@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NRSEMS勤怠</title> <style>
+    <title>NRSEMS勤怠</title>
+    <style>
         /* ========================================================================= */
-        /* CSSスタイル - テーマカラー変数とテーマ定義を追加 */
+        /* CSSスタイル */
         /* ========================================================================= */
 
         /* デフォルトテーマ（ブラックグリーン）の変数定義 */
@@ -99,10 +100,11 @@
             max-width: 400px;
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
-            /* ★修正: JavaScriptで初期は非表示にし、ローディング後 block にする */
+            
+            /* ★修正: 初期は完全に透明かつ非表示。JavaScriptで表示を制御 */
             opacity: 0; /* 初期透明度を 0 に設定 */
             transition: opacity 0.5s ease; /* opacity プロパティの変化を滑らかにする */
-            display: none; /* JavaScriptで制御するため、デフォルトで非表示 */
+            display: none; /* デフォルトで非表示 */
         }
         h1 {
             color: var(--text-color-main);
