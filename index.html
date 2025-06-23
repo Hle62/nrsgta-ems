@@ -104,7 +104,7 @@
             /* ★修正: 初期は完全に透明かつ非表示。JavaScriptで表示を制御 */
             opacity: 0; /* 初期透明度を 0 に設定 */
             transition: opacity 0.5s ease; /* opacity プロパティの変化を滑らかにする */
-            display: none; /* デフォルトで非表示 */
+            /* display: none; はJavaScriptで最初に設定し、アニメーション前に block に変更 */
         }
         h1 {
             color: var(--text-color-main);
@@ -380,8 +380,13 @@
                 loadingImage.style.width = '10px'; // 画像も小さくして消える演出
                 setTimeout(() => {
                     loadingOverlay.style.display = 'none'; // オーバーレイを完全に非表示にする
+
+                    // ★修正: ここでcontainerを表示状態にして、少し遅延させてopacityを1にする
                     container.style.display = 'block'; // メインコンテンツを表示
-                    container.style.opacity = '1'; // コンテナをフェードイン
+                    setTimeout(() => {
+                        container.style.opacity = '1'; // コンテナをフェードイン
+                    }, 50); // display:blockにした直後（短い遅延）
+
                     transitionToView(initialView); // 初期ビューに切り替える
                     if(initialView === 'attendance') {
                         updateStatusMessage(); // 出勤状態のメッセージを更新
