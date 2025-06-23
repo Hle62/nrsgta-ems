@@ -154,17 +154,21 @@
         button.cancel-button {
             background-color: var(--button-bg-cancel); /* 変数を適用 */
         }
-        button.setting-toggle-button {
-            background-color: var(--setting-button-bg); /* 変数を適用 */
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 8px 15px;
-            font-size: 0.9em;
-            border-radius: 5px;
-            width: auto;
-            min-width: unset;
+         button.setting-toggle-button {
+        background-color: var(--setting-button-bg);
+        color: white; /* ボタンの文字色は常に白が読みやすい */
+        padding: 8px 15px; /* パディングを調整 */
+        font-size: 0.9em;
+        border-radius: 5px;
+        width: auto;
+        min-width: unset;
+        
+        /* ★★★ 以下の位置指定を変更します ★★★ */
+        position: relative; /* absoluteからrelativeに変更 */
+        margin-top: 25px; /* 上の要素との間にスペースを設ける */
+        margin-bottom: 0px; /* 下の余白は不要 */
+        left: auto; /* absoluteのleftを解除 */
+        transform: none; /* absoluteのtransformを解除 */
         }
         button:hover {
             opacity: 0.9;
