@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NRSEMS勤怠</title>
-    <style>
+    <title>NRSEMS勤怠</title> <style>
         /* ========================================================================= */
         /* CSSスタイル - テーマカラー変数とテーマ定義を追加 */
         /* ========================================================================= */
@@ -100,6 +99,8 @@
             max-width: 400px;
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
+            /* ★修正: JavaScriptで初期は非表示にし、ローディング後 block にする */
+            display: none; 
         }
         h1 {
             color: var(--text-color-main);
@@ -155,21 +156,19 @@
             background-color: var(--button-bg-cancel); /* 変数を適用 */
         }
         button.setting-toggle-button {
-        background-color: var(--setting-button-bg);
-        color: white; /* ボタンの文字色は常に白が読みやすい */
-        padding: 8px 15px; /* パディングを調整 */
-        font-size: 0.9em;
-        border-radius: 5px;
-        width: auto;
-        min-width: unset;
-                      /* 右寄せのための修正 */
-        display: block; /* ブロック要素にしてfloatを適用 */
-        float: right; /* 右寄せ */
-        margin-top: 15px; /* 上の要素との間にスペースを設ける（必要に応じて調整） */
-        margin-left: auto; /* 右寄せと組み合わせて中央寄せ防止 */
-        clear: both; /* 他のfloat要素との重なりを防ぐ */
-        /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ */
-    }
+            background-color: var(--setting-button-bg); /* 変数を適用 */
+            /* ★修正: position relative + float: right で右寄せに */
+            display: block;
+            float: right;
+            margin-top: 15px; /* 上の要素との間にスペースを設ける */
+            margin-left: auto; /* float:rightと組み合わせて中央寄せ防止 */
+            clear: both; /* 他のfloat要素との重なりを防ぐ */
+            padding: 8px 15px;
+            font-size: 0.9em;
+            border-radius: 5px;
+            width: auto;
+            min-width: unset;
+        }
         button:hover {
             opacity: 0.9;
         }
@@ -178,7 +177,6 @@
             font-weight: bold;
             font-size: 1.1em;
             min-height: 20px;
-            /* メッセージ色も変数化可能だが、今回はそのまま */
         }
         .message-processing { color: var(--message-color-processing); }
         .message-success { color: var(--message-color-success); }
@@ -211,16 +209,45 @@
             font-size: 1em;
             color: var(--text-color-main);
         }
+
+        /* ★新規追加: ローディング画面のスタイル */
+        #loading-overlay {
+            position: fixed; /* 画面全体を覆う */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color-main); /* メイン背景色と同じ */
+            z-index: 1000; /* 最前面に表示 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0; /* 最初は透明にしてJavaScriptでフェードイン */
+            transition: opacity 0.5s ease; /* フェードイン/アウトのアニメーション */
+        }
+
+        #loading-overlay img {
+            width: 10px; /* 初期は非常に小さく */
+            height: auto;
+            opacity: 0.8; /* わずかに透明に */
+            transition: width 0.5s ease, opacity 0.5s ease; /* サイズと透明度の変化アニメーション */
+        }
     </style>
 </head>
 <body>
+    <div id="loading-overlay">
+        <img src="path/to/your/loading-image.gif" alt="Loading...">
+    </div>
+
     <div class="container">
         <h1>NRS勤怠</h1>
-        <div id="current-time"></div> <div id="login-section">
+        <div id="current-time"></div>
+        
+        <div id="login-section">
             <h2>ログイン</h2>
             <select id="nameSelect">
                 <option value="">名前を選択してください</option>
-                </select>
+            </select>
             <input type="password" id="passwordInput" placeholder="パスワード">
             <button class="login-button" onclick="handleLogin()">ログイン</button>
             <p id="loginMessage"></p>
@@ -270,10 +297,10 @@
         // ★★★ あなたの環境に合わせて、以下の2つの変数を必ず変更してください ★★★
 
         // 1. GASでデプロイしたウェブアプリのURL
-        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx_9U8cM79Rmf0InZJCR3USH_-93_0otQUNd3JhH1h77u3iffbdrz1omhCsDnJ5HI_FQQ/exec'; // 例: 'https://script.google.com/macros/s/AKfycb.../exec'
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx_9U8cM79Rmf0InZJCR3USH_-93_0otQUNd3JhH1h77u3iffbdrz1omhCsDnJ5HI_FQQ/exec'; 
 
         // 2. 共通のパスワード
-        const CORRECT_PASSWORD = 'nrsgta'; // 例: 'nrsgta'
+        const CORRECT_PASSWORD = 'nrsgta'; 
 
         // ★★★ 変更はここまでです ★★★
 
@@ -300,14 +327,25 @@
 
         // ページロード時に実行
         document.addEventListener('DOMContentLoaded', async () => {
-            await loadNamesIntoDropdown(); // まず名前リストをロード
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const loadingImage = loadingOverlay.querySelector('img');
+            const container = document.querySelector('.container'); // メインコンテンツのコンテナ
+
+            // ローディング画面を初期表示し、フェードインアニメーションを開始
+            loadingOverlay.style.opacity = '1'; // まず不透明にする
+            setTimeout(() => {
+                loadingImage.style.width = '80px'; // 画像を大きくする（フェードインの演出）
+            }, 100); // わずかに遅延させてアニメーションを開始
+
+            await loadNamesIntoDropdown(); // 名前リストのロードを待つ
 
             // 保存されたテーマをロードして適用
-            const savedTheme = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) || 'black-green'; // デフォルトはブラックグリーン
+            const savedTheme = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) || 'black-green';
             changeTheme(savedTheme);
             document.getElementById('themeSelect').value = savedTheme; // プルダウンの選択も合わせる
 
             const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+            let initialView = 'login';
             if (storedUser) {
                 const nameSelect = document.getElementById('nameSelect');
                 let userExistsInDropdown = false;
@@ -321,19 +359,32 @@
                 if (userExistsInDropdown) {
                     loggedInUser = storedUser;
                     nameSelect.value = storedUser;
-                    transitionToView('attendance'); // ログイン画面ではなく、直接勤怠画面へ
-                    updateStatusMessage();
-                    populateCorrectedTimeInputs();
+                    initialView = 'attendance'; // ログイン画面ではなく、直接勤怠画面へ
                     console.log(`自動ログインしました: ${loggedInUser}`);
                 } else {
                     localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
-                    transitionToView('login'); // ログイン画面へ
+                    initialView = 'login'; // ログイン画面へ
                     document.getElementById('loginMessage').textContent = '以前のユーザー名が見つかりませんでした。再度ログインしてください。';
                     document.getElementById('loginMessage').style.color = 'var(--message-color-error)';
                 }
             } else {
-                transitionToView('login'); // ログイン画面へ
+                initialView = 'login'; // ログイン画面へ
             }
+
+            // ローディング画面をフェードアウトして、メインコンテンツを表示
+            setTimeout(() => {
+                loadingOverlay.style.opacity = '0'; // オーバーレイをフェードアウト
+                loadingImage.style.width = '10px'; // 画像も小さくして消える演出
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none'; // オーバーレイを完全に非表示にする
+                    container.style.display = 'block'; // メインコンテンツを表示
+                    transitionToView(initialView); // 初期ビューに切り替える
+                    if(initialView === 'attendance') {
+                        updateStatusMessage(); // 出勤状態のメッセージを更新
+                        populateCorrectedTimeInputs(); // 修正時刻入力欄に初期値を設定
+                    }
+                }, 500); // フェードアウトのアニメーション時間（transitionと同じ値）
+            }, 1500); // 名前ロードやテーマ設定などの処理完了後、少し待ってからフェードアウト開始
         });
 
         /**
@@ -344,18 +395,18 @@
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('attendance-section').style.display = 'none';
             document.getElementById('settings-section').style.display = 'none';
-            document.getElementById('toggleSettingButton').style.display = 'none'; // 基本は非表示
+            document.getElementById('toggleSettingButton').style.display = 'none';
 
             if (viewName === 'login') {
                 document.getElementById('login-section').style.display = 'block';
             } else if (viewName === 'attendance') {
                 document.getElementById('attendance-section').style.display = 'block';
-                document.getElementById('toggleSettingButton').style.display = 'block'; // 勤怠画面の時だけ設定ボタン表示
+                document.getElementById('toggleSettingButton').style.display = 'block';
             } else if (viewName === 'settings') {
                 document.getElementById('settings-section').style.display = 'block';
-                document.getElementById('toggleSettingButton').style.display = 'block'; // 設定画面の時も設定ボタン表示
+                document.getElementById('toggleSettingButton').style.display = 'block';
             }
-            currentView = viewName; // 現在のビューを更新
+            currentView = viewName;
         }
 
         /**
@@ -377,7 +428,7 @@
          */
         function changeTheme(themeName) {
             document.body.setAttribute('data-theme', themeName);
-            localStorage.setItem(LOCAL_STORAGE_THEME_KEY, themeName); // テーマを保存
+            localStorage.setItem(LOCAL_STORAGE_THEME_KEY, themeName);
         }
 
         /**
@@ -394,7 +445,7 @@
             } else {
                 correctedStartTimeInput.value = '';
             }
-            correctedEndTimeInput.value = ''; // 退勤時刻はデフォルトで空にする
+            correctedEndTimeInput.value = '';
         }
 
         /**
