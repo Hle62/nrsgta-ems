@@ -392,7 +392,7 @@
                     transitionToView(initialView); // 初期ビューに切り替える
                     if(initialView === 'attendance') {
                         updateStatusMessage(); // 出勤状態のメッセージを更新
-                        populateCorrectedTimeInputs(); // 修正時刻入力欄に初期値を設定
+                        clearCorrectedTimeInputs(); // ★変更: ロード時に修正時刻入力欄をクリア
                     }
                 }, 500); // ローディングオーバーレイのフェードアウトアニメーションと同じ時間
             }, 1500); // ロード処理完了後、少し待ってからフェードアウト開始
@@ -413,6 +413,8 @@
             } else if (viewName === 'attendance') {
                 document.getElementById('attendance-section').style.display = 'block';
                 document.getElementById('toggleSettingButton').style.display = 'block';
+                updateStatusMessage(); // 勤怠画面に切り替わる際にステータスを更新
+                clearCorrectedTimeInputs(); // ★変更: 勤怠画面表示時に修正時刻入力欄をクリア
             } else if (viewName === 'settings') {
                 document.getElementById('settings-section').style.display = 'block';
                 document.getElementById('toggleSettingButton').style.display = 'block';
@@ -442,21 +444,30 @@
             localStorage.setItem(LOCAL_STORAGE_THEME_KEY, themeName);
         }
 
+        /**
+         * 修正時刻入力欄をクリアする新しい関数
+         * これを呼び出すことで、入力欄が常に空になります。
+         */
+        function clearCorrectedTimeInputs() { // ★新規追加関数
+            document.getElementById('correctedStartTime').value = '';
+            document.getElementById('correctedEndTime').value = '';
+        }
+
         /**
-         * 修正時刻入力欄に現在の出勤時刻を設定する
-         * 退勤時刻入力欄は初期状態では空にする
+         * 修正時刻入力欄に現在の出勤時刻を設定する (この関数はもう使われませんが、念のため残しておきます)
          */
         function populateCorrectedTimeInputs() {
-            const correctedStartTimeInput = document.getElementById('correctedStartTime');
-            const correctedEndTimeInput = document.getElementById('correctedEndTime');
-            
-            const storedStartTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-            if (storedStartTime) {
-                correctedStartTimeInput.value = storedStartTime.substring(0, 16);
-            } else {
-                correctedStartTimeInput.value = '';
-            }
-            correctedEndTimeInput.value = '';
+            // この関数は意図的に何もしないように変更しました。
+            // 修正時刻入力欄はclearCorrectedTimeInputs()で明示的にクリアされます。
+            // const correctedStartTimeInput = document.getElementById('correctedStartTime');
+            // const correctedEndTimeInput = document.getElementById('correctedEndTime');
+            // const storedStartTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            // if (storedStartTime) {
+            //     correctedStartTimeInput.value = storedStartTime.substring(0, 16);
+            // } else {
+            //     correctedStartTimeInput.value = '';
+            // }
+            // correctedEndTimeInput.value = '';
         }
 
         /**
@@ -523,8 +534,7 @@
                 loginMessageElement.textContent = 'ログイン成功！';
                 loginMessageElement.style.color = 'var(--message-color-success)';
                 transitionToView('attendance'); // 勤怠画面へ
-                // ログイン時に出勤状態を更新するが、修正時刻入力欄は自動で埋めない
-                updateStatusMessage(false); // ★変更：falseを渡してpopulateCorrectedTimeInputsをスキップ
+                clearCorrectedTimeInputs(); // ★変更：ログイン成功時に修正時刻入力欄をクリア
             } else {
                 loginMessageElement.textContent = 'パスワードが間違っています。';
                 loginMessageElement.style.color = 'var(--message-color-error)';
@@ -550,9 +560,8 @@
 
         /**
          * 出勤状態のメッセージを更新する
-         * @param {boolean} shouldPopulateTimeInput - 修正時刻入力欄を自動で埋めるかどうか (デフォルト: true)
          */
-        function updateStatusMessage(shouldPopulateTimeInput = true) { // ★変更：引数追加
+        function updateStatusMessage() {
             const statusMessageElement = document.getElementById('statusMessage');
             const startTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
             if (startTime) {
@@ -563,13 +572,7 @@
                 statusMessageElement.textContent = '現在の状態: 未出勤';
                 statusMessageElement.style.color = 'var(--text-color-main)';
             }
-            if (shouldPopulateTimeInput) { // ★変更：条件付きでpopulateCorrectedTimeInputsを呼び出す
-                populateCorrectedTimeInputs();
-            } else {
-                // 修正時刻入力欄をクリアする
-                document.getElementById('correctedStartTime').value = '';
-                document.getElementById('correctedEndTime').value = '';
-            }
+            // この関数はステータス表示のみを行い、入力欄の操作はclearCorrectedTimeInputs()に任せる
         }
 
         /**
@@ -603,8 +606,8 @@
                 await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: type });
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
-                // 出勤時は修正時刻入力欄を自動で埋めないようにする
-                updateStatusMessage(false); // ★変更：falseを渡してpopulateCorrectedTimeInputsをスキップ
+                updateStatusMessage(); // 出勤状態メッセージを更新
+                clearCorrectedTimeInputs(); // ★変更：出勤後に修正時刻入力欄をクリア
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
                 if (!startTimeISO) {
@@ -620,7 +623,6 @@
                     if (isNaN(endTime.getTime())) {
                         attendanceMessageElement.textContent = 'エラー: 不正な退勤修正時刻です。';
                         attendanceMessageElement.style.color = 'var(--message-color-error)';
-                        return;
                     }
                     if (endTime.getTime() < new Date(startTimeISO).getTime()) {
                         attendanceMessageElement.textContent = 'エラー: 退勤時刻が出勤時刻より前です。';
@@ -636,7 +638,8 @@
 
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤務時間を記録しました。`;
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
-                updateStatusMessage(); // 退勤時は出勤状態を更新し、修正時刻入力欄もリセット
+                updateStatusMessage(); // 退勤状態メッセージを更新
+                clearCorrectedTimeInputs(); // ★変更：退勤後に修正時刻入力欄をクリア
             }
         }
 
@@ -667,7 +670,8 @@
 
             attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
             attendanceMessageElement.style.color = 'var(--message-color-success)';
-            updateStatusMessage(); // 勤怠取り消し後も出勤状態を更新し、修正時刻入力欄もリセット
+            updateStatusMessage(); // 勤怠状態メッセージを更新
+            clearCorrectedTimeInputs(); // ★変更：取り消し後に修正時刻入力欄をクリア
         }
 
 
