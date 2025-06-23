@@ -317,27 +317,32 @@
         /**
          * Discord通知をGAS経由で送信する
          */
-        async function sendDiscordNotification(name, type) {
-            try {
-                const formData = new FormData();
-                formData.append('action', 'notifyDiscord'); // GASにアクションを伝える
-                formData.append('name', name);
-                formData.append('type', type);
+       function handleDiscordNotification(e) {
+  const name = e.parameter.name;
+  const type = e.parameter.type; // '出勤' or '退勤'
+  const timestamp = new Date();
 
-                const response = await fetch(GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // CORSエラーを避けるため
-                    body: new URLSearchParams(formData).toString(),
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                });
-                // no-corsモードではresponse.okやresponse.json()は使えないため、成功は仮定
-                console.log('Discord通知送信リクエスト完了');
-            } catch (error) {
-                console.error('Discord通知エラー:', error);
-            }
-        }
+  // ★追加: デバッグログ★
+  Logger.log('Received name for Discord: ' + name);
+  Logger.log('Received type for Discord: ' + type);
+
+  if (!name || !type) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: '名前または種別が指定されていません。' }))
+                         .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  try {
+    const discordMessage = `${name}-${type} (${Utilities.formatDate(timestamp, Session.getScriptTimeZone(), 'yyyy/MM/dd HH:mm:ss')})`;
+    sendDiscordNotification(discordMessage);
+
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Discord通知が完了しました！' }))
+                         .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    Logger.log('Discord通知エラー: ' + error.message);
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'Discord通知中にエラーが発生しました: ' + error.message }))
+                         .setMimeType(ContentService.MimeType.JSON);
+  }
+}
 
         /**
          * スプレッドシートに勤務時間を記録する
