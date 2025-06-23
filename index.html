@@ -100,7 +100,9 @@
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
             /* ★修正: JavaScriptで初期は非表示にし、ローディング後 block にする */
-            display: none; 
+            opacity: 0; /* 初期透明度を 0 に設定 */
+            transition: opacity 0.5s ease; /* opacity プロパティの変化を滑らかにする */
+            display: none; /* JavaScriptで制御するため、デフォルトで非表示 */
         }
         h1 {
             color: var(--text-color-main);
@@ -378,6 +380,7 @@
                 setTimeout(() => {
                     loadingOverlay.style.display = 'none'; // オーバーレイを完全に非表示にする
                     container.style.display = 'block'; // メインコンテンツを表示
+                    container.style.opacity = '1'; // コンテナをフェードイン
                     transitionToView(initialView); // 初期ビューに切り替える
                     if(initialView === 'attendance') {
                         updateStatusMessage(); // 出勤状態のメッセージを更新
@@ -424,7 +427,7 @@
 
         /**
          * テーマカラーを変更する
-         * @param {string} themeName 選択されたテーマ名
+         * @param {string} themeName選択されたテーマ名
          */
         function changeTheme(themeName) {
             document.body.setAttribute('data-theme', themeName);
