@@ -101,9 +101,10 @@
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
             
-            /* ★修正: 初期は完全に透明かつ非表示。JavaScriptで表示を制御 */
+            /* ★修正: ズームインアニメーションの初期状態 */
             opacity: 0; /* 初期透明度を 0 に設定 */
-            transition: opacity 0.5s ease; /* opacity プロパティの変化を滑らかにする */
+            transform: scale(0.8); /* 初期サイズを小さく */
+            transition: opacity 0.5s ease, transform 0.5s ease; /* 透明度とサイズの変化を滑らかに */
             display: none; /* デフォルトで非表示 */
         }
         h1 {
@@ -383,9 +384,10 @@
 
                     // ★修正: ここでcontainerを表示状態にして、少し遅延させてopacityを1にする
                     container.style.display = 'block'; // メインコンテンツを表示
-                    // display: block にした直後に opacity を設定するとアニメーションしない場合があるため、わずかに遅延させる
+                    // display: block にした直後（次のフレーム）に opacity を設定することでアニメーション開始
                     setTimeout(() => {
                         container.style.opacity = '1'; // コンテナをフェードイン
+                        container.style.transform = 'scale(1)'; // コンテナをズームイン
                     }, 50); // 50ms のわずかな遅延
                     
                     transitionToView(initialView); // 初期ビューに切り替える
