@@ -684,7 +684,7 @@
                 await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: type });
                 await sendRequestToGAS('recordAttendance', { name: loggedInUser, startTime: startTimeISO, endTime: endTime.toISOString() });
 
-                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤務時間を記録しました。`;
+                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
                 updateStatusMessage(); // 退勤状態メッセージを更新
                 clearCorrectedTimeInputs(); // ★新規：退勤後に修正時刻入力欄をクリア
