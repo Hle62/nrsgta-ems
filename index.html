@@ -77,6 +77,7 @@
             --setting-button-bg: #4a4a4a;
         }
 
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -85,26 +86,26 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: var(--bg-color-main);
-            color: var(--text-color-main);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: var(--bg-color-main); /* 変数を適用 */
+            color: var(--text-color-main); /* 変数を適用 */
+            transition: background-color 0.3s ease, color 0.3s ease; /* テーマ変更をスムーズに */
         }
         .container {
-            background-color: var(--bg-color-container);
+            background-color: var(--bg-color-container); /* 変数を適用 */
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             text-align: center;
             width: 90%;
             max-width: 400px;
-            position: relative;
-            overflow: hidden;
+            position: relative; /* 設定ボタン配置のため */
+            overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
             
-            /* ロードアニメーション用の初期設定（変更なし） */
+            /* ロードアニメーション用の初期設定 */
             opacity: 0;
             transform: scale(0.8);
             transition: opacity 0.5s ease, transform 0.5s ease;
-            display: none;
+            display: none; /* JavaScriptで制御するためデフォルトで非表示 */
         }
         h1 {
             color: var(--text-color-main);
@@ -336,7 +337,6 @@
 
         <button class="setting-toggle-button" id="toggleSettingButton" onclick="toggleSettings()">設定</button>
     </div>
-
     <script>
         // =========================================================================
         // JavaScriptコード
@@ -345,10 +345,10 @@
         // ★★★ あなたの環境に合わせて、以下の2つの変数を必ず変更してください ★★★
 
         // 1. GASでデプロイしたウェブアプリのURL
-        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw22uU2hir9XmjP8W4HhcihPYZYncWbuL1_kLYX4frkP08Wur2vS8xzxxP76_-9r8aG/exec'; 
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw22uU2hir9XmjP8W4HhcihPYZYncWbuL1_kLYX4frkP08Wur2vS8xzxxP76_-9r8aG/exec';
 
         // 2. 共通のパスワード
-        const CORRECT_PASSWORD = 'nrsgta'; 
+        const CORRECT_PASSWORD = 'nrsgta';
 
         // ★★★ 変更はここまでです ★★★
 
@@ -434,7 +434,7 @@
                     transitionToView(initialView); // 初期ビューに切り替える（ここでセクションもアクティブ化）
                     if(initialView === 'attendance') {
                         updateStatusMessage();
-                        // populateCorrectedTimeInputs(); // この呼び出しは不要、transitionToView内でクリアされる
+                        // populateCorrectedTimeInputs(); // この呼び出しは不要、clearCorrectedTimeInputsが別途呼び出される
                     }
                     clearCorrectedTimeInputs(); // DOM読み込み完了時にも修正時刻入力欄をクリア
                 }, 500); // ローディングオーバーレイのフェードアウトアニメーションと同じ時間
@@ -460,6 +460,8 @@
             } else if (viewName === 'attendance') {
                 targetSection = document.getElementById('attendance-section');
                 document.getElementById('toggleSettingButton').style.display = 'block'; // 勤怠画面の時だけ設定ボタン表示
+                updateStatusMessage(); // 勤怠画面に切り替わる際にステータスを更新
+                clearCorrectedTimeInputs(); // ★新規：勤怠画面表示時にも修正時刻入力欄をクリア
             } else if (viewName === 'settings') {
                 targetSection = document.getElementById('settings-section');
                 document.getElementById('toggleSettingButton').style.display = 'block'; // 設定画面の時も設定ボタン表示
@@ -561,7 +563,7 @@
                 localStorage.setItem(LOCAL_STORAGE_USER_KEY, loggedInUser);
                 loginMessageElement.textContent = 'ログイン成功！';
                 loginMessageElement.style.color = 'var(--message-color-success)';
-                transitionToView('attendance'); // 勤怠画面へ
+                transitionToView('attendance');
                 clearCorrectedTimeInputs();
             } else {
                 loginMessageElement.textContent = 'パスワードが間違っています。';
