@@ -262,8 +262,8 @@
             <h2 id="loggedInUserName"></h2>
             <p id="statusMessage">現在の状態: 未出勤</p>
             <div>
-                <button onclick="recordAction('出勤')">出勤する</button>
-                <button class="out" onclick="recordAction('退勤')">退勤する</button>
+                <button onclick="recordAction('出勤')">出勤</button>
+                <button class="out" onclick="recordAction('退勤')">退勤</button>
             </div>
             <p id="attendanceMessage"></p>
 
@@ -287,7 +287,6 @@
                 <option value="rose-pink">ローズピンク</option>
                 <option value="red-black">レッドブラック</option>
             </select>
-            <p style="margin-top: 20px;">その他の設定項目をここに追加できます。</p>
         </div>
 
         <button class="setting-toggle-button" id="toggleSettingButton" onclick="toggleSettings()">設定</button>
@@ -639,7 +638,7 @@
                 await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: type });
                 await sendRequestToGAS('recordAttendance', { name: loggedInUser, startTime: startTimeISO, endTime: endTime.toISOString() });
 
-                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤務時間を記録しました。`;
+                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
                 updateStatusMessage(); // 退勤状態メッセージを更新
                 clearCorrectedTimeInputs(); // ★新規：退勤後に修正時刻入力欄をクリア
