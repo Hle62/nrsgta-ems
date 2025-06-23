@@ -305,7 +305,7 @@
                 localStorage.setItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser, currentTime.toISOString()); // ISO形式で保存
                 // GAS経由でDiscord通知を送信
                 await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: type });
-                attendanceMessageElement.textContent = `<span class="math-inline">\{loggedInUser\}さんが</span>{type}しました！`;
+                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = '#2ecc71';
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
@@ -322,7 +322,7 @@
                 // GAS経由でスプレッドシート記録を送信
                 await sendRequestToGAS('recordAttendance', { name: loggedInUser, startTime: startTimeISO, endTime: endTime.toISOString() });
 
-                attendanceMessageElement.textContent = `<span class="math-inline">\{loggedInUser\}さんが</span>{type}しました！勤務時間を記録しました。`;
+                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = '#2ecc71';
             }
             updateStatusMessage(); // 状態メッセージを更新
