@@ -1,164 +1,361 @@
-// スプレッドシートのID
-const SPREADSHEET_ID = '19hPtAuxc2COKwcdXr4FmZ7WCuvBcGl4zT7Oog-pMrCA'; 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS 出退勤管理</title>
+    <style>
+        /* ========================================================================= */
+        /* CSSスタイル */
+        /* ========================================================================= */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        .container {
+            background-color: #34495e;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #ecf0f1;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+        select, input[type="password"] {
+            padding: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #7f8c8d;
+            border-radius: 6px;
+            width: calc(100% - 24px);
+            box-sizing: border-box;
+            font-size: 1em;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2C114.7L159.2%2C242.5c-4.2%2C4.2-9.6%2C6.4-15.1%2C6.4s-10.9-2.2-15.1-6.4L5.4%2C114.7c-8.9-8.9-8.9-23.3%2C0-32.2s23.3-8.9%2C32.2%2C0l113.6%2C113.6L254.8%2C82.5c8.9-8.9%2C23.3-8.9%2C32.2%2C0S295.9%2C105.8%2C287%2C114.7z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+            min-width: 120px;
+        }
+        button.out {
+            background-color: #c0392b;
+        }
+        button.login-button {
+            background-color: #3498db;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #message {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 1.1em;
+            min-height: 20px;
+        }
+        #login-section, #attendance-section {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>EMS 出退勤管理システム</h1>
 
-// 各機能で使用するシート名
-const EMPLOYEE_INFO_SHEET_NAME = '社員情報'; 
-const ATTENDANCE_ARCHIVE_SHEET_NAME = '勤怠アーカイブ'; 
+        <div id="login-section">
+            <h2>ログイン</h2>
+            <select id="nameSelect">
+                <option value="">名前を選択してください</option>
+                </select>
+            <input type="password" id="passwordInput" placeholder="パスワード">
+            <button class="login-button" onclick="handleLogin()">ログイン</button>
+            <p id="loginMessage"></p>
+            <button onclick="refreshNames()" style="background-color: #7f8c8d; margin-top: 10px;">名前リスト更新</button>
+        </div>
 
-// DiscordウェブフックURLをあなたの環境に合わせて変更してください
-const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1385565389299384492/t4M39HW5Ot4NXSyorrFZYOA7yNvG3pDfPv0Jt5sUS7bRJxa90ZTFMzxBj-MNKJdGoAmA'; // ★ここをあなたのDiscordウェブフックURLに書き換える★
+        <div id="attendance-section">
+            <h2 id="loggedInUserName"></h2>
+            <p id="statusMessage">現在の状態: 未出勤</p>
+            <div>
+                <button onclick="recordAction('出勤')">出勤する</button>
+                <button class="out" onclick="recordAction('退勤')">退勤する</button>
+            </div>
+            <p id="attendanceMessage"></p>
+            <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
+        </div>
+    </div>
 
-/**
- * WebアプリからのPOSTリクエストを処理する主要関数
- * Webアプリからのリクエストに応じて、Discord通知またはスプレッドシート記録を行う
- */
-function doPost(e) {
-  const action = e.parameter.action; // 'notifyDiscord' または 'recordAttendance'
+    <script>
+        // =========================================================================
+        // JavaScriptコード
+        // UI操作、GASへのリクエスト送信、ローカルストレージ管理
+        // =========================================================================
 
-  if (action === 'notifyDiscord') {
-    return handleDiscordNotification(e);
-  } else if (action === 'recordAttendance') {
-    return handleRecordAttendance(e);
-  } else {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: '不明なアクションです。' }))
-                         .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+        // ★★★ あなたの環境に合わせて、以下の2つの変数を必ず変更してください ★★★
 
-/**
- * Discord通知のみを行う関数 (出勤/退勤ボタン押下時)
- */
-function handleDiscordNotification(e) {
-  const name = e.parameter.name;
-  const type = e.parameter.type; // '出勤' or '退勤'
-  const timestamp = new Date();
+        // 1. GASでデプロイしたウェブアプリのURL
+        // GASデプロイ後に取得したURLをここに設定
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzj4hygG8fhZ_cDVp-6Pj-TL7sWGK_DurkoE0dtjOCBRjQVDPQA2E8k-WgChBw-sEh71g/exec'; // 例: 'https://script.google.com/macros/s/AKfycb.../exec'
 
-  if (!name || !type) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: '名前または種別が指定されていません。' }))
-                         .setMimeType(ContentService.MimeType.JSON);
-  }
+        // 2. 共通のパスワード
+        // 全員共通のログイン用パスワード
+        const CORRECT_PASSWORD = 'nrsgta'; // 例: 'nrsgta'
 
-  try {
-    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-    // ↓↓ この行を以下のように修正してください ↓↓
-    const discordMessage = `${name}-${type} (${Utilities.formatDate(timestamp, Session.getScriptTimeZone(), 'yyyy/MM/dd HH:mm:ss')})`;
-    // ↑↑ 上記の1行が正しい形式です。他の記述がある場合は削除してください。 ↑↑
-    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-    sendDiscordNotification(discordMessage);
+        // ★★★ 変更はここまでです ★★★
 
-    return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Discord通知が完了しました！' }))
-                         .setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    Logger.log('Discord通知エラー: ' + error.message);
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'Discord通知中にエラーが発生しました: ' + error.message }))
-                         .setMimeType(ContentService.MimeType.JSON);
-  }
-}
 
-/**
- * スプレッドシートに勤務時間を記録する関数 (退勤ボタン押下時)
- */
-function handleRecordAttendance(e) {
-  const name = e.parameter.name;
-  const startTime = e.parameter.startTime; // ISO形式文字列で渡される想定
-  const endTime = e.parameter.endTime;     // ISO形式文字列で渡される想定
-  const submissionTime = new Date(); // 勤怠提出時の日時
+        let loggedInUser = ''; // ログインしたユーザーの名前を保持
+        const LOCAL_STORAGE_USER_KEY = 'ems_loggedInUser'; // localStorageに保存するユーザー名のキー名
+        const LOCAL_STORAGE_START_TIME_KEY_PREFIX = 'ems_startTime_'; // 出勤時刻を保存するキー名のプレフィックス
 
-  if (!name || !startTime || !endTime) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: '名前、業務開始時間、または業務終了時間が指定されていません。' }))
-                         .setMimeType(ContentService.MimeType.JSON);
-  }
+        // ページロード時に実行
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadNamesIntoDropdown(); // まず名前リストをロード
 
-  try {
-    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(ATTENDANCE_ARCHIVE_SHEET_NAME);
-    if (!sheet) {
-      throw new Error(`シート名「${ATTENDANCE_ARCHIVE_SHEET_NAME}」が見つかりません。`);
-    }
+            // localStorageに保存されたユーザー名があるかチェック
+            const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+            if (storedUser) {
+                const nameSelect = document.getElementById('nameSelect');
+                let userExistsInDropdown = false;
+                for (let i = 0; i < nameSelect.options.length; i++) {
+                    if (nameSelect.options[i].value === storedUser) {
+                        userExistsInDropdown = true;
+                        break;
+                    }
+                }
 
-    const startJsDate = new Date(startTime);
-    const endJsDate = new Date(endTime);
-    
-    // 勤務時間を計算 (ミリ秒)
-    const durationMs = endJsDate.getTime() - startJsDate.getTime();
-    // ミリ秒を HH時間MM分 形式に変換
-    const hours = Math.floor(durationMs / (1000 * 60 * 60));
-    const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-    const durationFormatted = `${hours}時間${minutes}分`;
-
-    // スプレッドシートに追記
-    // 列順: 勤怠提出時の日時 | 名前 | 業務開始時間 | 業務終了時間 | 勤務時間
-    sheet.appendRow([
-      Utilities.formatDate(submissionTime, Session.getScriptTimeZone(), 'yyyy/MM/dd HH:mm:ss'), // 勤怠提出時の日時
-      name, // 名前
-      Utilities.formatDate(startJsDate, Session.getScriptTimeZone(), 'yyyy/MM/dd HH:mm:ss'), // 業務開始時間
-      Utilities.formatDate(endJsDate, Session.getScriptTimeZone(), 'yyyy/MM/dd HH:mm:ss'), // 業務終了時間
-      durationFormatted // 勤務時間
-    ]);
-
-    return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: '勤務時間を記録しました！' }))
-                         .setMimeType(ContentService.MimeType.JSON);
-
-  } catch (error) {
-    Logger.log('勤務時間記録エラー: ' + error.message);
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: '勤務時間の記録中にエラーが発生しました: ' + error.message }))
-                             .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-/**
- * スプレッドシートから名前のリストを取得して返す関数
- * 「社員情報」タブのC列から名前を取得します。
- */
-function doGet(e) {
-  try {
-    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(EMPLOYEE_INFO_SHEET_NAME);
-    if (!sheet) {
-      throw new Error(`シート名「${EMPLOYEE_INFO_SHEET_NAME}」が見つかりません。`);
-    }
-
-    const lastRow = sheet.getLastRow();
-    let names = [];
-    if (lastRow >= 2) { // 2行目以降にデータがある場合のみ処理
-        // 変更点: getRangeの2番目の引数を列番号1 (A列) から 3 (C列) に変更
-        const nameColumnData = sheet.getRange(2, 3, lastRow - 1, 1).getValues(); // 2行目から最終行までの3列目（C列）を取得
-        const uniqueNames = new Set();
-        nameColumnData.forEach(row => {
-            const name = String(row[0]).trim();
-            if (name !== '') {
-                uniqueNames.add(name);
+                if (userExistsInDropdown) {
+                    loggedInUser = storedUser;
+                    nameSelect.value = storedUser; // プルダウンの選択も自動で合わせる
+                    transitionToAttendanceScreen();
+                    updateStatusMessage(); // 状態メッセージを更新
+                    console.log(`自動ログインしました: ${loggedInUser}`);
+                } else {
+                    // 保存されたユーザー名がリストにない場合（例: スプレッドシートから削除された）
+                    localStorage.removeItem(LOCAL_STORAGE_USER_KEY); // 無効なユーザー名を削除
+                    document.getElementById('login-section').style.display = 'block';
+                    document.getElementById('loginMessage').textContent = '以前のユーザー名が見つかりませんでした。再度ログインしてください。';
+                    document.getElementById('loginMessage').style.color = '#e74c3c';
+                }
+            } else {
+                // 保存されたユーザー名がない場合はログイン画面を表示
+                document.getElementById('login-section').style.display = 'block';
             }
         });
-        names = Array.from(uniqueNames).sort();
-    }
 
-    return ContentService.createTextOutput(JSON.stringify({ status: 'success', names: names }))
-                         .setMimeType(ContentService.MimeType.JSON);
+        /**
+         * GASから名前リストを取得し、プルダウンに追加する
+         */
+        async function loadNamesIntoDropdown() {
+            const nameSelect = document.getElementById('nameSelect');
+            const loginMessageElement = document.getElementById('loginMessage');
+            nameSelect.innerHTML = '<option value="">名前を選択してください</option>'; // 既存オプションをクリア
 
-  } catch (error) {
-    Logger.log('名前リスト取得エラー: ' + error.message);
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: '名前リスト取得エラー: ' + error.message }))
-                             .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+            loginMessageElement.textContent = '名前リストを読み込み中...';
+            loginMessageElement.style.color = '#f1c40f';
 
-/**
- * Discord Webhookにメッセージを送信する関数
- */
-function sendDiscordNotification(message) {
-  const payload = {
-    content: message
-  };
-  const options = {
-    'method' : 'post',
-    'contentType': 'application/json',
-    'payload' : JSON.stringify(payload),
-    'muteHttpExceptions': true
-  };
+            try {
+                const response = await fetch(GAS_WEB_APP_URL); // GASのdoGetが呼ばれる
+                const data = await response.json();
 
-  try {
-    const response = UrlFetchApp.fetch(DISCORD_WEBHOOK_URL, options);
-    Logger.log('Discord Webhook Response: ' + response.getContentText());
-  } catch (e) {
-    Logger.log('Discord Webhook Error: ' + e.message);
-  }
-}
+                if (data.status === 'success' && data.names && data.names.length > 0) {
+                    data.names.forEach(name => {
+                        const option = document.createElement('option');
+                        option.value = name;
+                        option.textContent = name;
+                        nameSelect.appendChild(option);
+                    });
+                    loginMessageElement.textContent = '';
+                } else {
+                    loginMessageElement.textContent = '名前リストを取得できませんでした。スプレッドシートの「社員情報」タブのC列を確認してください。';
+                    loginMessageElement.style.color = '#e74c3c';
+                }
+            } catch (error) {
+                console.error('名前リスト取得エラー:', error);
+                loginMessageElement.textContent = '名前リストの取得中に通信エラーが発生しました。';
+                loginMessageElement.style.color = '#e74c3c';
+            }
+        }
+
+        /**
+         * 名前リストを強制的に更新するボタンのハンドラ
+         */
+        async function refreshNames() {
+            await loadNamesIntoDropdown();
+            document.getElementById('loginMessage').textContent = '名前リストを更新しました。';
+            document.getElementById('loginMessage').style.color = '#2ecc71';
+        }
+
+        /**
+         * ログイン成功後の画面遷移処理
+         */
+        function transitionToAttendanceScreen() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('attendance-section').style.display = 'block';
+            document.getElementById('loggedInUserName').textContent = `${loggedInUser}としてログイン中`;
+            document.getElementById('attendanceMessage').textContent = '';
+            updateStatusMessage(); // 状態メッセージを更新
+        }
+
+        /**
+         * ログイン処理
+         */
+        function handleLogin() {
+            const selectedName = document.getElementById('nameSelect').value;
+            const password = document.getElementById('passwordInput').value.trim();
+            const loginMessageElement = document.getElementById('loginMessage');
+
+            if (!selectedName) {
+                loginMessageElement.textContent = '名前を選択してください。';
+                loginMessageElement.style.color = '#e74c3c';
+                return;
+            }
+
+            if (password === CORRECT_PASSWORD) {
+                loggedInUser = selectedName;
+                localStorage.setItem(LOCAL_STORAGE_USER_KEY, loggedInUser); // ログイン成功時に名前を保存
+                loginMessageElement.textContent = 'ログイン成功！';
+                loginMessageElement.style.color = '#2ecc71';
+                transitionToAttendanceScreen(); // 画面遷移
+            } else {
+                loginMessageElement.textContent = 'パスワードが間違っています。';
+                loginMessageElement.style.color = '#e74c3c';
+            }
+        }
+
+        /**
+         * ログアウト処理
+         */
+        function handleLogout() {
+            loggedInUser = '';
+            localStorage.removeItem(LOCAL_STORAGE_USER_KEY); // localStorageから名前を削除
+            // 出勤状態もリセット
+            localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser); 
+
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('loginMessage').textContent = '';
+            document.getElementById('attendanceMessage').textContent = '';
+
+            // ログイン画面を表示し、出退勤画面を非表示
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('attendance-section').style.display = 'none';
+            document.getElementById('nameSelect').value = ''; // プルダウンをリセット
+            loadNamesIntoDropdown(); // 再度名前リストをロード
+        }
+
+        /**
+         * 出勤状態のメッセージを更新する
+         */
+        function updateStatusMessage() {
+            const statusMessageElement = document.getElementById('statusMessage');
+            const startTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            if (startTime) {
+                const startDateTime = new Date(startTime);
+                statusMessageElement.textContent = `現在の状態: 出勤中 (開始: ${startDateTime.toLocaleTimeString('ja-JP')})`;
+                statusMessageElement.style.color = '#2ecc71';
+            } else {
+                statusMessageElement.textContent = '現在の状態: 未出勤';
+                statusMessageElement.style.color = '#ecf0f1';
+            }
+        }
+
+        /**
+         * 出勤/退勤のアクションを記録する関数
+         * @param {string} type '出勤' または '退勤'
+         */
+        async function recordAction(type) {
+            const attendanceMessageElement = document.getElementById('attendanceMessage');
+
+            if (!loggedInUser) {
+                attendanceMessageElement.textContent = 'ログインしてください！';
+                attendanceMessageElement.style.color = '#e74c3c';
+                return;
+            }
+
+            attendanceMessageElement.textContent = '処理中...';
+            attendanceMessageElement.style.color = '#f1c40f';
+
+            if (type === '出勤') {
+                const currentTime = new Date();
+                localStorage.setItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser, currentTime.toISOString()); // ISO形式で保存
+                // GAS経由でDiscord通知を送信
+                await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: type });
+                attendanceMessageElement.textContent = `<span class="math-inline">\{loggedInUser\}さんが</span>{type}しました！`;
+                attendanceMessageElement.style.color = '#2ecc71';
+            } else if (type === '退勤') {
+                const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+                if (!startTimeISO) {
+                    attendanceMessageElement.textContent = 'エラー: 出勤記録がありません。出勤ボタンを先に押してください。';
+                    attendanceMessageElement.style.color = '#e74c3c';
+                    return;
+                }
+                const endTime = new Date();
+                localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser); // 出勤時刻をクリア
+
+                // GAS経由でDiscord通知を送信
+                await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: type });
+                // GAS経由でスプレッドシート記録を送信
+                await sendRequestToGAS('recordAttendance', { name: loggedInUser, startTime: startTimeISO, endTime: endTime.toISOString() });
+
+                attendanceMessageElement.textContent = `<span class="math-inline">\{loggedInUser\}さんが</span>{type}しました！勤務時間を記録しました。`;
+                attendanceMessageElement.style.color = '#2ecc71';
+            }
+            updateStatusMessage(); // 状態メッセージを更新
+        }
+
+        /**
+         * GASにリクエストを送信する汎用関数
+         * @param {string} action GASのdoPostで処理を分岐するためのアクション名
+         * @param {Object} params リクエストに含めるパラメータ
+         */
+        async function sendRequestToGAS(action, params) {
+            try {
+                const formData = new FormData();
+                formData.append('action', action); // GASにアクションを伝える
+                for (const key in params) {
+                    formData.append(key, params[key]);
+                }
+
+                const response = await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // CORSエラーを避けるため
+                    body: new URLSearchParams(formData).toString(),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+                // no-corsモードではresponse.okやresponse.json()は使えないため、成功は仮定
+                console.log(`GASへのリクエスト [${action}] 送信完了`);
+            } catch (error) {
+                console.error(`GASへのリクエスト [${action}] エラー:`, error);
+                // 必要であればここでUIにエラーを表示することも検討
+            }
+        }
+    </script>
+</body>
+</html>
