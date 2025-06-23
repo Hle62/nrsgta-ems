@@ -33,7 +33,13 @@
             margin-bottom: 30px;
             font-size: 1.8em;
         }
-        select, input[type="password"] {
+        #current-time {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #f39c12; /* オレンジ系の色 */
+        }
+        select, input[type="password"], input[type="datetime-local"] {
             padding: 12px;
             margin-bottom: 25px;
             border: 1px solid #7f8c8d;
@@ -46,11 +52,15 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
+            /* datetime-localにはプルダウン矢印は不要なので、selectにのみ適用 */
+        }
+        select {
             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2C114.7L159.2%2C242.5c-4.2%2C4.2-9.6%2C6.4-15.1%2C6.4s-10.9-2.2-15.1-6.4L5.4%2C114.7c-8.9-8.9-8.9-23.3%2C0-32.2s23.3-8.9%2C32.2%2C0l113.6%2C113.6L254.8%2C82.5c8.9-8.9%2C23.3-8.9%2C32.2%2C0S295.9%2C105.8%2C287%2C114.7z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 12px;
         }
+
         button {
             background-color: #27ae60;
             color: white;
@@ -69,6 +79,9 @@
         button.login-button {
             background-color: #3498db;
         }
+        button.cancel-button {
+            background-color: #e67e22; /* オレンジ系 */
+        }
         button:hover {
             opacity: 0.9;
         }
@@ -81,13 +94,27 @@
         #login-section, #attendance-section {
             display: none;
         }
+        .time-correction-group {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #446680;
+            text-align: left; /* ラベルと入力欄を左寄せ */
+        }
+        .time-correction-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #bdc3c7;
+        }
+        .time-correction-group input {
+            margin-bottom: 10px; /* 入力欄間のスペース */
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>EMS 出退勤管理システム</h1>
-
-        <div id="login-section">
+        <div id="current-time"></div> <div id="login-section">
             <h2>ログイン</h2>
             <select id="nameSelect">
                 <option value="">名前を選択してください</option>
@@ -106,6 +133,15 @@
                 <button class="out" onclick="recordAction('退勤')">退勤する</button>
             </div>
             <p id="attendanceMessage"></p>
+
+            <div class="time-correction-group">
+                <label for="correctedStartTime">出勤時刻を修正 (任意):</label>
+                <input type="datetime-local" id="correctedStartTime">
+                <label for="correctedEndTime">退勤時刻を修正 (任意):</label>
+                <input type="datetime-local" id="correctedEndTime">
+            </div>
+            
+            <button class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button>
             <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
         </div>
     </div>
@@ -119,11 +155,9 @@
         // ★★★ あなたの環境に合わせて、以下の2つの変数を必ず変更してください ★★★
 
         // 1. GASでデプロイしたウェブアプリのURL
-        // GASデプロイ後に取得したURLをここに設定
-        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9XSydZNljUPyCj5vWcGIR-RLBELO83IuIU6LnaylxzEYdK86iaHJIx8Lec89Z8f86fA/exec'; // 例: 'https://script.google.com/macros/s/AKfycb.../exec'
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwxgumbve6xlRX4QnxgHsmigFhBkE1Igpu9RNKiMfSMiBjykljFBSq38RXY5DjxaM4YXQ/exec'; // 例: 'https://script.google.com/macros/s/AKfycb.../exec'
 
         // 2. 共通のパスワード
-        // 全員共通のログイン用パスワード
         const CORRECT_PASSWORD = 'nrsgta'; // 例: 'nrsgta'
 
         // ★★★ 変更はここまでです ★★★
@@ -133,11 +167,23 @@
         const LOCAL_STORAGE_USER_KEY = 'ems_loggedInUser'; // localStorageに保存するユーザー名のキー名
         const LOCAL_STORAGE_START_TIME_KEY_PREFIX = 'ems_startTime_'; // 出勤時刻を保存するキー名のプレフィックス
 
+        // リアルタイム時刻表示を更新
+        function updateCurrentTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const date = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('current-time').textContent = `${year}/${month}/${date} ${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateCurrentTime, 1000); // 1秒ごとに更新
+
         // ページロード時に実行
         document.addEventListener('DOMContentLoaded', async () => {
             await loadNamesIntoDropdown(); // まず名前リストをロード
 
-            // localStorageに保存されたユーザー名があるかチェック
             const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
             if (storedUser) {
                 const nameSelect = document.getElementById('nameSelect');
@@ -154,19 +200,35 @@
                     nameSelect.value = storedUser; // プルダウンの選択も自動で合わせる
                     transitionToAttendanceScreen();
                     updateStatusMessage(); // 状態メッセージを更新
+                    populateCorrectedTimeInputs(); // 修正時刻入力欄に初期値を設定
                     console.log(`自動ログインしました: ${loggedInUser}`);
                 } else {
-                    // 保存されたユーザー名がリストにない場合（例: スプレッドシートから削除された）
-                    localStorage.removeItem(LOCAL_STORAGE_USER_KEY); // 無効なユーザー名を削除
+                    localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
                     document.getElementById('login-section').style.display = 'block';
                     document.getElementById('loginMessage').textContent = '以前のユーザー名が見つかりませんでした。再度ログインしてください。';
                     document.getElementById('loginMessage').style.color = '#e74c3c';
                 }
             } else {
-                // 保存されたユーザー名がない場合はログイン画面を表示
                 document.getElementById('login-section').style.display = 'block';
             }
         });
+
+        /**
+         * 修正時刻入力欄に現在の出勤時刻を設定する
+         */
+        function populateCorrectedTimeInputs() {
+            const correctedStartTimeInput = document.getElementById('correctedStartTime');
+            const correctedEndTimeInput = document.getElementById('correctedEndTime');
+            
+            const storedStartTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            if (storedStartTime) {
+                // ISO文字列をdatetime-local形式に変換 (YYYY-MM-DDTHH:MM)
+                correctedStartTimeInput.value = storedStartTime.substring(0, 16);
+            } else {
+                correctedStartTimeInput.value = '';
+            }
+            correctedEndTimeInput.value = new Date().toISOString().substring(0, 16); // 退勤時は現在時刻を初期値に
+        }
 
         /**
          * GASから名前リストを取得し、プルダウンに追加する
@@ -180,7 +242,7 @@
             loginMessageElement.style.color = '#f1c40f';
 
             try {
-                const response = await fetch(GAS_WEB_APP_URL); // GASのdoGetが呼ばれる
+                const response = await fetch(GAS_WEB_APP_URL);
                 const data = await response.json();
 
                 if (data.status === 'success' && data.names && data.names.length > 0) {
@@ -220,6 +282,7 @@
             document.getElementById('loggedInUserName').textContent = `${loggedInUser}としてログイン中`;
             document.getElementById('attendanceMessage').textContent = '';
             updateStatusMessage(); // 状態メッセージを更新
+            populateCorrectedTimeInputs(); // 修正時刻入力欄を更新
         }
 
         /**
@@ -238,10 +301,10 @@
 
             if (password === CORRECT_PASSWORD) {
                 loggedInUser = selectedName;
-                localStorage.setItem(LOCAL_STORAGE_USER_KEY, loggedInUser); // ログイン成功時に名前を保存
+                localStorage.setItem(LOCAL_STORAGE_USER_KEY, loggedInUser);
                 loginMessageElement.textContent = 'ログイン成功！';
                 loginMessageElement.style.color = '#2ecc71';
-                transitionToAttendanceScreen(); // 画面遷移
+                transitionToAttendanceScreen();
             } else {
                 loginMessageElement.textContent = 'パスワードが間違っています。';
                 loginMessageElement.style.color = '#e74c3c';
@@ -253,19 +316,17 @@
          */
         function handleLogout() {
             loggedInUser = '';
-            localStorage.removeItem(LOCAL_STORAGE_USER_KEY); // localStorageから名前を削除
-            // 出勤状態もリセット
+            localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
             localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser); 
 
             document.getElementById('passwordInput').value = '';
             document.getElementById('loginMessage').textContent = '';
             document.getElementById('attendanceMessage').textContent = '';
 
-            // ログイン画面を表示し、出退勤画面を非表示
             document.getElementById('login-section').style.display = 'block';
             document.getElementById('attendance-section').style.display = 'none';
-            document.getElementById('nameSelect').value = ''; // プルダウンをリセット
-            loadNamesIntoDropdown(); // 再度名前リストをロード
+            document.getElementById('nameSelect').value = '';
+            loadNamesIntoDropdown();
         }
 
         /**
@@ -282,6 +343,7 @@
                 statusMessageElement.textContent = '現在の状態: 未出勤';
                 statusMessageElement.style.color = '#ecf0f1';
             }
+            populateCorrectedTimeInputs(); // 状態更新時も修正時刻入力欄を更新
         }
 
         /**
@@ -301,9 +363,18 @@
             attendanceMessageElement.style.color = '#f1c40f';
 
             if (type === '出勤') {
-                const currentTime = new Date();
-                localStorage.setItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser, currentTime.toISOString()); // ISO形式で保存
-                // GAS経由でDiscord通知を送信
+                let currentTime = new Date();
+                const correctedStartTimeValue = document.getElementById('correctedStartTime').value;
+                if (correctedStartTimeValue) {
+                    currentTime = new Date(correctedStartTimeValue); // 修正時刻があればそれを使用
+                    // 時刻が不正な場合は警告
+                    if (isNaN(currentTime.getTime())) {
+                        attendanceMessageElement.textContent = 'エラー: 不正な出勤修正時刻です。';
+                        attendanceMessageElement.style.color = '#e74c3c';
+                        return;
+                    }
+                }
+                localStorage.setItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser, currentTime.toISOString());
                 await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: type });
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = '#2ecc71';
@@ -314,46 +385,89 @@
                     attendanceMessageElement.style.color = '#e74c3c';
                     return;
                 }
-                const endTime = new Date();
-                localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser); // 出勤時刻をクリア
 
-                // GAS経由でDiscord通知を送信
+                let endTime = new Date();
+                const correctedEndTimeValue = document.getElementById('correctedEndTime').value;
+                if (correctedEndTimeValue) {
+                    endTime = new Date(correctedEndTimeValue); // 修正時刻があればそれを使用
+                    // 時刻が不正な場合や、出勤時刻より前の場合の警告
+                    if (isNaN(endTime.getTime())) {
+                        attendanceMessageElement.textContent = 'エラー: 不正な退勤修正時刻です。';
+                        attendanceMessageElement.style.color = '#e74c3c';
+                        return;
+                    }
+                    if (endTime.getTime() < new Date(startTimeISO).getTime()) {
+                        attendanceMessageElement.textContent = 'エラー: 退勤時刻が出勤時刻より前です。';
+                        attendanceMessageElement.style.color = '#e74c3c';
+                        return;
+                    }
+                }
+                
+                localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+
                 await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: type });
-                // GAS経由でスプレッドシート記録を送信
                 await sendRequestToGAS('recordAttendance', { name: loggedInUser, startTime: startTimeISO, endTime: endTime.toISOString() });
 
-                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
+                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤務時間を記録しました。`;
                 attendanceMessageElement.style.color = '#2ecc71';
             }
-            updateStatusMessage(); // 状態メッセージを更新
+            updateStatusMessage();
         }
 
         /**
+         * 勤怠取り消し処理
+         */
+        async function cancelAttendance() {
+            const attendanceMessageElement = document.getElementById('attendanceMessage');
+            if (!loggedInUser) {
+                attendanceMessageElement.textContent = 'ログインしてください！';
+                attendanceMessageElement.style.color = '#e74c3c';
+                return;
+            }
+
+            const storedStartTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            if (!storedStartTime) {
+                attendanceMessageElement.textContent = 'エラー: 取り消す出勤記録がありません。';
+                attendanceMessageElement.style.color = '#e74c3c';
+                return;
+            }
+
+            attendanceMessageElement.textContent = '勤怠取り消し中...';
+            attendanceMessageElement.style.color = '#f1c40f';
+
+            localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser); // 出勤時刻をクリア
+
+            // Discordに勤怠取り消し通知
+            await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '勤怠取り消し' });
+
+            attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
+            attendanceMessageElement.style.color = '#2ecc71';
+            updateStatusMessage();
+        }
+
+
+        /**
          * GASにリクエストを送信する汎用関数
-         * @param {string} action GASのdoPostで処理を分岐するためのアクション名
-         * @param {Object} params リクエストに含めるパラメータ
          */
         async function sendRequestToGAS(action, params) {
             try {
                 const formData = new FormData();
-                formData.append('action', action); // GASにアクションを伝える
+                formData.append('action', action);
                 for (const key in params) {
                     formData.append(key, params[key]);
                 }
 
                 const response = await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // CORSエラーを避けるため
+                    mode: 'no-cors',
                     body: new URLSearchParams(formData).toString(),
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 });
-                // no-corsモードではresponse.okやresponse.json()は使えないため、成功は仮定
                 console.log(`GASへのリクエスト [${action}] 送信完了`);
             } catch (error) {
                 console.error(`GASへのリクエスト [${action}] エラー:`, error);
-                // 必要であればここでUIにエラーを表示することも検討
             }
         }
     </script>
