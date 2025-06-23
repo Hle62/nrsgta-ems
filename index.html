@@ -30,7 +30,7 @@
         body[data-theme="premium-blue"] {
             --bg-color-main: #1a2b4b;
             --bg-color-container: #2c3d5e;
-            --text-color-main: #e0f2f7;
+            --text-color-main: #0000ff;
             --border-color: #5c7c9a;
             --button-bg-primary: #007bff;
             --button-bg-secondary: #dc3545;
@@ -39,7 +39,7 @@
             --message-color-processing: #ffc107;
             --message-color-success: #28a745;
             --message-color-error: #dc3545;
-            --highlight-color: #17a2b8;
+            --highlight-color: #0000ff;
             --setting-button-bg: #5c7c9a;
         }
 
@@ -47,7 +47,7 @@
         body[data-theme="rose-pink"] {
             --bg-color-main: #4a2c3e;
             --bg-color-container: #5c3d4f;
-            --text-color-main: #f8eaf0;
+            --text-color-main: #ff00ff;
             --border-color: #b08899;
             --button-bg-primary: #e83e8c;
             --button-bg-secondary: #c0392b;
@@ -56,7 +56,7 @@
             --message-color-processing: #f1c40f;
             --message-color-success: #e83e8c;
             --message-color-error: #dc3545;
-            --highlight-color: #fd7e14;
+            --highlight-color: #ff00ff;
             --setting-button-bg: #800080; /* Purple */
         }
 
@@ -64,7 +64,7 @@
         body[data-theme="red-black"] {
             --bg-color-main: #1c1c1c;
             --bg-color-container: #2a2a2a;
-            --text-color-main: #f5f5f5;
+            --text-color-main: #e74c3c;
             --border-color: #4a4a4a;
             --button-bg-primary: #dc3545;
             --button-bg-secondary: #6c757d;
@@ -154,7 +154,7 @@
         button.cancel-button {
             background-color: var(--button-bg-cancel); /* 変数を適用 */
         }
-         button.setting-toggle-button {
+        button.setting-toggle-button {
         background-color: var(--setting-button-bg);
         color: white; /* ボタンの文字色は常に白が読みやすい */
         padding: 8px 15px; /* パディングを調整 */
@@ -162,14 +162,14 @@
         border-radius: 5px;
         width: auto;
         min-width: unset;
-        
-        /* ★★★ 以下の位置指定を変更します ★★★ */
-        position: relative; /* absoluteからrelativeに変更 */
-        margin-top: 25px; /* 上の要素との間にスペースを設ける */
-        margin-bottom: 0px; /* 下の余白は不要 */
-        left: auto; /* absoluteのleftを解除 */
-        transform: none; /* absoluteのtransformを解除 */
-        }
+                      /* 右寄せのための修正 */
+        display: block; /* ブロック要素にしてfloatを適用 */
+        float: right; /* 右寄せ */
+        margin-top: 15px; /* 上の要素との間にスペースを設ける（必要に応じて調整） */
+        margin-left: auto; /* 右寄せと組み合わせて中央寄せ防止 */
+        clear: both; /* 他のfloat要素との重なりを防ぐ */
+        /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ */
+    }
         button:hover {
             opacity: 0.9;
         }
