@@ -104,7 +104,7 @@
             /* ★修正: 初期は完全に透明かつ非表示。JavaScriptで表示を制御 */
             opacity: 0; /* 初期透明度を 0 に設定 */
             transition: opacity 0.5s ease; /* opacity プロパティの変化を滑らかにする */
-            /* display: none; はJavaScriptで最初に設定し、アニメーション前に block に変更 */
+            display: none; /* デフォルトで非表示 */
         }
         h1 {
             color: var(--text-color-main);
@@ -383,17 +383,18 @@
 
                     // ★修正: ここでcontainerを表示状態にして、少し遅延させてopacityを1にする
                     container.style.display = 'block'; // メインコンテンツを表示
+                    // display: block にした直後に opacity を設定するとアニメーションしない場合があるため、わずかに遅延させる
                     setTimeout(() => {
                         container.style.opacity = '1'; // コンテナをフェードイン
-                    }, 50); // display:blockにした直後（短い遅延）
-
+                    }, 50); // 50ms のわずかな遅延
+                    
                     transitionToView(initialView); // 初期ビューに切り替える
                     if(initialView === 'attendance') {
                         updateStatusMessage(); // 出勤状態のメッセージを更新
                         populateCorrectedTimeInputs(); // 修正時刻入力欄に初期値を設定
                     }
-                }, 500); // フェードアウトのアニメーション時間（transitionと同じ値）
-            }, 1500); // 名前ロードやテーマ設定などの処理完了後、少し待ってからフェードアウト開始
+                }, 500); // ローディングオーバーレイのフェードアウトアニメーションと同じ時間
+            }, 1500); // ロード処理完了後、少し待ってからフェードアウト開始
         });
 
         /**
