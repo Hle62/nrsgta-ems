@@ -88,7 +88,7 @@
             <h2>ログイン</h2>
             <select id="nameSelect">
                 <option value="">名前を選択してください</option>
-                </select>
+            </select>
             <input type="password" id="passwordInput" placeholder="パスワード">
             <button class="login-button" onclick="handleLogin()">ログイン</button>
             <p id="loginMessage"></p>
@@ -176,7 +176,7 @@
                     });
                     loginMessageElement.textContent = '';
                 } else {
-                    loginMessageElement.textContent = '名前リストを取得できませんでした。スプレッドシートを確認してください。';
+                    loginMessageElement.textContent = '名前リストを取得できませんでした。スプレッドシートの「社員情報」タブのC列を確認してください。';
                     loginMessageElement.style.color = '#e74c3c';
                 }
             } catch (error) {
@@ -293,7 +293,7 @@
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
                 if (!startTimeISO) {
-                    attendanceMessageElement.textContent = 'エラー: 出勤記録がありません。';
+                    attendanceMessageElement.textContent = 'エラー: 出勤記録がありません。出勤ボタンを先に押してください。';
                     attendanceMessageElement.style.color = '#e74c3c';
                     return;
                 }
@@ -319,15 +319,16 @@
                 formData.append('name', name);
                 formData.append('type', type);
 
-                await fetch(GAS_WEB_APP_URL, {
+                const response = await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
+                    mode: 'no-cors', // CORSエラーを避けるため
                     body: new URLSearchParams(formData).toString(),
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 });
-                console.log('Discord通知送信完了');
+                // no-corsモードではresponse.okやresponse.json()は使えないため、成功は仮定
+                console.log('Discord通知送信リクエスト完了');
             } catch (error) {
                 console.error('Discord通知エラー:', error);
             }
@@ -344,15 +345,16 @@
                 formData.append('startTime', startTimeISO);
                 formData.append('endTime', endTimeISO);
 
-                await fetch(GAS_WEB_APP_URL, {
+                const response = await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
+                    mode: 'no-cors', // CORSエラーを避けるため
                     body: new URLSearchParams(formData).toString(),
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 });
-                console.log('スプレッドシート記録完了');
+                // no-corsモードではresponse.okやresponse.json()は使えないため、成功は仮定
+                console.log('スプレッドシート記録リクエスト完了');
             } catch (error) {
                 console.error('スプレッドシート記録エラー:', error);
             }
