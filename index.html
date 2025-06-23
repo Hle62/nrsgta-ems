@@ -227,7 +227,7 @@
         }
 
         #loading-overlay img {
-            width: 500px; /* 初期は非常に小さく */
+            width: 100px; /* 初期は非常に小さく */
             height: auto;
             opacity: 0.8; /* わずかに透明に */
             transition: width 0.5s ease, opacity 0.5s ease; /* サイズと透明度の変化アニメーション */
@@ -334,7 +334,7 @@
             // ローディング画面を初期表示し、フェードインアニメーションを開始
             loadingOverlay.style.opacity = '1'; // まず不透明にする
             setTimeout(() => {
-                loadingImage.style.width = '80px'; // 画像を大きくする（フェードインの演出）
+                loadingImage.style.width = '200px'; // 画像を大きくする（フェードインの演出）
             }, 100); // わずかに遅延させてアニメーションを開始
 
             await loadNamesIntoDropdown(); // 名前リストのロードを待つ
