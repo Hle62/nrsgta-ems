@@ -303,7 +303,12 @@
                 await sendDiscordNotification(loggedInUser, type); // Discord通知
                 await recordAttendanceToSpreadsheet(loggedInUser, startTimeISO, endTime.toISOString()); // スプレッドシート記録
 
-                attendanceMessageElement.textContent = `<span class="math-inline">\{loggedInUser\}さんが</span>{type}しました！勤務時間を記録しました。`;
+                // 出勤時
+                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`; // 「勤務時間を記録しました」は退勤時のみに表示されるべきなので削除
+                attendanceMessageElement.style.color = '#2ecc71';
+
+                // 退勤時
+                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤務時間を記録しました。`;
                 attendanceMessageElement.style.color = '#2ecc71';
             }
             updateStatusMessage(); // 状態メッセージを更新
