@@ -359,7 +359,8 @@
         <h1>NRS勤怠</h1>
         <div id="current-time"></div>
         
-        <div id="login-section"> <h2>ログイン</h2>
+        <div id="login-section">
+            <h2>ログイン</h2>
             <select id="nameSelect">
                 <option value="">名前を選択してください</option>
             </select>
@@ -385,8 +386,7 @@
                 <input type="datetime-local" id="correctedEndTime">
             </div>
             
-            <button id="submitButton" class="submit-button" onclick="handleSubmit()">提出</button> 
-            <button id="cancelButton" class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button> 
+            <button id="submitButton" class="cancel-button" onclick="handleSubmit()">提出</button> <button id="cancelButton" class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button> 
             <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
         </div>
 
@@ -423,7 +423,7 @@
         let loggedInUser = ''; 
         const LOCAL_STORAGE_USER_KEY = 'ems_loggedInUser';
         const LOCAL_STORAGE_START_TIME_KEY_PREFIX = 'ems_startTime_';
-        const LOCAL_STORAGE_END_TIME_KEY_PREFIX = 'ems_endTime_'; 
+        const LOCAL_STORAGE_END_TIME_KEY_PREFIX = 'ems_endTime_'; // 退勤時刻保存用キーを明確化
         const LOCAL_STORAGE_THEME_KEY = 'ems_theme';
 
         let currentView = 'login'; 
@@ -452,6 +452,7 @@
                 loadingImage.style.width = '200px'; 
             }, 0); 
 
+            // 名前リストのロードを待つ
             await loadNamesIntoDropdown(); 
 
             const savedTheme = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) || 'black-green';
@@ -511,7 +512,6 @@
          */
         function transitionToView(viewName) {
             const allSections = document.querySelectorAll('.container > div[id$="-section"]'); 
-            const currentActiveSection = document.querySelector('.container > div.active'); 
             const targetSection = document.getElementById(viewName + '-section'); 
             
             // 設定ボタンの表示/非表示を事前に設定
@@ -522,6 +522,7 @@
             }
 
             // 現在アクティブなセクションがあれば、それをアニメーションで隠す
+            const currentActiveSection = document.querySelector('.container > div.active');
             if (currentActiveSection && currentActiveSection !== targetSection) { 
                 currentActiveSection.style.opacity = '0';
                 currentActiveSection.style.transform = 'translateY(-10px)'; 
@@ -541,7 +542,7 @@
                         updateUI(); // UIの状態を更新
                     }, 0); 
                 }, 200); 
-            } else if (!currentActiveSection || currentActiveSection === targetSection) {
+            } else {
                 // 初回ロード時、または既に目的のセクションが表示されている場合 (アニメーションなし)
                 targetSection.style.display = 'block';
                 targetSection.classList.add('active'); 
@@ -564,18 +565,18 @@
             const statusMessageElement = document.getElementById('statusMessage');
 
             const startTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-            const endTime = localStorage.getItem(LOCAL_STORAGE_END_TIME_KEY_PREFIX + loggedInUser);
+            const endTime = localStorage.getItem(LOCAL_STORAGE_END_TIME_KEY_PREFIX + loggedInUser); // 退勤時刻も取得して判定に使う
 
             if (currentView === 'attendance') { // 勤怠画面の場合のみボタン制御
                 // 出勤ボタンの制御
                 inButton.disabled = !!startTime; // 出勤時刻があれば無効化
                 
                 // 退勤ボタンの制御
-                outButton.disabled = !startTime || !!endTime; // 出勤時刻がないか、退勤時刻があれば無効化
-
+                outButton.disabled = !startTime || !!endTime; // 出勤時刻がなければ無効、退勤時刻があれば無効
+                
                 // 提出ボタンの制御
-                submitButton.disabled = !(startTime && endTime); // 出勤時刻と退勤時刻が両方あれば有効
-                // disabled属性に応じてスタイルも自動で変わるため、直接opacity/cursor操作は不要（CSSで定義済み）
+                // 出勤時刻と退勤時刻の両方があれば提出ボタンを有効化、なければ無効化
+                submitButton.disabled = !(startTime && endTime); 
 
                 // 勤怠取り消しボタンの制御
                 cancelButton.disabled = !(startTime || endTime); // 出勤か退勤の記録があれば有効
@@ -642,7 +643,9 @@
             loginMessageElement.style.color = 'var(--message-color-processing)';
 
             try {
-                const response = await fetch(GAS_WEB_APP_URL); 
+                // GASへのリクエストURLにタイムスタンプを追加してキャッシュを回避
+                const urlWithCacheBuster = `${GAS_WEB_APP_URL}?_t=${new Date().getTime()}`;
+                const response = await fetch(urlWithCacheBuster); 
                 const data = await response.json();
 
                 if (data.status === 'success' && data.names && data.names.length > 0) {
@@ -926,13 +929,11 @@
                     formData.append(key, params[key]);
                 }
 
-                const url = GAS_WEB_APP_URL;
-                const method = 'POST'; 
-                const body = new URLSearchParams(formData).toString();
-                const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-
-                const response = await fetch(url, {
-                    method: method,
+                // GASへのリクエストURLにタイムスタンプを追加してキャッシュを回避 (名前リスト以外も)
+                const urlWithCacheBuster = `${GAS_WEB_APP_URL}?_t=${new Date().getTime()}`;
+                
+                const response = await fetch(urlWithCacheBuster, { // URLを変更
+                    method: 'POST', 
                     mode: 'no-cors', 
                     body: body,
                     headers: headers
