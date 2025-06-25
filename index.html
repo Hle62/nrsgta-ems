@@ -495,6 +495,8 @@
                     const initialSection = document.getElementById(initialView + '-section');
                     initialSection.style.display = 'block'; // 対象セクションを表示
                     initialSection.style.visibility = 'visible'; // 追加: 初回表示時にvisibilityを確保
+                    // 強制的にリフローを実行し、display: blockの適用を保証
+                    initialSection.offsetHeight; // 追加: 強制リフロー
                     initialSection.classList.add('active'); // activeクラスを追加
                     initialSection.style.pointerEvents = 'auto'; // 追加: 初回表示時にクリックを有効に
                     
@@ -537,6 +539,8 @@
             if (!currentActiveSection) {
                 targetSection.style.display = 'block'; // 対象セクションを表示
                 targetSection.style.visibility = 'visible'; // 追加: visibilityを明示的に設定
+                // 強制的にリフローを実行し、display: blockの適用を保証
+                targetSection.offsetHeight; // 追加: 強制リフロー
                 setTimeout(() => { // 短い遅延でアニメーション開始
                     targetSection.classList.add('active');
                     targetSection.style.pointerEvents = 'auto'; // 追加: クリックイベントを有効に
@@ -565,6 +569,9 @@
                 targetSection.style.transform = 'translateY(10px)'; // ★変更：初期位置を短く (元: 20px)
                 targetSection.style.display = 'block'; // 表示を有効にする
                 targetSection.style.visibility = 'visible'; // 追加: visibilityを明示的に設定
+
+                // 強制的にリフローを実行し、display: blockの適用を保証
+                targetSection.offsetHeight; // 追加: 強制リフロー
 
                 // 次のフレームでアニメーションを開始
                 setTimeout(() => {
