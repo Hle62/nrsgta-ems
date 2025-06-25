@@ -680,7 +680,7 @@
                     });
                     loginMessageElement.textContent = '';
                 } else {
-                    loginMessageElement.textContent = '名前リストを取得できませんでした。スプレッドシートの「社員情報」タブのC列を確認してください。';
+                    loginMessageElement.textContent = '名前リストを取得できませんでした。';
                     loginMessageElement.style.color = 'var(--message-color-error)';
                 }
             } catch (error) {
@@ -837,7 +837,7 @@
                 localStorage.setItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser, endTime.toISOString());
                 localStorage.setItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser, 'true'); // Set submit ready flag
 
-                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤怠提出ボタンを押してデータを送信してください。`;
+                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤怠提出ボタンを押してください。`;
                 attendanceMessageElement.style.color = 'var(--message-color-processing)'; // Indicate pending submission
                 updateStatusMessage();
                 // clearCorrectedTimeInputs(); // ❌ NO RESET: 退勤時に修正時間をリセットしない
