@@ -494,7 +494,9 @@
                     // 初回ビュー表示はアニメーションなしで即座に設定 (transitionToViewの初回処理を流用)
                     const initialSection = document.getElementById(initialView + '-section');
                     initialSection.style.display = 'block'; // 対象セクションを表示
+                    initialSection.style.visibility = 'visible'; // 追加: 初回表示時にvisibilityを確保
                     initialSection.classList.add('active'); // activeクラスを追加
+                    initialSection.style.pointerEvents = 'auto'; // 追加: 初回表示時にクリックを有効に
                     
                     // 初回表示時の処理を実行
                     if(initialView === 'attendance') {
@@ -522,19 +524,22 @@
             // 現在アクティブなセクションを取得
             const currentActiveSection = document.querySelector('.container > div.active');
             const targetSection = document.getElementById(viewName + '-section');
+            const toggleSettingButton = document.getElementById('toggleSettingButton');
             
             // 設定ボタンの表示/非表示を事前に設定
             if (viewName === 'attendance' || viewName === 'settings') {
-                document.getElementById('toggleSettingButton').style.display = 'block';
+                toggleSettingButton.style.display = 'block';
             } else {
-                document.getElementById('toggleSettingButton').style.display = 'none';
+                toggleSettingButton.style.display = 'none';
             }
 
             // currentActiveSection がない場合（初回ロード時やエラーからの復帰時）はアニメーションしない
             if (!currentActiveSection) {
                 targetSection.style.display = 'block'; // 対象セクションを表示
+                targetSection.style.visibility = 'visible'; // 追加: visibilityを明示的に設定
                 setTimeout(() => { // 短い遅延でアニメーション開始
                     targetSection.classList.add('active');
+                    targetSection.style.pointerEvents = 'auto'; // 追加: クリックイベントを有効に
                 }, 0); // ★変更：遅延をなくす
                 currentView = viewName;
                 if(viewName === 'attendance') {
@@ -547,20 +552,24 @@
             // 現在のセクションをアニメーションで非表示にする
             currentActiveSection.style.opacity = '0';
             currentActiveSection.style.transform = 'translateY(-10px)'; // ★変更：移動距離を短く (元: -20px)
+            currentActiveSection.style.pointerEvents = 'none'; // 追加: フェードアウト中はクリックイベントを無効に
 
             setTimeout(() => {
                 // アニメーション完了後にdisplayをnoneにし、activeクラスを削除
                 currentActiveSection.style.display = 'none';
+                currentActiveSection.style.visibility = 'hidden'; // 追加: visibilityを明示的に設定
                 currentActiveSection.classList.remove('active');
 
                 // 次のセクションを表示する準備
                 targetSection.style.opacity = '0'; // 初期状態を透明にする
                 targetSection.style.transform = 'translateY(10px)'; // ★変更：初期位置を短く (元: 20px)
                 targetSection.style.display = 'block'; // 表示を有効にする
+                targetSection.style.visibility = 'visible'; // 追加: visibilityを明示的に設定
 
                 // 次のフレームでアニメーションを開始
                 setTimeout(() => {
                     targetSection.classList.add('active'); // activeクラスを追加して表示＆アニメーション開始
+                    targetSection.style.pointerEvents = 'auto'; // 追加: アニメーション開始後にクリックイベントを有効に
                     currentView = viewName;
                     if(viewName === 'attendance') {
                         updateStatusMessage();
