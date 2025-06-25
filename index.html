@@ -779,7 +779,7 @@
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
                 updateStatusMessage();
-                // clearCorrectedTimeInputs(); // ❌ NO RESET: 出勤時にリセットしない
+                // clearCorrectedTimeInputs(); // ❌ NO RESET: 出勤時に修正時間をリセットしない
                 updateSubmitButtonState(); // Update button state
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
@@ -812,7 +812,7 @@
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤怠提出ボタンを押してデータを送信してください。`;
                 attendanceMessageElement.style.color = 'var(--message-color-processing)'; // Indicate pending submission
                 updateStatusMessage();
-                // clearCorrectedTimeInputs(); // ❌ NO RESET: 退勤時にリセットしない
+                // clearCorrectedTimeInputs(); // ❌ NO RESET: 退勤時に修正時間をリセットしない
                 updateSubmitButtonState(); // Update button state
             }
         }
@@ -896,8 +896,8 @@
             attendanceMessageElement.style.color = 'var(--message-color-processing)';
 
             try {
-                // Send data to Discord and spreadsheet
-                await window.sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '勤怠提出' });
+                // Send data to Discord (change type from '勤怠提出' to '退勤')
+                await window.sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '退勤' }); // MODIFIED LINE
                 await window.sendRequestToGAS('recordAttendance', { name: loggedInUser, startTime: startTimeISO, endTime: endTimeISO });
 
                 attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠データを提出しました！`;
