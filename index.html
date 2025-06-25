@@ -252,6 +252,20 @@
             color: var(--text-color-main);
         }
 
+        /* 新しいボタンコンテナのスタイル */
+        .attendance-submission-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* ボタン間のスペース */
+            margin-top: 20px; /* 上の要素からのマージン */
+            margin-bottom: 10px; /* 下の要素へのマージン */
+            width: 100%; /* 利用可能な幅いっぱいに広げる */
+        }
+        .attendance-submission-buttons button {
+            flex: 1; /* ボタンが利用可能なスペースを均等に分け合う */
+            max-width: 180px; /* 広がりすぎないように最大幅を設定 */
+        }
+
         /* ★新規追加: ローディング画面のスタイル */
         #loading-overlay {
             position: fixed; /* 画面全体を覆う */
@@ -338,6 +352,17 @@
                 max-width: 250px; /* 広がりすぎないように最大幅を設定 */
                 margin: 10px auto; /* 中央揃えして上下にマージン */
             }
+            /* 勤怠取り消し・提出ボタンもスマホで縦並びにする */
+            .attendance-submission-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .attendance-submission-buttons button {
+                width: calc(100% - 20px);
+                max-width: 250px;
+                margin: 0;
+            }
         }
     </style>
 </head>
@@ -377,8 +402,9 @@
                 <input type="datetime-local" id="correctedEndTime">
             </div>
             
-            <button class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button>
-            <button id="submitAttendanceButton" class="login-button" onclick="submitAttendance()" disabled>勤怠提出</button>
+            <div class="attendance-submission-buttons"> <button class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button>
+                <button id="submitAttendanceButton" class="login-button" onclick="submitAttendance()" disabled>勤怠提出</button>
+            </div>
             <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
         </div>
 
