@@ -110,6 +110,7 @@
             /* ★変更: コンテナの表示アニメーションを速くする */
             transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* 元: 0.5s */
             display: none; /* デフォルトで非表示 */
+            min-height: 400px; /* ★追加: コンテナの最小高さを設定 */
         }
         h1 {
             color: var(--text-color-main);
@@ -212,7 +213,6 @@
             display: block; /* 表示を有効にする */
             opacity: 1; /* フェードイン */
             transform: translateY(0); /* 上に移動してくるアニメーション */
-            /* position: static; */ /* position変更による問題を避けるため削除 */
         }
 
         /* ログイン画面では設定ボタンは表示しない */
