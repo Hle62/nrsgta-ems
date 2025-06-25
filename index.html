@@ -108,39 +108,196 @@
             transform: scale(0.8); /* 初期サイズを小さく */
             transition: opacity 0.5s ease, transform 0.5s ease; /* opacity プロパティの変化を滑らかに */
             /* ★変更: コンテナの表示アニメーションを速くする */
-            transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* 元: 0.5s */
+            /* transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* 元: 0.5s */ */
             display: none; /* デフォルトで非表示 */
         }
         h1 {
-@@ -136,7 +137,7 @@
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            color: var(--text-color-main); /* 変数を適用 */
+            text-shadow: 0 0 8px var(--highlight-color);
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color-main); /* 変数を適用 */
+        }
+        .input-group input[type="password"],
+        .input-group select,
+        .input-group input[type="datetime-local"] { /* 新しく追加 */
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            margin-top: 5px;
+            border: 1px solid var(--border-color); /* 変数を適用 */
+            border-radius: 6px;
+            background-color: var(--bg-color-container); /* 変数を適用 */
+            color: var(--text-color-main); /* 変数を適用 */
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+        .input-group input[type="password"]:focus,
+        .input-group select:focus,
+        .input-group input[type="datetime-local"]:focus { /* 新しく追加 */
+            border-color: var(--highlight-color); /* 変数を適用 */
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 250, 154, 0.5);
+        }
+        .message {
+            margin-top: 15px;
+            font-size: 0.95em;
+            font-weight: bold;
+            min-height: 20px; /* メッセージがない時の表示の揺れを防ぐ */
+        }
+        .button-group {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap; /* ボタンが複数行になる可能性を考慮 */
+            gap: 15px; /* ボタン間のスペース */
+            justify-content: center;
+        }
+        .button-group button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+            flex-grow: 1; /* ボタンが均等に広がるように */
+            min-width: 120px; /* ボタンの最小幅 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .button-group button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .button-group button.primary {
+            background-color: var(--button-bg-primary); /* 変数を適用 */
+            color: white;
+        }
+        .button-group button.primary:hover {
+            background-color: #2ecc71;
+        }
+        .button-group button.secondary {
+            background-color: var(--button-bg-secondary); /* 変数を適用 */
+            color: white;
+        }
+        .button-group button.secondary:hover {
+            background-color: #e74c3c;
+        }
+        .button-group button.tertiary {
+            background-color: var(--button-bg-tertiary); /* 変数を適用 */
+            color: white;
+        }
+        .button-group button.tertiary:hover {
+            background-color: #2980b9;
+        }
+        .button-group button.cancel { /* 新しく追加 */
+            background-color: var(--button-bg-cancel); /* 変数を適用 */
+            color: white;
+        }
+        .button-group button.cancel:hover {
+            background-color: #f39c12;
+        }
+
+        /* カスタムセレクトボックスのスタイル */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
             appearance: none;
         }
         select {
             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2C114.7L159.2%2C242.5c-4.2%2C4.2-9.6%2C6.4-15.1%2C6.4s-10.9-2.2-15.1-6.4L5.4%2C114.7c-8.9-8.9-8.9-23.3%2C0-32.2s23.3-8.9%2C32.2%2C0l113.6%2C113.6L254.8%2C82.5c8.9-8.9%2C23.3-8.9%2C32.2%2C0S295.9%2C105.8%2C287%2C114.7z%22%2F%3E%3C%2Fsvg%3E');
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2C114.7L159.2%2C242.5c-4.2%2C4.2-9.6%2C6.4-15.1%2C6.4s-10.9-2.2-15.1-6.4L5.4%2C114.7c-8.9-8.9-8.9-23.3%2C0-32.2s23.3-8.9%2C32.2%2C0l113.6%2C113.6L254.8%2C82.5c8.9-8.9%2C23.3-8.9%2C32.2%2C0S295.9%2C105.8%2C287%2C114.7z%22%2F%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 12px;
-@@ -193,10 +194,10 @@
+        }
+
+        /* 時刻表示用 */
+        .current-time {
+            font-size: 2.8em;
+            font-weight: bold;
+            color: var(--highlight-color); /* 変数を適用 */
+            margin-top: 10px;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(0, 250, 154, 0.7);
+        }
+
+        /* 設定ボタン */
+        .setting-button-container {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        .setting-button {
+            background-color: var(--setting-button-bg); /* 変数を適用 */
+            color: white;
+            border: none;
+            border-radius: 50%; /* 円形 */
+            width: 40px;
+            height: 40px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        .setting-button:hover {
+            background-color: #7f8c8d;
+        }
+        .setting-button:active {
+            transform: scale(0.95);
+        }
+
         /* 各セクションの初期状態 (非表示、透明、少し下) */
         #login-section, #attendance-section, #settings-section {
             width: 100%;
             /* アニメーションの基本設定 */
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
             /* ★変更: セクションの切り替えアニメーションを速くする */
-            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; /* 元: 0.5s */
+            /* transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; /* 元: 0.5s */ */
             opacity: 0; 
-            transform: translateY(20px); 
-            transform: translateY(10px); /* 元: 20px */
+            transform: translateY(20px); /* 元に戻す */
+            /* transform: translateY(10px); /* 元: 20px */ */
             position: absolute; /* container 内での位置決めのため */
             top: 0; 
             left: 0;
-@@ -260,14 +261,15 @@
+            display: none; /* デフォルトで非表示 */
+        }
+
+        /* activeクラスが追加された時に表示状態にする */
+        #login-section.active,
+        #attendance-section.active,
+        #settings-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ローディングオーバーレイ */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color-main); /* 背景色もテーマに合わせる */
+            z-index: 9999; /* 最前面に表示 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
             opacity: 0; /* 最初は透明にしてJavaScriptでフェードイン */
             /* ★変更: ローディング画面のフェードアウトを速くする */
-            transition: opacity 0.3s ease; /* 元: 0.5s */
-            transition: opacity 0.15s ease-out; /* 元: 0.3s (さらに速く) */
+            transition: opacity 0.5s ease; /* 元に戻す */
+            /* transition: opacity 0.15s ease-out; /* 元: 0.3s (さらに速く) */ */
         }
 
         #loading-overlay img {
@@ -149,85 +306,237 @@
             opacity: 0.8; /* わずかに透明に */
             transition: width 0.5s ease, opacity 0.5s ease; /* サイズと透明度の変化アニメーション */
             /* ★変更: ローディング画像の拡大アニメーションを速くする */
-            transition: width 0.15s ease-out, opacity 0.15s ease-out; /* 元: 0.5s */
+            /* transition: width 0.15s ease-out, opacity 0.15s ease-out; /* 元: 0.5s */ */
         }
 
         /* ========================================================================= */
-@@ -435,7 +437,7 @@
+        /* その他のユーティリティスタイル */
+        /* ========================================================================= */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <img src="loading_icon.gif" alt="Loading...">
+    </div>
+
+    <div class="container">
+        <div class="setting-button-container">
+            <button id="toggleSettingButton" class="setting-button" onclick="toggleSettings()">⚙️</button>
+        </div>
+
+        <div id="login-section" class="section">
+            <h1>NRSEMS勤怠</h1>
+            <div class="input-group">
+                <label for="nameSelect">名前:</label>
+                <select id="nameSelect"></select>
+                <button onclick="refreshNames()">リストを更新</button>
+            </div>
+            <div class="input-group">
+                <label for="passwordInput">パスワード:</label>
+                <input type="password" id="passwordInput" placeholder="パスワードを入力">
+            </div>
+            <div class="button-group">
+                <button class="tertiary" onclick="handleLogin()">ログイン</button>
+            </div>
+            <p id="loginMessage" class="message"></p>
+        </div>
+
+        <div id="attendance-section" class="section">
+            <h1>勤怠管理</h1>
+            <p>ようこそ、<span id="loggedInUserName"></span>さん！</p>
+            <div class="current-time" id="currentTime"></div>
+            <p id="statusMessage" class="message"></p>
+
+            <div class="input-group" id="correctedTimeInputs">
+                <label for="correctedStartTime">出勤修正時刻 (任意):</label>
+                <input type="datetime-local" id="correctedStartTime">
+                <label for="correctedEndTime">退勤修正時刻 (任意):</label>
+                <input type="datetime-local" id="correctedEndTime">
+            </div>
+
+            <div class="button-group">
+                <button class="primary" onclick="recordAction('出勤')">出勤</button>
+                <button class="secondary" onclick="recordAction('退勤')">退勤</button>
+                <button class="cancel" onclick="cancelAttendance()">勤怠取り消し</button>
+                <button class="tertiary" onclick="handleLogout()">ログアウト</button>
+            </div>
+            <p id="attendanceMessage" class="message"></p>
+        </div>
+
+        <div id="settings-section" class="section">
+            <h1>設定</h1>
+            <div class="input-group">
+                <label for="themeSelect">テーマ選択:</label>
+                <select id="themeSelect" onchange="changeTheme(this.value)">
+                    <option value="default">デフォルト (ブラックグリーン)</option>
+                    <option value="premium-blue">プレミアムブルー</option>
+                    <option value="rose-pink">ローズピンク</option>
+                    <option value="red-black">レッドブラック</option>
+                </select>
+            </div>
+            <p>このページは各種設定を行うためのものです。</p>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // JavaScript
+        // =========================================================================
+
+        // Google Apps ScriptのウェブアプリURL
+        // TODO: ここにデプロイしたGoogle Apps ScriptのウェブアプリURLを貼り付けてください。
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/exec";
+
+        // 従業員ログイン用のパスワード
+        // TODO: 適切なパスワードを設定してください。
+        const CORRECT_PASSWORD = "your_password"; // 実際にはより安全な方法でパスワードを管理してください
+
+        // ローカルストレージのキー
+        const LOCAL_STORAGE_USER_KEY = 'nrsems_loggedInUser';
+        const LOCAL_STORAGE_START_TIME_KEY_PREFIX = 'nrsems_startTime_';
+        const LOCAL_STORAGE_THEME_KEY = 'nrsems_theme';
+
+        let loggedInUser = '';
+        let currentView = 'login'; // 'login', 'attendance', 'settings'
+
+        // ドキュメントが完全に読み込まれた後に実行される関数
+        document.addEventListener('DOMContentLoaded', initializeUI);
+
+        // 時刻表示を毎秒更新
+        setInterval(updateCurrentTime, 1000);
+
+        /**
+         * 現在時刻を更新して表示する
+         */
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeElement = document.getElementById('currentTime');
+            if (timeElement) {
+                timeElement.textContent = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }
+        }
+
+        /**
+         * UIの初期化処理
+         */
+        async function initializeUI() {
+            // テーマを読み込む
+            const savedTheme = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) || 'default';
+            document.body.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeSelect').value = savedTheme;
+
+            // ローディングオーバーレイの要素を取得
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const loadingImage = document.querySelector('#loading-overlay img');
+            const container = document.querySelector('.container');
+
+            // まずローディング画面を表示
+            loadingOverlay.style.display = 'flex';
             loadingOverlay.style.opacity = '1'; // まず不透明にする
             setTimeout(() => {
                 loadingImage.style.width = '200px'; // 画像を大きくする（フェードインの演出）
-            }, 50); // ★変更：遅延を短縮 (元: 100ms)
-            }, 0); // ★変更：遅延をなくす (元: 50ms)
+            }, 100); // ★元の遅延100msに戻す
 
             // 名前リストのロードを待つ (これは時間がかかる可能性があるので、ロード中に表示が止まらないように)
-            await loadNamesIntoDropdown(); 
-@@ -473,8 +475,8 @@
+            await loadNamesIntoDropdown();
+
+            // ログイン状態を確認
+            loggedInUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+            let initialView = 'login';
+            if (loggedInUser) {
+                // ドロップダウンに保存されたユーザーを選択状態にする
+                const nameSelect = document.getElementById('nameSelect');
+                const optionExists = Array.from(nameSelect.options).some(option => option.value === loggedInUser);
+                if (optionExists) {
+                    nameSelect.value = loggedInUser;
+                    document.getElementById('loggedInUserName').textContent = loggedInUser;
+                    initialView = 'attendance';
+                } else {
+                    // 保存されたユーザーがリストにない場合 (例: スプレッドシートから削除された)
+                    loggedInUser = ''; // ログイン状態をリセット
+                    localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                    localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+                    document.getElementById('loginMessage').textContent = '以前ログインしたユーザーが見つかりません。名前を選択し直してください。';
+                    document.getElementById('loginMessage').style.color = 'var(--message-color-error)';
+                    initialView = 'login';
+                }
             }
 
-            // ローディング画面をフェードアウトして、メインコンテンツを表示
-            // 名前リストのロードが完了してから、このsetTimeoutが実行される
-            setTimeout(() => {
             // 名前リストのロードが完了したら、すぐにフェードアウトを開始
             setTimeout(() => { // このsetTimeoutはGAS通信完了後、ほぼ即座に実行される
                 loadingOverlay.style.opacity = '0'; // オーバーレイをフェードアウト
                 loadingImage.style.width = '10px'; // 画像も小さくして消える演出
 
-@@ -487,7 +489,7 @@
+                // ローディングアニメーションが完了するのを待ってからメインコンテンツを表示
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    container.style.display = 'block'; // まず表示をブロックに
                     setTimeout(() => {
                         container.style.opacity = '1'; // コンテナをフェードイン
                         container.style.transform = 'scale(1)'; // コンテナをズームイン
-                    }, 50); // わずかな遅延 (これ自体は短くてもOK)
-                    }, 0); // ★変更：遅延をなくす (元: 50ms)
+                    }, 50); // 元の遅延50msに戻す
 
                     // 初回ビュー表示はアニメーションなしで即座に設定 (transitionToViewの初回処理を流用)
                     const initialSection = document.getElementById(initialView + '-section');
-@@ -508,8 +510,8 @@
+                    if (initialSection) {
+                        // 初回表示時はCSSトランジションを一時的に無効にする
+                        initialSection.style.transition = 'none'; 
+                        initialSection.style.display = 'block';
+                        initialSection.style.opacity = '1';
+                        initialSection.style.transform = 'translateY(0)';
+                        
+                        // 次の描画サイクルでトランジションを元に戻す
+                        // これはDOM要素が描画されるのを待つため
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                initialSection.style.transition = ''; // CSSで定義されたtransitionに戻す
+                            });
+                        });
                     }
                     currentView = initialView;
 
-                }, 300); // ★変更：ローディングオーバーレイのフェードアウトアニメーションと同じ時間 (元: 500ms)
-            }, 500); // ★変更：名前リストロード完了後、ローディング画面フェードアウト開始までの遅延を短縮 (元: 1500ms)
-                }, 150); // ★変更：ローディングオーバーレイのフェードアウトアニメーションと同じ時間 (元: 300ms)
-            }, 0); // ★変更：遅延をなくす (元: 500ms)
+                }, 500); // 元の遅延500msに戻す
+            }, 1500); // 元の遅延1500msに戻す
         });
 
         /**
-@@ -533,7 +535,7 @@
-                targetSection.style.display = 'block'; // 対象セクションを表示
-                setTimeout(() => { // 短い遅延でアニメーション開始
-                    targetSection.classList.add('active');
-                }, 50); 
-                }, 0); // ★変更：遅延をなくす
-                currentView = viewName;
-                if(viewName === 'attendance') {
-                    updateStatusMessage();
-@@ -544,7 +546,7 @@
+         * 画面を切り替える関数
+         * @param {string} viewName切り替え先のビュー名 ('login', 'attendance', 'settings')
+         */
+        function transitionToView(viewName) {
+            if (currentView === viewName) {
+                return; // 同じビューなら何もしない
+            }
+
+            const currentActiveSection = document.getElementById(currentView + '-section');
+            const targetSection = document.getElementById(viewName + '-section');
 
             // 現在のセクションをアニメーションで非表示にする
             currentActiveSection.style.opacity = '0';
             currentActiveSection.style.transform = 'translateY(-20px)'; // 上に少し移動しながら消える
-            currentActiveSection.style.transform = 'translateY(-10px)'; // ★変更：移動距離を短く (元: -20px)
 
             setTimeout(() => {
                 // アニメーション完了後にdisplayをnoneにし、activeクラスを削除
-@@ -553,7 +555,7 @@
+                currentActiveSection.style.display = 'none';
+                currentActiveSection.classList.remove('active');
 
                 // 次のセクションを表示する準備
                 targetSection.style.opacity = '0'; // 初期状態を透明にする
                 targetSection.style.transform = 'translateY(20px)'; // 初期位置を少し下に設定
-                targetSection.style.transform = 'translateY(10px)'; // ★変更：初期位置を短く (元: 20px)
                 targetSection.style.display = 'block'; // 表示を有効にする
 
                 // 次のフレームでアニメーションを開始
-@@ -564,293 +566,293 @@
+                setTimeout(() => {
+                    targetSection.classList.add('active');
+                    if(viewName === 'attendance') {
                         updateStatusMessage();
                         clearCorrectedTimeInputs();
                     }
-                }, 50); // わずかな遅延
-            }, 500); // CSSのtransition時間と同じ
-                }, 0); // ★変更：遅延をなくす
-            }, 200); // ★変更：CSSのtransition時間と同じ (元: 500ms)
+                }, 50); // 元の遅延50msに戻す
+            }, 500); // 元のCSSのtransition時間と同じ500msに戻す
         }
 
         /**
