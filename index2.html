@@ -4,15 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NRSEMS勤怠</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
-    
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    
+
     <style>
         /* ========================================================================= */
         /* CSSスタイル */
@@ -113,7 +108,7 @@
             max-width: 400px;
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
-            
+
             opacity: 0; /* 初期透明度を 0 に設定 */
             transform: scale(0.8); /* 初期サイズを小さく */
             transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* コンテナ表示アニメーション */
@@ -142,6 +137,10 @@
             color: var(--text-color-main); /* 変数を適用 */
             -webkit-appearance: none;
             -moz-appearance: none;
+            -ms-expand { /* IE10+ */
+                border: 0;
+                background-color: transparent;
+            }
             appearance: none;
         }
         select {
@@ -358,7 +357,7 @@
     <div class="container">
         <h1>NRS勤怠</h1>
         <div id="current-time"></div>
-        
+
         <div id="login-section">
             <h2>ログイン</h2>
             <select id="nameSelect">
@@ -385,8 +384,9 @@
                 <label for="correctedEndTime">退勤時刻を修正 (任意):</label>
                 <input type="datetime-local" id="correctedEndTime">
             </div>
-            
-            <button id="submitButton" class="cancel-button" onclick="handleSubmit()">提出</button> <button id="cancelButton" class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button> 
+
+            <button id="submitButton" class="submit-button" onclick="handleSubmit()">提出</button> 
+            <button id="cancelButton" class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button> 
             <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
         </div>
 
@@ -447,14 +447,14 @@
             const loadingImage = loadingOverlay.querySelector('img');
             const container = document.querySelector('.container'); 
 
+            // ローディング画面をすぐに表示し、アニメーション開始
             loadingOverlay.style.opacity = '1'; 
-            setTimeout(() => {
-                loadingImage.style.width = '200px'; 
-            }, 0); 
+            loadingImage.style.width = '200px'; 
 
-            // 名前リストのロードを待つ
+            // 名前リストのロードを待つ (最も時間がかかる可能性のある処理)
             await loadNamesIntoDropdown(); 
 
+            // その他の初期設定
             const savedTheme = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) || 'black-green';
             changeTheme(savedTheme);
             document.getElementById('themeSelect').value = savedTheme; 
@@ -486,24 +486,24 @@
                 initialView = 'login'; 
             }
 
+            // 名前リストロード完了後、ローディング画面をフェードアウト
+            loadingOverlay.style.opacity = '0'; 
+            loadingImage.style.width = '10px'; 
+
+            // ローディング画面のフェードアウトアニメーション完了後、メインコンテンツを表示
             setTimeout(() => { 
-                loadingOverlay.style.opacity = '0'; 
-                loadingImage.style.width = '10px'; 
-                
-                setTimeout(() => { 
-                    loadingOverlay.style.display = 'none'; 
+                loadingOverlay.style.display = 'none'; 
 
-                    container.style.display = 'block'; 
-                    setTimeout(() => { 
-                        container.style.opacity = '1'; 
-                        container.style.transform = 'scale(1)'; 
-                    }, 0); 
-                    
-                    // 初回表示はtransitionToView関数に任せる
-                    transitionToView(initialView); 
+                container.style.display = 'block'; 
+                setTimeout(() => { // メインコンテナのアニメーション開始
+                    container.style.opacity = '1'; 
+                    container.style.transform = 'scale(1)'; 
+                }, 0); 
 
-                }, 150); 
-            }, 0); 
+                // 初回表示の画面を切り替え
+                transitionToView(initialView); 
+
+            }, 150); // ローディングオーバーレイのフェードアウトCSS transition時間 (0.15s)
         });
 
         /**
@@ -512,8 +512,9 @@
          */
         function transitionToView(viewName) {
             const allSections = document.querySelectorAll('.container > div[id$="-section"]'); 
+            const currentActiveSection = document.querySelector('.container > div.active'); 
             const targetSection = document.getElementById(viewName + '-section'); 
-            
+
             // 設定ボタンの表示/非表示を事前に設定
             if (viewName === 'attendance' || viewName === 'settings') {
                 document.getElementById('toggleSettingButton').style.display = 'block';
@@ -522,7 +523,6 @@
             }
 
             // 現在アクティブなセクションがあれば、それをアニメーションで隠す
-            const currentActiveSection = document.querySelector('.container > div.active');
             if (currentActiveSection && currentActiveSection !== targetSection) { 
                 currentActiveSection.style.opacity = '0';
                 currentActiveSection.style.transform = 'translateY(-10px)'; 
@@ -536,7 +536,7 @@
                     targetSection.style.transform = 'translateY(10px)'; 
                     targetSection.style.display = 'block'; 
 
-                    setTimeout(() => { 
+                    setTimeout(() => { // アニメーション開始
                         targetSection.classList.add('active'); 
                         currentView = viewName;
                         updateUI(); // UIの状態を更新
@@ -570,12 +570,12 @@
             if (currentView === 'attendance') { // 勤怠画面の場合のみボタン制御
                 // 出勤ボタンの制御
                 inButton.disabled = !!startTime; // 出勤時刻があれば無効化
-                
+
                 // 退勤ボタンの制御
-                outButton.disabled = !startTime || !!endTime; // 出勤時刻がなければ無効、退勤時刻があれば無効
-                
+                outButton.disabled = !startTime || !!endTime; // 出勤時刻がないか、退勤時刻があれば無効化
+
                 // 提出ボタンの制御
-                // 出勤時刻と退勤時刻の両方があれば提出ボタンを有効化、なければ無効化
+                // 出勤時刻と退勤時刻が両方あれば提出ボタンを有効化、なければ無効化
                 submitButton.disabled = !(startTime && endTime); 
 
                 // 勤怠取り消しボタンの制御
@@ -696,7 +696,6 @@
                 loginMessageElement.textContent = 'ログイン成功！';
                 loginMessageElement.style.color = 'var(--message-color-success)';
                 transitionToView('attendance'); 
-                // updateUIによってclearCorrectedTimeInputsが呼び出される
             } else {
                 loginMessageElement.textContent = 'パスワードが間違っています。';
                 loginMessageElement.style.color = 'var(--message-color-error)';
@@ -719,7 +718,6 @@
             document.getElementById('nameSelect').value = '';
             loadNamesIntoDropdown(); // 名前リストを再ロード
             transitionToView('login'); 
-            // updateUIによってclearCorrectedTimeInputsが呼び出される
         }
 
         /**
@@ -833,7 +831,7 @@
                 updateUI(); 
                 return;
             }
-            
+
             let finalStartTime = startTimeISO;
             let finalEndTime = endTimeISO;
 
@@ -929,14 +927,14 @@
                     formData.append(key, params[key]);
                 }
 
-                // GASへのリクエストURLにタイムスタンプを追加してキャッシュを回避 (名前リスト以外も)
+                // GASへのリクエストURLにタイムスタンプを追加してキャッシュを回避 (すべてのリクエスト)
                 const urlWithCacheBuster = `${GAS_WEB_APP_URL}?_t=${new Date().getTime()}`;
-                
-                const response = await fetch(urlWithCacheBuster, { // URLを変更
+
+                const response = await fetch(urlWithCacheBuster, { 
                     method: 'POST', 
                     mode: 'no-cors', 
-                    body: body,
-                    headers: headers
+                    body: new URLSearchParams(formData).toString(), // FormDataをURLSearchParamsに変換
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 });
                 console.log(`GASへのリクエスト [${action}] 送信完了`);
             } catch (error) {
