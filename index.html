@@ -854,7 +854,7 @@
                 clearCorrectedTimeInputs();
 
             } catch (error) {
-                console.error('勤怠提出エラー:', error);
+                console.error(`勤怠提出エラー:`, error); // 詳細なエラーをコンソールに出力
                 attendanceMessageElement.textContent = 'エラー: 勤怠提出中に問題が発生しました。再度お試しください。';
                 attendanceMessageElement.style.color = 'var(--message-color-error)';
                 updateSubmitButtonState(); // Ensure button state is consistent even on error
