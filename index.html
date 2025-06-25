@@ -33,8 +33,6 @@
             --message-color-error: #e74c3c; /* エラーメッセージ */
             --highlight-color: #00fa9a; /* 時刻表示などハイライト色 */
             --setting-button-bg: #6c757d; /* 設定ボタン */
-            --button-disabled-bg: #888888; /* 無効ボタンの背景色 */
-            --button-disabled-color: #bbbbbb; /* 無効ボタンの文字色 */
         }
 
         /* プレミアムブルーテーマ */
@@ -52,7 +50,6 @@
             --message-color-error: #dc3545;
             --highlight-color: #00bfff;
             --setting-button-bg: #5c7c9a;
-            --button-disabled-bg: #a0a0a0;
         }
 
         /* ローズピンクテーマ */
@@ -70,7 +67,6 @@
             --message-color-error: #dc3545;
             --highlight-color: #ff00ff;
             --setting-button-bg: #800080; /* Purple */
-            --button-disabled-bg: #b5b5b5;
         }
 
         /* レッドブラックテーマ */
@@ -88,7 +84,6 @@
             --message-color-error: #dc3545;
             --highlight-color: #e74c3c;
             --setting-button-bg: #4a4a4a;
-            --button-disabled-bg: #707070;
         }
 
         body {
@@ -321,7 +316,7 @@
             }
 
             /* 提出、勤怠取り消し、ログアウトボタンのスタイル調整 */
-            #attendance-section button { /* これが submit-button, cancel-button, logout button に適用される */
+            #attendance-section button { 
                 width: calc(100% - 20px); 
                 max-width: 250px; 
                 margin: 10px auto; 
@@ -372,7 +367,9 @@
             <h2 id="loggedInUserName"></h2>
             <p id="statusMessage">現在の状態: 未出勤</p>
             <div>
-                <button id="inButton" onclick="recordAction('出勤')">出勤</button> <button id="outButton" class="out" onclick="recordAction('退勤')">退勤</button> </div>
+                <button id="inButton" onclick="recordAction('出勤')">出勤</button> 
+                <button id="outButton" class="out" onclick="recordAction('退勤')">退勤</button> 
+            </div>
             <p id="attendanceMessage"></p>
 
             <div class="time-correction-group">
@@ -382,7 +379,9 @@
                 <input type="datetime-local" id="correctedEndTime">
             </div>
             
-            <button id="submitButton" class="submit-button" onclick="handleSubmit()">提出</button> <button id="cancelButton" class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button> <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
+            <button id="submitButton" class="submit-button" onclick="handleSubmit()">提出</button> 
+            <button id="cancelButton" class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button> 
+            <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
         </div>
 
         <div id="settings-section">
@@ -442,16 +441,13 @@
             const loadingImage = loadingOverlay.querySelector('img');
             const container = document.querySelector('.container'); 
 
-            // ローディング画面を初期表示し、フェードインアニメーションを開始
             loadingOverlay.style.opacity = '1'; 
             setTimeout(() => {
                 loadingImage.style.width = '200px'; 
             }, 0); 
 
-            // 名前リストのロードを待つ
             await loadNamesIntoDropdown(); 
 
-            // 保存されたテーマをロードして適用
             const savedTheme = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) || 'black-green';
             changeTheme(savedTheme);
             document.getElementById('themeSelect').value = savedTheme; 
@@ -483,7 +479,6 @@
                 initialView = 'login'; 
             }
 
-            // ローディング画面をフェードアウトして、メインコンテンツを表示
             setTimeout(() => { 
                 loadingOverlay.style.opacity = '0'; 
                 loadingImage.style.width = '10px'; 
@@ -509,8 +504,9 @@
          * @param {string} viewName 'login', 'attendance', 'settings'
          */
         function transitionToView(viewName) {
-            const allSections = document.querySelectorAll('.container > div[id$="-section"]');
-            const targetSection = document.getElementById(viewName + '-section');
+            const allSections = document.querySelectorAll('.container > div[id$="-section"]'); 
+            const currentActiveSection = document.querySelector('.container > div.active'); 
+            const targetSection = document.getElementById(viewName + '-section'); 
             
             // 設定ボタンの表示/非表示を事前に設定
             if (viewName === 'attendance' || viewName === 'settings') {
@@ -519,70 +515,84 @@
                 document.getElementById('toggleSettingButton').style.display = 'none';
             }
 
-            // 現在アクティブなセクションがあれば、それをアニメーションで隠してから切り替える
-            const currentActiveSection = document.querySelector('.container > div.active');
-            if (currentActiveSection && currentActiveSection !== targetSection) { // 同じセクションへの遷移はアニメーションしない
+            // 現在アクティブなセクションがあれば、それをアニメーションで隠す
+            if (currentActiveSection && currentActiveSection !== targetSection) { 
                 currentActiveSection.style.opacity = '0';
                 currentActiveSection.style.transform = 'translateY(-10px)'; 
 
                 setTimeout(() => {
                     currentActiveSection.style.display = 'none';
-                    currentActiveSection.classList.remove('active'); // activeクラスを削除
+                    currentActiveSection.classList.remove('active'); 
 
                     // 次のセクションを表示する準備
                     targetSection.style.opacity = '0'; 
                     targetSection.style.transform = 'translateY(10px)'; 
                     targetSection.style.display = 'block'; 
 
-                    setTimeout(() => { // アニメーション開始
+                    setTimeout(() => { 
                         targetSection.classList.add('active'); 
                         currentView = viewName;
-                        updateUI(viewName); // UIの状態を更新
+                        updateUI(); // UIの状態を更新
                     }, 0); 
-                }, 200); // CSSのtransition時間と同じ
+                }, 200); 
             } else if (!currentActiveSection || currentActiveSection === targetSection) {
-                // 初回ロード時、または既に目的のセクションが表示されている場合
+                // 初回ロード時、または既に目的のセクションが表示されている場合 (アニメーションなし)
                 targetSection.style.display = 'block';
-                targetSection.classList.add('active'); // activeクラスを付与
+                targetSection.classList.add('active'); 
                 currentView = viewName;
-                updateUI(viewName); // UIの状態を更新
+                updateUI(); // UIの状態を更新
             }
         }
 
         /**
          * 画面表示に合わせたUIの状態（ボタンの有効/無効、メッセージ、入力欄など）を更新する
          */
-        function updateUI(viewName) {
+        function updateUI() {
             document.getElementById('loggedInUserName').textContent = loggedInUser ? `${loggedInUser}さん` : ''; // ユーザー名表示
             clearCorrectedTimeInputs(); // 修正時刻入力欄をクリア
 
-            if (viewName === 'attendance') {
-                // 出勤/退勤ボタンの有効無効を制御
-                const startTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-                const endTime = localStorage.getItem(LOCAL_STORAGE_END_TIME_KEY_PREFIX + loggedInUser);
+            const inButton = document.getElementById('inButton');
+            const outButton = document.getElementById('outButton');
+            const submitButton = document.getElementById('submitButton');
+            const cancelButton = document.getElementById('cancelButton');
+            const statusMessageElement = document.getElementById('statusMessage');
 
-                document.getElementById('inButton').disabled = !!startTime; // 出勤時刻があれば出勤ボタンを無効化
-                document.getElementById('outButton').disabled = !startTime || !!endTime; // 出勤時刻がなければ退勤ボタン無効、退勤時刻があれば退勤ボタン無効
+            const startTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            const endTime = localStorage.getItem(LOCAL_STORAGE_END_TIME_KEY_PREFIX + loggedInUser);
+
+            if (currentView === 'attendance') { // 勤怠画面の場合のみボタン制御
+                // 出勤ボタンの制御
+                inButton.disabled = !!startTime; // 出勤時刻があれば無効化
                 
-                // 提出ボタンの有効無効を制御
-                // 出勤時刻と退勤時刻の両方があれば提出ボタンを有効化
-                const submitButton = document.getElementById('submitButton');
-                submitButton.disabled = !(startTime && endTime); // 出勤＆退勤時刻が揃っていれば有効
-                submitButton.style.opacity = submitButton.disabled ? 0.7 : 1; // グレーアウトの見た目
-                submitButton.style.cursor = submitButton.disabled ? 'not-allowed' : 'pointer'; // カーソル
+                // 退勤ボタンの制御
+                outButton.disabled = !startTime || !!endTime; // 出勤時刻がないか、退勤時刻があれば無効化
 
-                // 勤怠取り消しボタンの有効無効を制御
-                document.getElementById('cancelButton').disabled = !(startTime || endTime); // 出勤か退勤の記録があれば有効
+                // 提出ボタンの制御
+                submitButton.disabled = !(startTime && endTime); // 出勤時刻と退勤時刻が両方あれば有効
+                // disabled属性に応じてスタイルも自動で変わるため、直接opacity/cursor操作は不要（CSSで定義済み）
 
-                updateStatusMessage(); // ステータス表示メッセージを更新
-            } else if (viewName === 'login') {
-                document.getElementById('loginMessage').textContent = '';
-                document.getElementById('passwordInput').value = '';
-            } else if (viewName === 'settings') {
-                // 設定画面での初期化があればここに追加
+                // 勤怠取り消しボタンの制御
+                cancelButton.disabled = !(startTime || endTime); // 出勤か退勤の記録があれば有効
+
+                // ステータス表示メッセージの更新
+                if (startTime && endTime) {
+                    const startDateTime = new Date(startTime);
+                    const endDateTime = new Date(endTime);
+                    statusMessageElement.textContent = `現在の状態: 退勤済み (出勤: ${startDateTime.toLocaleTimeString('ja-JP')}, 退勤: ${endDateTime.toLocaleTimeString('ja-JP')})`;
+                    statusMessageElement.style.color = 'var(--message-color-success)';
+                } else if (startTime) {
+                    const startDateTime = new Date(startTime);
+                    statusMessageElement.textContent = `現在の状態: 出勤中 (開始: ${startDateTime.toLocaleTimeString('ja-JP')})`;
+                    statusMessageElement.style.color = 'var(--message-color-success)';
+                } else {
+                    statusMessageElement.textContent = '現在の状態: 未出勤';
+                    statusMessageElement.style.color = 'var(--text-color-main)';
+                }
+
+            } else { // 勤怠画面以外ではボタンは非表示
+                // 必要であれば、他の画面でのUI初期化処理を追加
             }
         }
-
 
         /**
          * 設定画面の表示/非表示を切り替える
@@ -698,7 +708,7 @@
             document.getElementById('attendanceMessage').textContent = '';
 
             document.getElementById('nameSelect').value = '';
-            loadNamesIntoDropdown(); 
+            loadNamesIntoDropdown(); // 名前リストを再ロード
             transitionToView('login'); 
             // updateUIによってclearCorrectedTimeInputsが呼び出される
         }
@@ -729,7 +739,7 @@
         }
 
         /**
-         * 出勤/退勤のアクションをローカルに記録する関数 (GAS送信はしない)
+         * 出勤/退勤のアクションをローカルに記録する関数
          * @param {string} type '出勤' または '退勤'
          */
         async function recordAction(type) {
@@ -753,7 +763,7 @@
                     if (isNaN(currentTime.getTime())) {
                         attendanceMessageElement.textContent = 'エラー: 不正な出勤修正時刻です。';
                         attendanceMessageElement.style.color = 'var(--message-color-error)';
-                        updateUI(currentView); // エラー発生時もUI更新
+                        updateUI(); 
                         return;
                     }
                 }
@@ -766,7 +776,7 @@
                 if (!startTimeISO) {
                     attendanceMessageElement.textContent = 'エラー: 出勤記録がありません。出勤ボタンを先に押してください。';
                     attendanceMessageElement.style.color = 'var(--message-color-error)';
-                    updateUI(currentView); // エラー発生時もUI更新
+                    updateUI(); 
                     return;
                 }
 
@@ -776,13 +786,13 @@
                     if (isNaN(currentTime.getTime())) {
                         attendanceMessageElement.textContent = 'エラー: 不正な退勤修正時刻です。';
                         attendanceMessageElement.style.color = 'var(--message-color-error)';
-                        updateUI(currentView); // エラー発生時もUI更新
+                        updateUI(); 
                         return;
                     }
                     if (currentTime.getTime() < new Date(startTimeISO).getTime()) {
                         attendanceMessageElement.textContent = 'エラー: 退勤時刻が出勤時刻より前です。';
                         attendanceMessageElement.style.color = 'var(--message-color-error)';
-                        updateUI(currentView); // エラー発生時もUI更新
+                        updateUI(); 
                         return;
                     }
                 }
@@ -790,11 +800,11 @@
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`; 
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
             }
-            updateUI(currentView); // 画面の状態を更新（ボタンの有効/無効、メッセージ、入力欄クリア）
+            updateUI(); 
         }
 
         /**
-         * 記録された出勤/退勤データを提出する関数 (Discord通知とスプレッドシート記録をここで行う)
+         * 記録された出勤/退勤データを提出する関数
          */
         async function handleSubmit() { 
             const attendanceMessageElement = document.getElementById('attendanceMessage');
@@ -808,14 +818,10 @@
             const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
             const endTimeISO = localStorage.getItem(LOCAL_STORAGE_END_TIME_KEY_PREFIX + loggedInUser);
 
-            if (!startTimeISO) {
-                attendanceMessageElement.textContent = 'エラー: 出勤記録がありません。出勤ボタンを先に押してください。';
+            if (!(startTimeISO && endTimeISO)) { // 出勤と退勤が両方記録されているか確認
+                attendanceMessageElement.textContent = 'エラー: 出勤時刻と退勤時刻の両方を記録してから提出してください。';
                 attendanceMessageElement.style.color = 'var(--message-color-error)';
-                return;
-            }
-            if (!endTimeISO) {
-                attendanceMessageElement.textContent = 'エラー: 退勤記録がありません。退勤ボタンを先に押してください。';
-                attendanceMessageElement.style.color = 'var(--message-color-error)';
+                updateUI(); 
                 return;
             }
             
@@ -830,7 +836,7 @@
                 } else {
                     attendanceMessageElement.textContent = 'エラー: 不正な出勤修正時刻です。';
                     attendanceMessageElement.style.color = 'var(--message-color-error)';
-                    updateUI(currentView); // エラー発生時もUI更新
+                    updateUI(); 
                     return;
                 }
             }
@@ -843,7 +849,7 @@
                 } else {
                     attendanceMessageElement.textContent = 'エラー: 不正な退勤修正時刻です。';
                     attendanceMessageElement.style.color = 'var(--message-color-error)';
-                    updateUI(currentView); // エラー発生時もUI更新
+                    updateUI(); 
                     return;
                 }
             }
@@ -851,7 +857,7 @@
             if (new Date(finalEndTime).getTime() < new Date(finalStartTime).getTime()) {
                 attendanceMessageElement.textContent = 'エラー: 退勤時刻が出勤時刻より前です。';
                 attendanceMessageElement.style.color = 'var(--message-color-error)';
-                updateUI(currentView); // エラー発生時もUI更新
+                updateUI(); 
                 return;
             }
 
@@ -866,7 +872,7 @@
 
             attendanceMessageElement.textContent = `${loggedInUser}さんの勤務時間を提出しました！`;
             attendanceMessageElement.style.color = 'var(--message-color-success)';
-            updateUI(currentView); // 画面の状態を更新（ボタンの有効/無効、メッセージ、入力欄クリア）
+            updateUI(); 
         }
 
 
@@ -900,7 +906,7 @@
 
             attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
             attendanceMessageElement.style.color = 'var(--message-color-success)';
-            updateUI(currentView); // 画面の状態を更新（ボタンの有効/無効、メッセージ、入力欄クリア）
+            updateUI(); 
         }
 
         /**
