@@ -9,6 +9,10 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
     
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <style>
         /* ========================================================================= */
         /* CSSスタイル */
@@ -496,7 +500,7 @@
          * @param {string} viewName 'login', 'attendance', 'settings'
          */
         function transitionToView(viewName) {
-            const allSections = document.querySelectorAll('.container > div[id$="-section"]');
+            const allSections = document.querySelectorAll('.container > div[id$="-section"]'); // すべてのセクションを取得
             const currentActiveSection = document.querySelector('.container > div.active');
             const targetSection = document.getElementById(viewName + '-section');
             
@@ -514,7 +518,7 @@
 
                 setTimeout(() => {
                     currentActiveSection.style.display = 'none';
-                    currentActiveSection.classList.remove('active');
+                    currentActiveSection.classList.remove('active'); // activeクラスを削除
 
                     // 次のセクションを表示する準備
                     targetSection.style.opacity = '0'; 
@@ -523,7 +527,7 @@
 
                     // 次のフレームでアニメーションを開始
                     setTimeout(() => {
-                        targetSection.classList.add('active'); 
+                        targetSection.classList.add('active'); // activeクラスを追加
                         currentView = viewName;
                         if(viewName === 'attendance') {
                             updateStatusMessage();
@@ -533,15 +537,14 @@
                 }, 200); // CSSのtransition時間と同じ
             } else {
                 // 初回ロード時など、activeセクションがない場合、直接表示
+                // ここではactiveクラスを付与し、初期表示の関数を呼び出す
                 targetSection.style.display = 'block';
-                setTimeout(() => {
-                    targetSection.classList.add('active');
-                    currentView = viewName;
-                    if(viewName === 'attendance') {
-                        updateStatusMessage();
-                        clearCorrectedTimeInputs();
-                    }
-                }, 0);
+                targetSection.classList.add('active'); // activeクラスを付与
+                currentView = viewName;
+                if(viewName === 'attendance') {
+                    updateStatusMessage();
+                    clearCorrectedTimeInputs();
+                }
             }
         }
 
