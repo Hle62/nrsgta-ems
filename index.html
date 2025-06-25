@@ -107,8 +107,8 @@
             
             opacity: 0; /* 初期透明度を 0 に設定 */
             transform: scale(0.8); /* 初期サイズを小さく */
-            transition: opacity 0.5s ease, transform 0.5s ease; /* opacity プロパティの変化を滑らかに */
-            /* 元の「★変更: コンテナの表示アニメーションを速くする」は、このtransition: 0.5s; に戻しています */
+            /* ★変更: コンテナの表示アニメーションを速くする */
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* 元: 0.5s */
             display: none; /* デフォルトで非表示 */
         }
         h1 {
@@ -194,12 +194,10 @@
         /* 各セクションの初期状態 (非表示、透明、少し下) */
         #login-section, #attendance-section, #settings-section {
             width: 100%;
-            /* アニメーションの基本設定 */
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* 元の0.5sに戻す */
-            /* 「★変更: セクションの切り替えアニメーションを速くする」は、このtransition: 0.5s; に戻しています */
+            /* ★変更: セクションの切り替えアニメーションを速くする */
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; /* 元: 0.5s */
             opacity: 0; 
-            transform: translateY(20px); /* 元の20pxに戻す */
-            /* transform: translateY(10px); /* 元: 20px */ */
+            transform: translateY(10px); /* 元: 20px */
             position: absolute; /* container 内での位置決めのため */
             top: 0; 
             left: 0;
@@ -217,7 +215,7 @@
             transform: translateY(0); /* 上に移動してくるアニメーション */
             position: static; /* active時はレイアウトを占めるようにする */
             /* 重要: display: none から block への切り替えは transition の対象外なので、
-                JavaScriptでdisplayの変更を少し遅らせる必要があります。 */
+               JavaScriptでdisplayの変更を少し遅らせる必要があります。 */
         }
 
         /* ログイン画面では設定ボタンは表示しない */
@@ -262,16 +260,16 @@
             justify-content: center;
             align-items: center;
             opacity: 0; /* 最初は透明にしてJavaScriptでフェードイン */
-            transition: opacity 0.5s ease; /* 元の0.5sに戻す */
-            /* 「★変更: ローディング画面のフェードアウトを速くする」は、このtransition: 0.5s; に戻しています */
+            /* ★変更: ローディング画面のフェードアウトを速くする */
+            transition: opacity 0.15s ease-out; /* 元: 0.3s (さらに速く) */
         }
 
         #loading-overlay img {
             width: 100px; /* 初期は非常に小さく */
             height: auto;
             opacity: 0.8; /* わずかに透明に */
-            transition: width 0.5s ease, opacity 0.5s ease; /* 元の0.5sに戻す */
-            /* 「★変更: ローディング画像の拡大アニメーションを速くする」は、このtransition: 0.5s; に戻しています */
+            /* ★変更: ローディング画像の拡大アニメーションを速くする */
+            transition: width 0.15s ease-out, opacity 0.15s ease-out; /* 元: 0.5s */
         }
 
         /* ========================================================================= */
@@ -319,7 +317,7 @@
                 width: 150px; /* ローディング画像の初期サイズをスマホ向けに少し大きく */
                 opacity: 0.9;
             }
-            /* 出勤/退勤ボタンを縦に並べるためのFlexbox設定 */
+            /* ★追加: 出勤/退勤ボタンを縦に並べる */
             #attendance-section div:first-of-type {
                 display: flex;
                 flex-direction: column; /* 縦方向に配置 */
@@ -331,9 +329,8 @@
                 max-width: 250px; /* 広がりすぎないように最大幅を設定 */
                 margin: 0; /* 個別のマージンをリセット */
             }
-            /* 勤怠取り消し、ログアウトボタンも縦に並べる */
-            #attendance-section > button.cancel-button,
-            #attendance-section > button[onclick="handleLogout()"] {
+            /* 修正時刻グループ内のボタン（取り消し、ログアウト）も縦に並べる */
+            #attendance-section > button {
                 width: calc(100% - 20px); /* ほぼコンテナ幅に広げる */
                 max-width: 250px; /* 広がりすぎないように最大幅を設定 */
                 margin: 10px auto; /* 中央揃えして上下にマージン */
@@ -347,7 +344,7 @@
     </div>
 
     <div class="container">
-        <h1>NRSEMS勤怠</h1>
+        <h1>NRS勤怠</h1>
         <div id="current-time"></div>
         
         <div id="login-section">
@@ -395,8 +392,7 @@
 
         <button class="setting-toggle-button" id="toggleSettingButton" onclick="toggleSettings()">設定</button>
     </div>
-    <script defer>
-        // =========================================================================
+    <script defer> // =========================================================================
         // JavaScriptコード
         // =========================================================================
 
@@ -441,7 +437,7 @@
             loadingOverlay.style.opacity = '1'; // まず不透明にする
             setTimeout(() => {
                 loadingImage.style.width = '200px'; // 画像を大きくする（フェードインの演出）
-            }, 100); // 元の遅延100msに戻す
+            }, 0); // ★変更：遅延をなくす (元: 50ms)
 
             // 名前リストのロードを待つ (これは時間がかかる可能性があるので、ロード中に表示が止まらないように)
             await loadNamesIntoDropdown(); 
@@ -493,29 +489,29 @@
                     setTimeout(() => {
                         container.style.opacity = '1'; // コンテナをフェードイン
                         container.style.transform = 'scale(1)'; // コンテナをズームイン
-                    }, 50); // 元の遅延50msに戻す
+                    }, 0); // ★変更：遅延をなくす (元: 50ms)
                     
                     // 初回ビュー表示はアニメーションなしで即座に設定 (transitionToViewの初回処理を流用)
                     const initialSection = document.getElementById(initialView + '-section');
-                    if (initialSection) {
-                        // 初回表示時はCSSトランジションを一時的に無効にする
-                        initialSection.style.transition = 'none'; 
-                        initialSection.style.display = 'block';
-                        initialSection.style.opacity = '1';
-                        initialSection.style.transform = 'translateY(0)';
-                        
-                        // 次の描画サイクルでトランジションを元に戻す
-                        // これはDOM要素が描画されるのを待つため
-                        requestAnimationFrame(() => {
-                            requestAnimationFrame(() => {
-                                initialSection.style.transition = ''; // CSSで定義されたtransitionに戻す
-                            });
-                        });
+                    initialSection.style.display = 'block'; // 対象セクションを表示
+                    initialSection.classList.add('active'); // activeクラスを追加
+                    
+                    // 初回表示時の処理を実行
+                    if(initialView === 'attendance') {
+                        updateStatusMessage(); // 出勤状態のメッセージを更新
+                    }
+                    clearCorrectedTimeInputs(); // 修正時刻入力欄をクリア
+
+                    // 設定ボタンの初期表示状態をセット
+                    if (initialView === 'attendance' || initialView === 'settings') {
+                        document.getElementById('toggleSettingButton').style.display = 'block';
+                    } else {
+                        document.getElementById('toggleSettingButton').style.display = 'none';
                     }
                     currentView = initialView;
 
-                }, 500); // 元の遅延500msに戻す
-            }, 1500); // 元の遅延1500msに戻す
+                }, 150); // ★変更：ローディングオーバーレイのフェードアウトアニメーションと同じ時間 (元: 300ms)
+            }, 0); // ★変更：遅延をなくす (元: 500ms)
         });
 
         /**
@@ -539,7 +535,7 @@
                 targetSection.style.display = 'block'; // 対象セクションを表示
                 setTimeout(() => { // 短い遅延でアニメーション開始
                     targetSection.classList.add('active');
-                }, 50); // 元の遅延50msに戻す
+                }, 0); // ★変更：遅延をなくす
                 currentView = viewName;
                 if(viewName === 'attendance') {
                     updateStatusMessage();
@@ -550,7 +546,7 @@
 
             // 現在のセクションをアニメーションで非表示にする
             currentActiveSection.style.opacity = '0';
-            currentActiveSection.style.transform = 'translateY(-20px)'; // 元の-20pxに戻す
+            currentActiveSection.style.transform = 'translateY(-10px)'; // ★変更：移動距離を短く (元: -20px)
 
             setTimeout(() => {
                 // アニメーション完了後にdisplayをnoneにし、activeクラスを削除
@@ -559,7 +555,7 @@
 
                 // 次のセクションを表示する準備
                 targetSection.style.opacity = '0'; // 初期状態を透明にする
-                targetSection.style.transform = 'translateY(20px)'; // 初期位置を少し下に設定
+                targetSection.style.transform = 'translateY(10px)'; // ★変更：初期位置を短く (元: 20px)
                 targetSection.style.display = 'block'; // 表示を有効にする
 
                 // 次のフレームでアニメーションを開始
@@ -570,8 +566,8 @@
                         updateStatusMessage();
                         clearCorrectedTimeInputs();
                     }
-                }, 50); // 元の遅延50msに戻す
-            }, 500); // 元のCSSのtransition時間と同じ500msに戻す
+                }, 0); // ★変更：遅延をなくす
+            }, 200); // ★変更：CSSのtransition時間と同じ (元: 500ms)
         }
 
         /**
@@ -686,7 +682,7 @@
                 loginMessageElement.textContent = 'ログイン成功！';
                 loginMessageElement.style.color = 'var(--message-color-success)';
                 transitionToView('attendance'); // 勤怠画面へ
-                clearCorrectedTimeInputs(); // ログイン成功時に修正時刻入力欄をクリア
+                clearCorrectedTimeInputs(); // ★変更：ログイン成功時に修正時刻入力欄をクリア
             } else {
                 loginMessageElement.textContent = 'パスワードが間違っています。';
                 loginMessageElement.style.color = 'var(--message-color-error)';
@@ -708,7 +704,7 @@
             document.getElementById('nameSelect').value = '';
             loadNamesIntoDropdown(); // 名前リストを再ロード
             transitionToView('login'); // ログイン画面へ
-            clearCorrectedTimeInputs(); // ログアウト時も修正時刻入力欄をクリア
+            clearCorrectedTimeInputs(); // ★新規：ログアウト時も修正時刻入力欄をクリア
         }
 
         /**
@@ -760,7 +756,7 @@
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
                 updateStatusMessage(); // 出勤状態メッセージを更新
-                clearCorrectedTimeInputs(); // 出勤後に修正時刻入力欄をクリア
+                clearCorrectedTimeInputs(); // ★新規：出勤後に修正時刻入力欄をクリア
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
                 if (!startTimeISO) {
@@ -793,7 +789,7 @@
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
                 updateStatusMessage(); // 退勤状態メッセージを更新
-                clearCorrectedTimeInputs(); // 退勤後に修正時刻入力欄をクリア
+                clearCorrectedTimeInputs(); // ★新規：退勤後に修正時刻入力欄をクリア
             }
         }
 
@@ -825,7 +821,7 @@
             attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
             attendanceMessageElement.style.color = 'var(--message-color-success)';
             updateStatusMessage(); // 勤怠状態メッセージを更新
-            clearCorrectedTimeInputs(); // 取り消し後に修正時刻入力欄をクリア
+            clearCorrectedTimeInputs(); // ★新規：取り消し後に修正時刻入力欄をクリア
         }
 
         /**
