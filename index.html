@@ -198,12 +198,11 @@
             opacity: 0; 
             transform: translateY(10px); /* 元: 20px */
             position: absolute; /* container 内での位置決めのため */
-            /* top: 0; */ /* ここを削除 */
+            top: 140px; /* ここを修正・追加: タイトルと時刻表示の下から開始するように調整 */
             left: 0;
             padding: 0 40px; /* containerのパディングと合わせる */
             box-sizing: border-box; /* paddingを含めた幅にする */
             display: none; /* 初期は完全に非表示 */
-            /* z-index: 1; */ /* 必要に応じてz-indexを設定するが、opacity/visibilityで制御 */
         }
 
         /* active クラスが付与されたセクションの状態 (表示、不透明、元の位置) */
@@ -214,7 +213,6 @@
             opacity: 1; /* フェードイン */
             transform: translateY(0); /* 上に移動してくるアニメーション */
             /* position: static; */ /* position変更による問題を避けるため削除 */
-            /* z-index: 2; */ /* 必要に応じてz-indexを設定するが、opacity/visibilityで制御 */
         }
 
         /* ログイン画面では設定ボタンは表示しない */
