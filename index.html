@@ -11,7 +11,7 @@
     
     <style>
         /* ========================================================================= */
-        /* CSSスタイル (変更なし) */
+        /* CSSスタイル */
         /* ========================================================================= */
 
         /* デフォルトテーマ（ブラックグリーン）の変数定義 */
@@ -196,7 +196,7 @@
             transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; /* 元: 0.5s */
             opacity: 0; 
             transform: translateY(10px); /* 元: 20px */
-            position: absolute; 
+            position: absolute; /* container 内での位置決めのため */
             top: 0; 
             left: 0;
             padding: 0 40px; 
@@ -346,7 +346,7 @@
         <h1>NRS勤怠</h1>
         <div id="current-time"></div>
         
-        <div id="login-section" class="active"> <h2>ログイン</h2>
+        <div id="login-section"> <h2>ログイン</h2>
             <select id="nameSelect">
                 <option value="">名前を選択してください</option>
             </select>
@@ -372,7 +372,8 @@
                 <input type="datetime-local" id="correctedEndTime">
             </div>
             
-            <button class="submit-button" onclick="handleSubmit()">提出</button> <button class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button>
+            <button class="submit-button" onclick="handleSubmit()">提出</button>
+            <button class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button>
             <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
         </div>
 
@@ -405,11 +406,10 @@
         // ★★★ 変更はここまでです ★★★
 
 
-        let loggedInUser = ''; // ログインしたユーザーの名前を保持
-        // LocalStorageに保存するキー名を修正時刻保存用に複数用意
+        let loggedInUser = ''; 
         const LOCAL_STORAGE_USER_KEY = 'ems_loggedInUser';
         const LOCAL_STORAGE_START_TIME_KEY_PREFIX = 'ems_startTime_';
-        const LOCAL_STORAGE_END_TIME_KEY_PREFIX = 'ems_endTime_'; // ★新規追加: 退勤時刻保存用キー
+        const LOCAL_STORAGE_END_TIME_KEY_PREFIX = 'ems_endTime_'; 
         const LOCAL_STORAGE_THEME_KEY = 'ems_theme';
 
         let currentView = 'login'; 
@@ -425,24 +425,21 @@
             const seconds = now.getSeconds().toString().padStart(2, '0');
             document.getElementById('current-time').textContent = `${year}/${month}/${date} ${hours}:${minutes}:${seconds}`;
         }
-        setInterval(updateCurrentTime, 1000); // 1秒ごとに更新
+        setInterval(updateCurrentTime, 1000); 
 
         // ページロード時に実行
         document.addEventListener('DOMContentLoaded', async () => {
             const loadingOverlay = document.getElementById('loading-overlay');
             const loadingImage = loadingOverlay.querySelector('img');
-            const container = document.querySelector('.container'); // メインコンテンツのコンテナ
+            const container = document.querySelector('.container'); 
 
-            // ローディング画面を初期表示し、フェードインアニメーションを開始
             loadingOverlay.style.opacity = '1'; 
             setTimeout(() => {
                 loadingImage.style.width = '200px'; 
-            }, 0); // 遅延をなくす
+            }, 0); 
 
-            // 名前リストのロードを待つ 
             await loadNamesIntoDropdown(); 
 
-            // 保存されたテーマをロードして適用
             const savedTheme = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) || 'black-green';
             changeTheme(savedTheme);
             document.getElementById('themeSelect').value = savedTheme; 
@@ -474,41 +471,24 @@
                 initialView = 'login'; 
             }
 
-            // ローディング画面をフェードアウトして、メインコンテンツを表示
             setTimeout(() => { 
                 loadingOverlay.style.opacity = '0'; 
                 loadingImage.style.width = '10px'; 
                 
-                setTimeout(() => { // ローディング画面のCSS transitionが終わるまで待つ
+                setTimeout(() => { 
                     loadingOverlay.style.display = 'none'; 
 
                     container.style.display = 'block'; 
-                    setTimeout(() => { // メインコンテナのアニメーション開始
+                    setTimeout(() => { 
                         container.style.opacity = '1'; 
                         container.style.transform = 'scale(1)'; 
                     }, 0); 
                     
-                    // 初回ビュー表示はアニメーションなしで即座に設定 (transitionToViewの初回処理を流用)
-                    const initialSection = document.getElementById(initialView + '-section');
-                    initialSection.style.display = 'block'; 
-                    initialSection.classList.add('active'); 
-                    
-                    // 初回表示時の処理を実行
-                    if(initialView === 'attendance') {
-                        updateStatusMessage(); // 出勤状態のメッセージを更新
-                    }
-                    clearCorrectedTimeInputs(); // 修正時刻入力欄をクリア
+                    // 初回表示はtransitionToView関数を呼び出してアニメーションさせる
+                    transitionToView(initialView); 
 
-                    // 設定ボタンの初期表示状態をセット
-                    if (initialView === 'attendance' || initialView === 'settings') {
-                        document.getElementById('toggleSettingButton').style.display = 'block';
-                    } else {
-                        document.getElementById('toggleSettingButton').style.display = 'none';
-                    }
-                    currentView = initialView;
-
-                }, 150); // ローディングオーバーレイのフェードアウトアニメーション時間 (0.15s)
-            }, 0); // 名前リストロード完了後、ローディング画面フェードアウト開始までの遅延をなくす
+                }, 150); 
+            }, 0); 
         });
 
         /**
@@ -516,48 +496,53 @@
          * @param {string} viewName 'login', 'attendance', 'settings'
          */
         function transitionToView(viewName) {
+            const allSections = document.querySelectorAll('.container > div[id$="-section"]');
             const currentActiveSection = document.querySelector('.container > div.active');
             const targetSection = document.getElementById(viewName + '-section');
             
+            // 設定ボタンの表示/非表示をすぐに設定
             if (viewName === 'attendance' || viewName === 'settings') {
                 document.getElementById('toggleSettingButton').style.display = 'block';
             } else {
                 document.getElementById('toggleSettingButton').style.display = 'none';
             }
 
-            if (!currentActiveSection) { // 初回ロード時など、activeセクションがない場合
-                targetSection.style.display = 'block'; 
-                setTimeout(() => { 
-                    targetSection.classList.add('active');
-                }, 0); 
-                currentView = viewName;
-                if(viewName === 'attendance') {
-                    updateStatusMessage();
-                    clearCorrectedTimeInputs();
-                }
-                return;
-            }
-
-            currentActiveSection.style.opacity = '0';
-            currentActiveSection.style.transform = 'translateY(-10px)'; 
-
-            setTimeout(() => {
-                currentActiveSection.style.display = 'none';
-                currentActiveSection.classList.remove('active');
-
-                targetSection.style.opacity = '0'; 
-                targetSection.style.transform = 'translateY(10px)'; 
-                targetSection.style.display = 'block'; 
+            // 現在アクティブなセクションがあれば、それをアニメーションで隠す
+            if (currentActiveSection) {
+                currentActiveSection.style.opacity = '0';
+                currentActiveSection.style.transform = 'translateY(-10px)'; 
 
                 setTimeout(() => {
-                    targetSection.classList.add('active'); 
+                    currentActiveSection.style.display = 'none';
+                    currentActiveSection.classList.remove('active');
+
+                    // 次のセクションを表示する準備
+                    targetSection.style.opacity = '0'; 
+                    targetSection.style.transform = 'translateY(10px)'; 
+                    targetSection.style.display = 'block'; 
+
+                    // 次のフレームでアニメーションを開始
+                    setTimeout(() => {
+                        targetSection.classList.add('active'); 
+                        currentView = viewName;
+                        if(viewName === 'attendance') {
+                            updateStatusMessage();
+                            clearCorrectedTimeInputs();
+                        }
+                    }, 0); 
+                }, 200); // CSSのtransition時間と同じ
+            } else {
+                // 初回ロード時など、activeセクションがない場合、直接表示
+                targetSection.style.display = 'block';
+                setTimeout(() => {
+                    targetSection.classList.add('active');
                     currentView = viewName;
                     if(viewName === 'attendance') {
                         updateStatusMessage();
                         clearCorrectedTimeInputs();
                     }
-                }, 0); 
-            }, 200); // CSSのtransition時間と同じ
+                }, 0);
+            }
         }
 
         /**
@@ -589,13 +574,6 @@
             document.getElementById('correctedStartTime').value = '';
             document.getElementById('correctedEndTime').value = '';
         }
-
-        // populateCorrectedTimeInputs関数は削除してOK
-        /*
-        function populateCorrectedTimeInputs() {
-            // ... (内容は使用しないため削除) ...
-        }
-        */
 
         /**
          * GASから名前リストを取得し、プルダウンに追加する
@@ -738,7 +716,7 @@
                     }
                 }
                 localStorage.setItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser, currentTime.toISOString());
-                await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '出勤' }); // ★変更なし: 出勤時にDiscord通知を送信
+                await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '出勤' }); 
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`; 
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
             } else if (type === '退勤') {
@@ -764,7 +742,6 @@
                     }
                 }
                 localStorage.setItem(LOCAL_STORAGE_END_TIME_KEY_PREFIX + loggedInUser, currentTime.toISOString()); 
-                // ★変更: 退勤時はDiscord通知を送信しない
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`; 
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
             }
@@ -798,7 +775,6 @@
                 return;
             }
             
-            // 修正時刻入力欄の値があれば優先して使用
             let finalStartTime = startTimeISO;
             let finalEndTime = endTimeISO;
 
@@ -826,7 +802,6 @@
                 }
             }
 
-            // 最終チェック: 退勤時刻が出勤時刻より前でないこと
             if (new Date(finalEndTime).getTime() < new Date(finalStartTime).getTime()) {
                 attendanceMessageElement.textContent = 'エラー: 退勤時刻が出勤時刻より前です。';
                 attendanceMessageElement.style.color = 'var(--message-color-error)';
@@ -836,10 +811,7 @@
             attendanceMessageElement.textContent = 'データを提出中...';
             attendanceMessageElement.style.color = 'var(--message-color-processing)';
 
-            // Discord通知 (退勤時のみ) - 提出時に送る
             await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '退勤' }); 
-
-            // スプレッドシート記録
             await sendRequestToGAS('recordAttendance', { name: loggedInUser, startTime: finalStartTime, endTime: finalEndTime });
 
             localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
@@ -853,7 +825,7 @@
 
 
         /**
-         * 勤怠取り消し処理 (変更なし: Discord通知なし、スプレッドシートへの影響なし)
+         * 勤怠取り消し処理
          */
         async function cancelAttendance() {
             const attendanceMessageElement = document.getElementById('attendanceMessage');
@@ -878,7 +850,6 @@
             localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
             localStorage.removeItem(LOCAL_STORAGE_END_TIME_KEY_PREFIX + loggedInUser); 
 
-            // ★変更: 勤怠取り消し時にDiscord通知を送信する
             await sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '勤怠取り消し' }); 
 
             attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
