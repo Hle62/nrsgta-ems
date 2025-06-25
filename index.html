@@ -108,9 +108,7 @@
             opacity: 0; /* 初期透明度を 0 に設定 */
             transform: scale(0.8); /* 初期サイズを小さく */
             transition: opacity 0.5s ease, transform 0.5s ease; /* opacity プロパティの変化を滑らかに */
-            /* 元のコメントアウト行も残します。 */
-            /* ★変更: コンテナの表示アニメーションを速くする */
-            /* transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* 元: 0.5s */ */
+            /* 元の「★変更: コンテナの表示アニメーションを速くする」は、このtransition: 0.5s; に戻しています */
             display: none; /* デフォルトで非表示 */
         }
         h1 {
@@ -197,11 +195,11 @@
         #login-section, #attendance-section, #settings-section {
             width: 100%;
             /* アニメーションの基本設定 */
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* 元に戻す */
-            /* ★変更: セクションの切り替えアニメーションを速くする のコメントアウトは残し、元の0.5sに戻します */
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* 元の0.5sに戻す */
+            /* ★変更: セクションの切り替えアニメーションを速くする */
             /* transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; /* 元: 0.5s */ */
             opacity: 0; 
-            transform: translateY(20px); /* 元に戻す */
+            transform: translateY(20px); /* 元の20pxに戻す */
             /* transform: translateY(10px); /* 元: 20px */ */
             position: absolute; /* container 内での位置決めのため */
             top: 0; 
@@ -265,7 +263,7 @@
             justify-content: center;
             align-items: center;
             opacity: 0; /* 最初は透明にしてJavaScriptでフェードイン */
-            transition: opacity 0.5s ease; /* 元に戻す */
+            transition: opacity 0.5s ease; /* 元の0.5sに戻す */
             /* ★変更: ローディング画面のフェードアウトを速くする */
             /* transition: opacity 0.15s ease-out; /* 元: 0.3s (さらに速く) */ */
         }
@@ -274,7 +272,7 @@
             width: 100px; /* 初期は非常に小さく */
             height: auto;
             opacity: 0.8; /* わずかに透明に */
-            transition: width 0.5s ease, opacity 0.5s ease; /* 元に戻す */
+            transition: width 0.5s ease, opacity 0.5s ease; /* 元の0.5sに戻す */
             /* ★変更: ローディング画像の拡大アニメーションを速くする */
             /* transition: width 0.15s ease-out, opacity 0.15s ease-out; /* 元: 0.5s */ */
         }
@@ -324,7 +322,7 @@
                 width: 150px; /* ローディング画像の初期サイズをスマホ向けに少し大きく */
                 opacity: 0.9;
             }
-            /* ★追加: 出勤/退勤ボタンを縦に並べる */
+            /* 出勤/退勤ボタンを縦に並べるためのFlexbox設定 */
             #attendance-section div:first-of-type {
                 display: flex;
                 flex-direction: column; /* 縦方向に配置 */
@@ -336,8 +334,9 @@
                 max-width: 250px; /* 広がりすぎないように最大幅を設定 */
                 margin: 0; /* 個別のマージンをリセット */
             }
-            /* 修正時刻グループ内のボタン（取り消し、ログアウト）も縦に並べる */
-            #attendance-section > button {
+            /* 勤怠取り消し、ログアウトボタンも縦に並べる */
+            #attendance-section > button.cancel-button,
+            #attendance-section > button[onclick="handleLogout()"] {
                 width: calc(100% - 20px); /* ほぼコンテナ幅に広げる */
                 max-width: 250px; /* 広がりすぎないように最大幅を設定 */
                 margin: 10px auto; /* 中央揃えして上下にマージン */
@@ -351,7 +350,7 @@
     </div>
 
     <div class="container">
-        <h1>NRS勤怠</h1>
+        <h1>NRSEMS勤怠</h1>
         <div id="current-time"></div>
         
         <div id="login-section">
