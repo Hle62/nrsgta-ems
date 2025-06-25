@@ -92,7 +92,7 @@
             margin: 0;
             background-color: var(--bg-color-main); /* 変数を適用 */
             color: var(--text-color-main); /* 変数を適用 */
-            transition: background-color 0.3s ease, color 0.3s ease; /* テーマ変更をスムーズに */
+            /* transition: background-color 0.3s ease, color 0.3s ease; */ /* アニメーション削除 */
         }
         .container {
             background-color: var(--bg-color-container); /* 変数を適用 */
@@ -107,9 +107,8 @@
             
             opacity: 0; /* 初期透明度を 0 に設定 */
             transform: scale(0.8); /* 初期サイズを小さく */
-            transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* コンテナの表示アニメーションを有効化 */
+            /* transition: opacity 0.2s ease-out, transform 0.2s ease-out; */ /* アニメーション削除 */
             display: none; /* デフォルトで非表示 */
-            min-height: 500px; /* ★調整: コンテナの最小高さを設定 (コンテンツに合わせて調整) */
         }
         h1 {
             color: var(--text-color-main);
@@ -201,11 +200,11 @@
         /* 各セクションの初期状態 (非表示、透明、少し下) */
         #login-section, #attendance-section, #settings-section {
             width: 100%;
-            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; /* アニメーションを再度有効化 */
+            /* transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; */ /* アニメーション削除 */
             opacity: 0; 
             transform: translateY(10px); /* 元: 20px */
             position: absolute; /* container 内での位置決めのため */
-            top: 140px; /* ★調整: タイトルと時刻表示の下から開始するように調整 */
+            top: 0; 
             left: 0;
             padding: 0 40px; /* containerのパディングと合わせる */
             box-sizing: border-box; /* paddingを含めた幅にする */
@@ -219,7 +218,9 @@
             display: block; /* 表示を有効にする */
             opacity: 1; /* フェードイン */
             transform: translateY(0); /* 上に移動してくるアニメーション */
-            /* position: static; */ /* position変更による問題を避けるため削除 */
+            position: static; /* active時はレイアウトを占めるようにする */
+            /* 重要: display: none から block への切り替えは transition の対象外なので、
+               JavaScriptでdisplayの変更を少し遅らせる必要があります。 */
         }
 
         /* ログイン画面では設定ボタンは表示しない */
@@ -278,14 +279,14 @@
             justify-content: center;
             align-items: center;
             opacity: 0; /* 最初は透明にしてJavaScriptでフェードイン */
-            transition: opacity 0.15s ease-out; /* アニメーションを再度有効化 */
+            /* transition: opacity 0.15s ease-out; */ /* アニメーション削除 */
         }
 
         #loading-overlay img {
             width: 100px; /* 初期は非常に小さく */
             height: auto;
             opacity: 0.8; /* わずかに透明に */
-            transition: width 0.15s ease-out, opacity 0.15s ease-out; /* アニメーションを再度有効化 */
+            /* transition: width 0.15s ease-out, opacity 0.15s ease-out; */ /* アニメーション削除 */
         }
 
         /* ========================================================================= */
