@@ -514,7 +514,10 @@
                 updateStatusMessage();
                 updateSubmitButtonState(); // Call to set initial state of submit button
             }
+            // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
+            // ページロード時はリセットしておくのが適切なので残す
             clearCorrectedTimeInputs();
+
 
             // 設定ボタンの初期表示状態をセット
             if (initialView === 'attendance' || initialView === 'settings') {
@@ -552,7 +555,7 @@
                 if(viewName === 'attendance') {
                     updateStatusMessage();
                     updateSubmitButtonState(); // Update submit button state
-                    clearCorrectedTimeInputs();
+                    // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
                 }
                 return;
             }
@@ -576,7 +579,7 @@
             if(viewName === 'attendance') {
                 updateStatusMessage();
                 updateSubmitButtonState(); // Update submit button state
-                clearCorrectedTimeInputs();
+                // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
             }
         }
 
@@ -778,7 +781,7 @@
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
                 updateStatusMessage();
-                clearCorrectedTimeInputs();
+                // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
                 updateSubmitButtonState(); // Update button state
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
@@ -811,7 +814,7 @@
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤怠提出ボタンを押してデータを送信してください。`;
                 attendanceMessageElement.style.color = 'var(--message-color-processing)'; // Indicate pending submission
                 updateStatusMessage();
-                clearCorrectedTimeInputs();
+                // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
                 updateSubmitButtonState(); // Update button state
             }
         }
@@ -908,7 +911,7 @@
                 localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser);
                 updateStatusMessage();
                 updateSubmitButtonState();
-                clearCorrectedTimeInputs();
+                clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
 
             } catch (error) {
                 console.error(`勤怠提出エラー:`, error); // 詳細なエラーをコンソールに出力
@@ -949,7 +952,7 @@
             attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
             attendanceMessageElement.style.color = 'var(--message-color-success)';
             updateStatusMessage();
-            clearCorrectedTimeInputs();
+            clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
             updateSubmitButtonState(); // Update submit button state
         }
     </script>
