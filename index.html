@@ -177,6 +177,7 @@
             border-radius: 5px;
             width: auto;
             min-width: unset;
+            z-index: 10; /* 他の要素の上に表示されるようにする */
         }
         button:hover {
             opacity: 0.9;
@@ -225,7 +226,7 @@
 
         /* ログイン画面では設定ボタンは表示しない */
         #toggleSettingButton {
-            /* display: none; */ /* 初期は非表示。JSで表示を制御。ボタンの絶対位置指定のためdisplay制御はJSに任せる */
+            /* display: none; */ /* CSSでの初期設定を削除し、JSで完全に制御する */
             /* ボタンが absolute になったため、初期は非表示のままにする */
         }
 
