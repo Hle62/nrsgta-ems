@@ -107,7 +107,8 @@
             
             opacity: 0; /* 初期透明度を 0 に設定 */
             transform: scale(0.8); /* 初期サイズを小さく */
-            transition: opacity 0.5s ease, transform 0.5s ease; /* opacity プロパティの変化を滑らかに */
+            /* ★変更: コンテナの表示アニメーションを速くする */
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* 元: 0.5s */
             display: none; /* デフォルトで非表示 */
         }
         h1 {
@@ -136,7 +137,7 @@
             appearance: none;
         }
         select {
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2C114.7L159.2%2C242.5c-4.2%2C4.2-9.6%2C6.4-15.1%2C6.4s-10.9-2.2-15.1-6.4L5.4%2C114.7c-8.9-8.9-8.9-23.3%2C0-32.2s23.3-8.9%2C32.2%2C0l113.6%2C113.6L254.8%2C82.5c8.9-8.9%2C23.3-8.9%2C32.2%2C0S295.9%2C105.8%2C287%2C114.7z%22%2F%3E%3C%2Fsvg%3E');
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2C114.7L159.2%2C242.5c-4.2%2C4.2-9.6%2C6.4-15.1%2C6.4s-10.9-2.2-15.1-6.4L5.4%2C114.7c-8.9-8.9-8.9-23.3%2C0-32.2s23.3-8.9%2C32.2%2C0l113.6%2C113.6L254.8%2C82.5c8.9-8.9%2C23.3-8.9%2C32.2%2C0S295.9%2C105.8%2C287%2C114.7z%22%2F%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 12px;
@@ -193,10 +194,10 @@
         /* 各セクションの初期状態 (非表示、透明、少し下) */
         #login-section, #attendance-section, #settings-section {
             width: 100%;
-            /* アニメーションの基本設定 */
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            /* ★変更: セクションの切り替えアニメーションを速くする */
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; /* 元: 0.5s */
             opacity: 0; 
-            transform: translateY(20px); 
+            transform: translateY(10px); /* 元: 20px */
             position: absolute; /* container 内での位置決めのため */
             top: 0; 
             left: 0;
@@ -260,14 +261,15 @@
             align-items: center;
             opacity: 0; /* 最初は透明にしてJavaScriptでフェードイン */
             /* ★変更: ローディング画面のフェードアウトを速くする */
-            transition: opacity 0.3s ease; /* 元: 0.5s */
+            transition: opacity 0.15s ease-out; /* 元: 0.3s (さらに速く) */
         }
 
         #loading-overlay img {
             width: 100px; /* 初期は非常に小さく */
             height: auto;
             opacity: 0.8; /* わずかに透明に */
-            transition: width 0.5s ease, opacity 0.5s ease; /* サイズと透明度の変化アニメーション */
+            /* ★変更: ローディング画像の拡大アニメーションを速くする */
+            transition: width 0.15s ease-out, opacity 0.15s ease-out; /* 元: 0.5s */
         }
 
         /* ========================================================================= */
@@ -435,7 +437,7 @@
             loadingOverlay.style.opacity = '1'; // まず不透明にする
             setTimeout(() => {
                 loadingImage.style.width = '200px'; // 画像を大きくする（フェードインの演出）
-            }, 50); // ★変更：遅延を短縮 (元: 100ms)
+            }, 0); // ★変更：遅延をなくす (元: 50ms)
 
             // 名前リストのロードを待つ (これは時間がかかる可能性があるので、ロード中に表示が止まらないように)
             await loadNamesIntoDropdown(); 
@@ -473,8 +475,8 @@
             }
 
             // ローディング画面をフェードアウトして、メインコンテンツを表示
-            // 名前リストのロードが完了してから、このsetTimeoutが実行される
-            setTimeout(() => {
+            // 名前リストのロードが完了したら、すぐにフェードアウトを開始
+            setTimeout(() => { // このsetTimeoutはGAS通信完了後、ほぼ即座に実行される
                 loadingOverlay.style.opacity = '0'; // オーバーレイをフェードアウト
                 loadingImage.style.width = '10px'; // 画像も小さくして消える演出
                 
@@ -487,7 +489,7 @@
                     setTimeout(() => {
                         container.style.opacity = '1'; // コンテナをフェードイン
                         container.style.transform = 'scale(1)'; // コンテナをズームイン
-                    }, 50); // わずかな遅延 (これ自体は短くてもOK)
+                    }, 0); // ★変更：遅延をなくす (元: 50ms)
                     
                     // 初回ビュー表示はアニメーションなしで即座に設定 (transitionToViewの初回処理を流用)
                     const initialSection = document.getElementById(initialView + '-section');
@@ -508,8 +510,8 @@
                     }
                     currentView = initialView;
 
-                }, 300); // ★変更：ローディングオーバーレイのフェードアウトアニメーションと同じ時間 (元: 500ms)
-            }, 500); // ★変更：名前リストロード完了後、ローディング画面フェードアウト開始までの遅延を短縮 (元: 1500ms)
+                }, 150); // ★変更：ローディングオーバーレイのフェードアウトアニメーションと同じ時間 (元: 300ms)
+            }, 0); // ★変更：遅延をなくす (元: 500ms)
         });
 
         /**
@@ -533,7 +535,7 @@
                 targetSection.style.display = 'block'; // 対象セクションを表示
                 setTimeout(() => { // 短い遅延でアニメーション開始
                     targetSection.classList.add('active');
-                }, 50); 
+                }, 0); // ★変更：遅延をなくす
                 currentView = viewName;
                 if(viewName === 'attendance') {
                     updateStatusMessage();
@@ -544,7 +546,7 @@
 
             // 現在のセクションをアニメーションで非表示にする
             currentActiveSection.style.opacity = '0';
-            currentActiveSection.style.transform = 'translateY(-20px)'; // 上に少し移動しながら消える
+            currentActiveSection.style.transform = 'translateY(-10px)'; // ★変更：移動距離を短く (元: -20px)
 
             setTimeout(() => {
                 // アニメーション完了後にdisplayをnoneにし、activeクラスを削除
@@ -553,7 +555,7 @@
 
                 // 次のセクションを表示する準備
                 targetSection.style.opacity = '0'; // 初期状態を透明にする
-                targetSection.style.transform = 'translateY(20px)'; // 初期位置を少し下に設定
+                targetSection.style.transform = 'translateY(10px)'; // ★変更：初期位置を短く (元: 20px)
                 targetSection.style.display = 'block'; // 表示を有効にする
 
                 // 次のフレームでアニメーションを開始
@@ -564,8 +566,8 @@
                         updateStatusMessage();
                         clearCorrectedTimeInputs();
                     }
-                }, 50); // わずかな遅延
-            }, 500); // CSSのtransition時間と同じ
+                }, 0); // ★変更：遅延をなくす
+            }, 200); // ★変更：CSSのtransition時間と同じ (元: 500ms)
         }
 
         /**
