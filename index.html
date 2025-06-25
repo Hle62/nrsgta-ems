@@ -166,11 +166,12 @@
         }
         button.setting-toggle-button {
             background-color: var(--setting-button-bg); /* 変数を適用 */
-            display: block;
-            float: right;
-            margin-top: 15px;
-            margin-left: auto;
-            clear: both;
+            display: block; /* ブロック要素として表示 */
+            /* float: right; */ /* 削除 */
+            margin: 15px auto 0 auto; /* 上15px、左右中央、下0 */
+            /* margin-top: 15px; */ /* 削除 */
+            /* margin-left: auto; */ /* 削除 */
+            /* clear: both; */ /* 削除 */
             padding: 8px 15px;
             font-size: 0.9em;
             border-radius: 5px;
