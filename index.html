@@ -514,9 +514,7 @@
                 updateStatusMessage();
                 updateSubmitButtonState(); // Call to set initial state of submit button
             }
-            // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
-            // ページロード時はリセットしておくのが適切なので残す
-            clearCorrectedTimeInputs();
+            clearCorrectedTimeInputs(); // ✅ RESET: ページロード時は修正時間をリセット
 
 
             // 設定ボタンの初期表示状態をセット
@@ -555,7 +553,7 @@
                 if(viewName === 'attendance') {
                     updateStatusMessage();
                     updateSubmitButtonState(); // Update submit button state
-                    // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
+                    // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
                 }
                 return;
             }
@@ -579,7 +577,7 @@
             if(viewName === 'attendance') {
                 updateStatusMessage();
                 updateSubmitButtonState(); // Update submit button state
-                // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
+                // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
             }
         }
 
@@ -695,7 +693,7 @@
                 loginMessageElement.textContent = 'ログイン成功！';
                 loginMessageElement.style.color = 'var(--message-color-success)';
                 transitionToView('attendance'); // 勤怠画面へ
-                clearCorrectedTimeInputs(); // ★変更：ログイン成功時に修正時刻入力欄をクリア
+                clearCorrectedTimeInputs(); // ✅ RESET: ログイン時は修正時間をリセット
                 updateSubmitButtonState(); // Update submit button state after login
             } else {
                 loginMessageElement.textContent = 'パスワードが間違っています。';
@@ -720,7 +718,7 @@
             document.getElementById('nameSelect').value = '';
             loadNamesIntoDropdown(); // 名前リストを再ロード
             transitionToView('login'); // ログイン画面へ
-            clearCorrectedTimeInputs(); // ★新規：ログアウト時も修正時刻入力欄をクリア
+            clearCorrectedTimeInputs(); // ✅ RESET: ログアウト時は修正時間をリセット
             updateSubmitButtonState(); // Update submit button state after logout
         }
 
@@ -781,7 +779,7 @@
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
                 updateStatusMessage();
-                // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
+                // clearCorrectedTimeInputs(); // ❌ NO RESET: 出勤時にリセットしない
                 updateSubmitButtonState(); // Update button state
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
@@ -814,7 +812,7 @@
                 attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤怠提出ボタンを押してデータを送信してください。`;
                 attendanceMessageElement.style.color = 'var(--message-color-processing)'; // Indicate pending submission
                 updateStatusMessage();
-                // clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
+                // clearCorrectedTimeInputs(); // ❌ NO RESET: 退勤時にリセットしない
                 updateSubmitButtonState(); // Update button state
             }
         }
@@ -911,7 +909,7 @@
                 localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser);
                 updateStatusMessage();
                 updateSubmitButtonState();
-                clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
+                clearCorrectedTimeInputs(); // ✅ RESET: 勤怠提出後に修正時間をリセット
 
             } catch (error) {
                 console.error(`勤怠提出エラー:`, error); // 詳細なエラーをコンソールに出力
@@ -952,7 +950,7 @@
             attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
             attendanceMessageElement.style.color = 'var(--message-color-success)';
             updateStatusMessage();
-            clearCorrectedTimeInputs(); // 修正時間リセットのタイミング変更
+            clearCorrectedTimeInputs(); // ✅ RESET: 勤怠取り消し後に修正時間をリセット
             updateSubmitButtonState(); // Update submit button state
         }
     </script>
