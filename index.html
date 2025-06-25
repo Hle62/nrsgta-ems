@@ -107,9 +107,8 @@
             
             opacity: 0; /* 初期透明度を 0 に設定 */
             transform: scale(0.8); /* 初期サイズを小さく */
-            transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* コンテナの表示アニメーションを有効化 */
+            /* transition: opacity 0.2s ease-out, transform 0.2s ease-out; */ /* アニメーション削除 */
             display: none; /* デフォルトで非表示 */
-            min-height: 500px; /* ★調整: コンテナの最小高さを設定 (コンテンツに合わせて調整) */
         }
         h1 {
             color: var(--text-color-main);
@@ -201,7 +200,7 @@
         /* 各セクションの初期状態 (非表示、透明、少し下) */
         #login-section, #attendance-section, #settings-section {
             width: 100%;
-            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; /* アニメーションを再度有効化 */
+            /* transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; */ /* アニメーション削除 */
             opacity: 0; 
             transform: translateY(10px); /* 元: 20px */
             position: absolute; /* container 内での位置決めのため */
@@ -279,14 +278,14 @@
             justify-content: center;
             align-items: center;
             opacity: 0; /* 最初は透明にしてJavaScriptでフェードイン */
-            transition: opacity 0.15s ease-out; /* アニメーションを再度有効化 */
+            /* transition: opacity 0.15s ease-out; */ /* アニメーション削除 */
         }
 
         #loading-overlay img {
             width: 100px; /* 初期は非常に小さく */
             height: auto;
             opacity: 0.8; /* わずかに透明に */
-            transition: width 0.15s ease-out, opacity 0.15s ease-out; /* アニメーションを再度有効化 */
+            /* transition: width 0.15s ease-out, opacity 0.15s ease-out; */ /* アニメーション削除 */
         }
 
         /* ========================================================================= */
@@ -502,11 +501,9 @@
             const loadingImage = loadingOverlay.querySelector('img');
             const container = document.querySelector('.container'); // メインコンテンツのコンテナ
 
-            // ローディング画面を初期表示し、フェードインアニメーションを開始
+            // ローディング画面を初期表示し、フェードインアニメーションを開始 (アニメーションを削除するため、不透明度を直接設定)
             loadingOverlay.style.opacity = '1';
-            setTimeout(() => {
-                loadingImage.style.width = '200px'; // 画像を大きくする（フェードインの演出）
-            }, 0);
+            // setTimeout(() => { loadingImage.style.width = '200px'; }, 0); // アニメーション削除
 
             // 名前リストのロードを待つ
             await loadNamesIntoDropdown(); 
@@ -543,52 +540,45 @@
                 initialView = 'login'; // ログイン画面へ
             }
 
-            // ローディング画面をフェードアウトして、メインコンテンツを表示
-            setTimeout(() => {
-                loadingOverlay.style.opacity = '0'; // オーバーレイをフェードアウト
-                loadingImage.style.width = '10px'; // 画像も小さくして消える演出
-                
-                // ローディング画面のCSS transitionが終わるまで待つ
-                setTimeout(() => {
-                    loadingOverlay.style.display = 'none'; // オーバーレイを完全に非表示にする
+            // ローディング画面をフェードアウトして、メインコンテンツを表示 (アニメーションを削除するため、不透明度とdisplayを直接設定)
+            loadingOverlay.style.opacity = '0';
+            loadingImage.style.width = '10px';
+            
+            loadingOverlay.style.display = 'none'; // オーバーレイを完全に非表示にする
 
-                    // メインコンテナをアニメーションで表示
-                    container.style.display = 'block'; // メインコンテンツを表示
-                    setTimeout(() => {
-                        container.style.opacity = '1'; // コンテナをフェードイン
-                        container.style.transform = 'scale(1)'; // コンテナをズームイン
-                    }, 0);
-                    
-                    // 初回ビュー表示を即座に設定
-                    const initialSection = document.getElementById(initialView + '-section');
-                    initialSection.style.display = 'block';
-                    initialSection.style.visibility = 'visible';
-                    initialSection.classList.add('active');
-                    initialSection.style.pointerEvents = 'auto';
-                    
-                    // 初回表示時の処理を実行
-                    if(initialView === 'attendance') {
-                        updateStatusMessage();
-                        updateSubmitButtonState(); // Call to set initial state of submit button
-                    }
-                    clearCorrectedTimeInputs(); // ✅ RESET: ページロード時は修正時間をリセット
+            // メインコンテナを表示 (アニメーションを削除するため、不透明度とtransformを直接設定)
+            container.style.display = 'block';
+            container.style.opacity = '1';
+            container.style.transform = 'scale(1)';
+            
+            // 初回ビュー表示を即座に設定
+            const initialSection = document.getElementById(initialView + '-section');
+            initialSection.style.display = 'block';
+            initialSection.style.visibility = 'visible';
+            initialSection.classList.add('active');
+            initialSection.style.pointerEvents = 'auto';
+            
+            // 初回表示時の処理を実行
+            if(initialView === 'attendance') {
+                updateStatusMessage();
+                updateSubmitButtonState(); // Call to set initial state of submit button
+            }
+            clearCorrectedTimeInputs(); // ✅ RESET: ページロード時は修正時間をリセット
 
 
-                    // 設定ボタンの初期表示状態をセット
-                    // absolute positionにしたため、JavaScriptでdisplayを制御する
-                    const toggleSettingButton = document.getElementById('toggleSettingButton');
-                    if (initialView === 'attendance' || initialView === 'settings') {
-                        toggleSettingButton.style.display = 'block';
-                    } else {
-                        toggleSettingButton.style.display = 'none';
-                    }
-                    currentView = initialView;
-                }, 150);
-            }, 0);
+            // 設定ボタンの初期表示状態をセット
+            // absolute positionにしたため、JavaScriptでdisplayを制御する
+            const toggleSettingButton = document.getElementById('toggleSettingButton');
+            if (initialView === 'attendance' || initialView === 'settings') {
+                toggleSettingButton.style.display = 'block';
+            } else {
+                toggleSettingButton.style.display = 'none';
+            }
+            currentView = initialView;
         });
 
         /**
-         * 画面表示を切り替える汎用関数 (アニメーション付き)
+         * 画面表示を切り替える汎用関数 (アニメーションなし)
          * @param {string} viewName 'login', 'attendance', 'settings'
          */
         function transitionToView(viewName) {
@@ -603,48 +593,40 @@
 
             // currentActiveSection がない場合（初回ロード時やエラーからの復帰時）はアニメーションしない
             if (!currentActiveSection) {
-                targetSection.style.display = 'block'; // 対象セクションを表示
-                targetSection.style.visibility = 'visible'; // Ensure visibility for initial display
-                setTimeout(() => { // 短い遅延でアニメーション開始
-                    targetSection.classList.add('active');
-                    targetSection.style.pointerEvents = 'auto'; // Enable clicks
-                }, 0);
+                targetSection.style.display = 'block';
+                targetSection.style.visibility = 'visible';
+                targetSection.classList.add('active');
+                targetSection.style.pointerEvents = 'auto';
                 currentView = viewName;
                 if(viewName === 'attendance') {
                     updateStatusMessage();
-                    updateSubmitButtonState();
+                    updateSubmitButtonState(); // Update submit button state
+                    // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
                 }
                 return;
             }
 
-            // 現在のセクションをアニメーションで非表示にする
+            // 現在のセクションを即座に非表示にする
             currentActiveSection.style.opacity = '0';
             currentActiveSection.style.transform = 'translateY(-10px)';
-            currentActiveSection.style.pointerEvents = 'none'; // Disable clicks immediately
+            currentActiveSection.style.pointerEvents = 'none';
+            currentActiveSection.style.display = 'none';
+            currentActiveSection.style.visibility = 'hidden';
+            currentActiveSection.classList.remove('active');
 
-            setTimeout(() => {
-                // アニメーション完了後にdisplayをnoneにし、activeクラスを削除
-                currentActiveSection.style.display = 'none';
-                currentActiveSection.style.visibility = 'hidden'; // Ensure hidden
-                currentActiveSection.classList.remove('active');
-
-                // 次のセクションを表示する準備
-                targetSection.style.opacity = '0'; // 初期状態を透明にする
-                targetSection.style.transform = 'translateY(10px)';
-                targetSection.style.display = 'block'; // 表示を有効にする
-                targetSection.style.visibility = 'visible'; // Ensure visibility
-
-                // 次のフレームでアニメーションを開始
-                setTimeout(() => {
-                    targetSection.classList.add('active'); // activeクラスを追加して表示＆アニメーション開始
-                    targetSection.style.pointerEvents = 'auto'; // Enable clicks after animation starts
-                    currentView = viewName;
-                    if(viewName === 'attendance') {
-                        updateStatusMessage();
-                        updateSubmitButtonState();
-                    }
-                }, 0);
-            }, 200); // CSSのtransition時間と同じ
+            // 次のセクションを即座に表示する
+            targetSection.style.opacity = '1'; /* opacityを直接1に設定 */
+            targetSection.style.transform = 'translateY(0)'; /* transformを直接0に設定 */
+            targetSection.style.display = 'block';
+            targetSection.style.visibility = 'visible';
+            targetSection.classList.add('active');
+            targetSection.style.pointerEvents = 'auto';
+            currentView = viewName;
+            if(viewName === 'attendance') {
+                updateStatusMessage();
+                updateSubmitButtonState(); // Update submit button state
+                // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
+            }
         }
 
         /**
