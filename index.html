@@ -781,6 +781,8 @@
                 updateStatusMessage();
                 // clearCorrectedTimeInputs(); // ❌ NO RESET: 出勤時に修正時間をリセットしない
                 updateSubmitButtonState(); // Update button state
+                // ✅ ADDED: 出勤時にDiscord通知を送信
+                await window.sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '出勤' });
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
                 if (!startTimeISO) {
