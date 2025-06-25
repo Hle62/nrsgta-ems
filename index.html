@@ -488,7 +488,7 @@
                         container.style.transform = 'scale(1)'; 
                     }, 0); 
                     
-                    // 初回表示はtransitionToView関数を呼び出してアニメーションさせる
+                    // 初回表示もtransitionToView関数に任せる
                     transitionToView(initialView); 
 
                 }, 150); 
@@ -501,8 +501,8 @@
          */
         function transitionToView(viewName) {
             const allSections = document.querySelectorAll('.container > div[id$="-section"]'); // すべてのセクションを取得
-            const currentActiveSection = document.querySelector('.container > div.active');
-            const targetSection = document.getElementById(viewName + '-section');
+            const currentActiveSection = document.querySelector('.container > div.active'); // 現在アクティブなセクション
+            const targetSection = document.getElementById(viewName + '-section'); // 次に表示するセクション
             
             // 設定ボタンの表示/非表示をすぐに設定
             if (viewName === 'attendance' || viewName === 'settings') {
@@ -511,40 +511,30 @@
                 document.getElementById('toggleSettingButton').style.display = 'none';
             }
 
-            // 現在アクティブなセクションがあれば、それをアニメーションで隠す
-            if (currentActiveSection) {
-                currentActiveSection.style.opacity = '0';
-                currentActiveSection.style.transform = 'translateY(-10px)'; 
+            // まずすべてのセクションを非アクティブにする（アニメーションなしで即座に）
+            allSections.forEach(section => {
+                section.classList.remove('active');
+                section.style.display = 'none';
+                // アニメーションの初期状態にリセットしておく (次のアニメーションのために)
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(10px)'; 
+            });
 
-                setTimeout(() => {
-                    currentActiveSection.style.display = 'none';
-                    currentActiveSection.classList.remove('active'); // activeクラスを削除
-
-                    // 次のセクションを表示する準備
-                    targetSection.style.opacity = '0'; 
-                    targetSection.style.transform = 'translateY(10px)'; 
-                    targetSection.style.display = 'block'; 
-
-                    // 次のフレームでアニメーションを開始
-                    setTimeout(() => {
-                        targetSection.classList.add('active'); // activeクラスを追加
-                        currentView = viewName;
-                        if(viewName === 'attendance') {
-                            updateStatusMessage();
-                            clearCorrectedTimeInputs();
-                        }
-                    }, 0); 
-                }, 200); // CSSのtransition時間と同じ
-            } else {
-                // 初回ロード時など、activeセクションがない場合、直接表示
-                // ここではactiveクラスを付与し、初期表示の関数を呼び出す
-                targetSection.style.display = 'block';
-                targetSection.classList.add('active'); // activeクラスを付与
-                currentView = viewName;
-                if(viewName === 'attendance') {
-                    updateStatusMessage();
-                    clearCorrectedTimeInputs();
-                }
+            // 次に表示するセクションをアクティブにする
+            targetSection.style.display = 'block'; // 表示を有効に
+            setTimeout(() => { // わずかな遅延でアニメーション開始
+                targetSection.classList.add('active'); // opacity:1 & transform:0 でアニメーション
+            }, 0); 
+            
+            currentView = viewName; // 現在のビューを更新
+            
+            // 各ビューに応じた初期化処理
+            if(viewName === 'attendance') {
+                document.getElementById('loggedInUserName').textContent = loggedInUser; // ログインユーザー名を表示
+                updateStatusMessage();
+                clearCorrectedTimeInputs();
+            } else if (viewName === 'login') {
+                document.getElementById('loggedInUserName').textContent = ''; // ログインユーザー名をクリア
             }
         }
 
@@ -641,7 +631,7 @@
                 loginMessageElement.textContent = 'ログイン成功！';
                 loginMessageElement.style.color = 'var(--message-color-success)';
                 transitionToView('attendance'); 
-                clearCorrectedTimeInputs(); 
+                // clearCorrectedTimeInputs()はtransitionToView内で呼び出される
             } else {
                 loginMessageElement.textContent = 'パスワードが間違っています。';
                 loginMessageElement.style.color = 'var(--message-color-error)';
@@ -662,9 +652,9 @@
             document.getElementById('attendanceMessage').textContent = '';
 
             document.getElementById('nameSelect').value = '';
-            loadNamesIntoDropdown(); 
+            loadNamesIntoDropdown(); // 名前リストを再ロード
             transitionToView('login'); 
-            clearCorrectedTimeInputs(); 
+            // clearCorrectedTimeInputs()はtransitionToView内で呼び出される
         }
 
         /**
@@ -674,6 +664,9 @@
             const statusMessageElement = document.getElementById('statusMessage');
             const startTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
             const endTime = localStorage.getItem(LOCAL_STORAGE_END_TIME_KEY_PREFIX + loggedInUser); 
+
+            // ログインユーザー名を更新
+            document.getElementById('loggedInUserName').textContent = `${loggedInUser}さん`;
 
             if (startTime && endTime) {
                 const startDateTime = new Date(startTime);
