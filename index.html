@@ -96,10 +96,8 @@
         }
         .container {
             background-color: var(--bg-color-container);
-            /* ★ここを元に戻しました★ */
             padding: 40px; /* 元のパディングに戻す */
             max-width: 400px; /* 元の最大幅に戻す */
-            /* ★ここまで修正★ */
             border-radius: 10px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             text-align: center;
@@ -204,7 +202,7 @@
             position: absolute; /* container 内での位置決めのため */
             top: 0; 
             left: 0;
-            padding: 0 40px; /* ★ここを元に戻しました★ コンテナのパディングに合わせて調整 */
+            padding: 0 40px; /* コンテナのパディングに合わせて調整 */
             box-sizing: border-box; /* paddingを含めた幅にする */
             display: none; /* 初期は完全に非表示 */
         }
@@ -226,23 +224,25 @@
             display: flex;
             justify-content: center; /* 中央寄せ */
             align-items: center; /* 垂直方向中央寄せ */
-            gap: 15px; /* 元の間隔に戻す */
-            margin-top: 25px; /* 元の間隔に戻す */
-            margin-bottom: 10px; /* 元の間隔に戻す */
+            gap: 15px; /* ボタン間のスペース */
+            /* ★ここを修正しました★ */
+            margin-top: 15px; /* 上からのマージンを詰める */
+            margin-bottom: 5px; /* 下へのマージンを詰める */
+            /* ★ここまで修正しました★ */
         }
         .bottom-buttons button {
             margin: 0; /* 親コンテナで管理するので個別のマージンはリセット */
             flex: 1; /* スペースを均等に配分 */
-            max-width: 150px; /* 元の最大幅に戻す */
+            max-width: 150px; /* 最大幅を設定 */
         }
         /* 設定ボタンは他のボタンより少し小さめにする場合 */
         .bottom-buttons .setting-toggle-button,
         .bottom-buttons .return-to-attendance-button { /* 両方のボタンに適用 */
             background-color: var(--setting-button-bg);
-            padding: 10px 20px; /* 元のパディングに戻す */
-            font-size: 0.9em; /* 元のフォントサイズに戻す */
+            padding: 10px 20px; /* 少し小さめのパディング */
+            font-size: 0.9em; /* 少し小さめのフォントサイズ */
             border-radius: 5px;
-            max-width: 100px; /* 元の最大幅に戻す */
+            max-width: 100px; /* さらに小さく */
         }
 
         .time-correction-group {
@@ -266,8 +266,10 @@
             display: flex;
             justify-content: center;
             gap: 15px; /* 元の間隔に戻す */
-            margin-top: 20px; /* 元の間隔に戻す */
-            margin-bottom: 10px; /* 元の間隔に戻す */
+            /* ★ここを修正しました★ */
+            margin-top: 15px; /* 上からのマージンを詰める */
+            margin-bottom: 5px; /* 下へのマージンを詰める */
+            /* ★ここまで修正しました★ */
             width: 100%; 
         }
         .attendance-submission-buttons button {
