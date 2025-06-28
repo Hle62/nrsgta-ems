@@ -381,46 +381,45 @@
         @media (max-width: 600px) { 
             body {
                 font-size: 1em; /* スマホでの基準フォントサイズ */
-                /* zoom/scaleは削除 */
-                width: 100%; /* zoom/scaleの調整を削除したのでデフォルトに */
-                height: 100vh; /* zoom/scaleの調整を削除したのでデフォルトに */
+                width: 100%; 
+                height: 100vh; 
             }
             .container {
-                padding: 25px; /* ★スマホ向けパディングを調整 */
+                padding: 25px; /* スマホ向けパディングを調整 */
                 width: 98%; /* スマホ向けコンテナの幅 */
                 max-width: 420px; /* ★スマホ向けコンテナの最大幅を再調整 */
             }
 
             h1 {
-                font-size: 1.6em; /* ★スマホ向けタイトルサイズ */
+                font-size: 1.6em; /* スマホ向けタイトルサイズ */
                 margin-bottom: 25px;
             }
             h2 {
-                font-size: 1.4em; /* ★スマホ向けh2サイズ */
+                font-size: 1.4em; /* スマホ向けh2サイズ */
                 margin-bottom: 25px;
             }
             h3 {
-                font-size: 1.1em; /* ★スマホ向けh3サイズ */
+                font-size: 1.1em; /* スマホ向けh3サイズ */
                 margin-top: 20px;
                 margin-bottom: 15px;
             }
 
             #current-time {
-                font-size: 1.4em; /* ★スマホ向け時刻サイズ */
+                font-size: 1.4em; /* スマホ向け時刻サイズ */
                 margin-bottom: 18px;
             }
 
             select, input[type="password"] {
                 padding: 10px; 
                 margin-bottom: 20px;
-                font-size: 1em; /* ★スマホ向けフォントサイズ */
+                font-size: 1em; /* スマホ向けフォントサイズ */
                 border-radius: 5px; 
             }
             /* datetime-localの入力欄のスタイル */
             input[type="datetime-local"] {
                 padding: 10px;
                 margin-bottom: 20px;
-                font-size: 1em; /* ★スマホ向けフォントサイズ */
+                font-size: 1em; /* スマホ向けフォントサイズ */
                 border-radius: 5px;
                 width: 100%; 
             }
@@ -439,7 +438,7 @@
             /* 設定ボタンは他のボタンより少し小さめにする場合 */
             .bottom-buttons .setting-toggle-button {
                 padding: 8px 15px;
-                font-size: 0.9em; /* ★スマホ向け設定ボタンフォントサイズ */
+                font-size: 0.9em; /* スマホ向け設定ボタンフォントサイズ */
                 border-radius: 4px;
                 max-width: 90px; 
             }
@@ -458,9 +457,9 @@
                 margin-top: 18px; 
                 padding-top: 12px; 
             }
-            /* 時刻修正入力の新しいコンテナとFlexboxスタイル (スマホ向け) */
+            /* ★時刻修正入力の新しいコンテナとFlexboxスタイル (スマホ向け) */
             .time-correction-fields {
-                flex-direction: column; 
+                flex-direction: column; /* ★縦並びに変更 */
                 gap: 10px; 
                 margin-bottom: 10px;
             }
@@ -470,7 +469,7 @@
                 min-width: unset; 
             }
             .time-correction-field-item label {
-                font-size: 0.9em; /* ★スマホ向けラベルフォントサイズ */
+                font-size: 0.9em; 
                 margin-bottom: 4px; 
             }
             .time-correction-field-item input {
@@ -521,7 +520,7 @@
             }
             #clockedInUsersList .user-name-item {
                 flex: 0 0 calc(50% - 4px); 
-                font-size: 0.9em; /* ★スマホ向けユーザー名フォントサイズ */
+                font-size: 0.9em; 
                 padding: 4px 0; 
             }
 
@@ -529,11 +528,11 @@
             #settings-section select {
                 padding: 10px;
                 margin-bottom: 20px;
-                font-size: 1em; /* ★スマホ向け設定selectフォントサイズ */
+                font-size: 1em; 
             }
             #settings-section label {
                 margin-bottom: 8px;
-                font-size: 1em; /* ★スマホ向け設定ラベルフォントサイズ */
+                font-size: 1em; 
             }
             #settings-section hr {
                 margin: 15px 0;
@@ -987,7 +986,7 @@
                 localStorage.removeItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser); // Ensure temp end time is cleared on clock-in
                 localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser); // Reset submit ready flag
                 
-                // ★追加：出勤時にGASを呼び出して「出勤中」シートに名前を削除
+                // ★追加：出勤時にGASを呼び出して「出勤中」シートに名前を追加
                 try {
                     await window.sendRequestToGAS('addClockedInUser', { name: loggedInUser });
                     attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
@@ -1159,7 +1158,7 @@
             }
 
             const storedStartTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-            const storedEndTimeTemp = localStorage.getItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
+            const storedEndTimeTemp = localStorage.getItem(LOCAL_LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
 
             if (!storedStartTime && !storedEndTimeTemp) { // If neither start nor temp end time exists
                 attendanceMessageElement.textContent = 'エラー: 取り消す勤怠記録がありません。';
