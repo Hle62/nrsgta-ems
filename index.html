@@ -92,16 +92,17 @@
             margin: 0;
             background-color: var(--bg-color-main); /* 変数を適用 */
             color: var(--text-color-main); /* 変数を適用 */
+            font-size: 0.9em; /* ★全体的に文字を小さく */
             /* transition: background-color 0.3s ease, color 0.3s ease; */ /* アニメーション削除 */
         }
         .container {
             background-color: var(--bg-color-container); /* 変数を適用 */
-            padding: 40px;
+            padding: 30px; /* ★パディングを縮小 */
             border-radius: 10px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             text-align: center;
             width: 90%;
-            max-width: 400px;
+            max-width: 360px; /* ★最大幅を縮小 */
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
             
@@ -112,23 +113,32 @@
         }
         h1 {
             color: var(--text-color-main);
-            margin-bottom: 30px;
-            font-size: 1.8em;
+            margin-bottom: 25px; /* ★マージンを縮小 */
+            font-size: 1.6em; /* ★文字サイズを縮小 */
+        }
+        h2 {
+            font-size: 1.3em; /* ★h2の文字サイズを調整 */
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.1em; /* ★h3の文字サイズを調整 */
+            margin-top: 20px;
+            margin-bottom: 15px;
         }
         #current-time {
-            font-size: 1.5em;
+            font-size: 1.4em; /* ★文字サイズを縮小 */
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 18px; /* ★マージンを縮小 */
             color: var(--highlight-color); /* 変数を適用 */
         }
         select, input[type="password"], input[type="datetime-local"] {
-            padding: 12px;
-            margin-bottom: 25px;
+            padding: 10px; /* ★パディングを縮小 */
+            margin-bottom: 20px; /* ★マージンを縮小 */
             border: 1px solid var(--border-color); /* 変数を適用 */
-            border-radius: 6px;
-            width: calc(100% - 24px);
+            border-radius: 5px; /* ★角丸を調整 */
+            width: calc(100% - 20px); /* ★パディングを考慮 */
             box-sizing: border-box;
-            font-size: 1em;
+            font-size: 0.95em; /* ★文字サイズを調整 */
             background-color: var(--bg-color-main); /* 変数を適用 */
             color: var(--text-color-main); /* 変数を適用 */
             -webkit-appearance: none;
@@ -138,21 +148,21 @@
         select {
             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2C114.7L159.2%2C242.5c-4.2%2C4.2-9.6%2C6.4-15.1%2C6.4s-10.9-2.2-15.1-6.4L5.4%2C114.7c-8.9-8.9-8.9-23.3%2C0-32.2s23.3-8.9%2C32.2%2C0l113.6%2C113.6L254.8%2C82.5c8.9-8.9%2C23.3-8.9%2C32.2%2C0S295.9%2C105.8%2C287%2C114.7z%22%2F%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 12px;
+            background-position: right 8px center; /* ★アイコン位置を調整 */
+            background-size: 11px; /* ★アイコンサイズを調整 */
         }
 
         button {
             background-color: var(--button-bg-primary); /* 変数を適用 */
             color: white;
-            padding: 15px 30px;
+            padding: 12px 25px; /* ★パディングを縮小 */
             border: none;
-            border-radius: 7px;
+            border-radius: 6px; /* ★角丸を調整 */
             cursor: pointer;
-            font-size: 1.1em;
-            margin: 10px;
+            font-size: 1em; /* ★文字サイズを調整 */
+            margin: 8px; /* ★マージンを縮小 */
             transition: background-color 0.3s ease;
-            min-width: 120px;
+            min-width: 100px; /* ★最小幅を調整 */
         }
         button.out {
             background-color: var(--button-bg-secondary); /* 変数を適用 */
@@ -167,12 +177,12 @@
             background-color: var(--setting-button-bg); /* 変数を適用 */
             display: block;
             float: right;
-            margin-top: 15px;
+            margin-top: 10px; /* ★マージンを調整 */
             margin-left: auto;
             clear: both;
-            padding: 8px 15px;
-            font-size: 0.9em;
-            border-radius: 5px;
+            padding: 6px 12px; /* ★パディングを調整 */
+            font-size: 0.8em; /* ★文字サイズを調整 */
+            border-radius: 4px; /* ★角丸を調整 */
             width: auto;
             min-width: unset;
         }
@@ -180,9 +190,9 @@
             opacity: 0.9;
         }
         #message {
-            margin-top: 30px;
+            margin-top: 25px; /* ★マージンを縮小 */
             font-weight: bold;
-            font-size: 1.1em;
+            font-size: 1em; /* ★文字サイズを調整 */
             min-height: 20px;
         }
         .message-processing { color: var(--message-color-processing); }
@@ -206,7 +216,7 @@
             position: absolute; /* container 内での位置決めのため */
             top: 0; 
             left: 0;
-            padding: 0 40px; /* containerのパディングと合わせる */
+            padding: 0 30px; /* ★コンテナのパディングと合わせる */
             box-sizing: border-box; /* paddingを含めた幅にする */
             display: none; /* 初期は完全に非表示 */
         }
@@ -230,25 +240,25 @@
 
 
         .time-correction-group {
-            margin-top: 20px;
-            padding-top: 15px;
+            margin-top: 18px; /* ★マージンを縮小 */
+            padding-top: 12px; /* ★パディングを縮小 */
             border-top: 1px solid var(--border-color); /* 変数を適用 */
             text-align: left;
         }
         .time-correction-group label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 0.9em;
+            margin-bottom: 4px; /* ★マージンを縮小 */
+            font-size: 0.85em; /* ★文字サイズを縮小 */
             color: var(--text-color-main);
         }
         .time-correction-group input {
-            margin-bottom: 10px;
+            margin-bottom: 8px; /* ★マージンを縮小 */
         }
         #settings-section label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px; /* ★マージンを縮小 */
             text-align: left;
-            font-size: 1em;
+            font-size: 0.95em; /* ★文字サイズを調整 */
             color: var(--text-color-main);
         }
 
@@ -256,14 +266,14 @@
         .attendance-submission-buttons {
             display: flex;
             justify-content: center;
-            gap: 15px; /* ボタン間のスペース */
-            margin-top: 20px; /* 上の要素からのマージン */
-            margin-bottom: 10px; /* 下の要素へのマージン */
+            gap: 12px; /* ★ボタン間のスペースを縮小 */
+            margin-top: 18px; /* ★マージンを縮小 */
+            margin-bottom: 8px; /* ★マージンを縮小 */
             width: 100%; /* 利用可能な幅いっぱいに広げる */
         }
         .attendance-submission-buttons button {
             flex: 1; /* ボタンが利用可能なスペースを均等に分け合う */
-            max-width: 180px; /* 広がりすぎないように最大幅を設定 */
+            max-width: 160px; /* ★最大幅を調整 */
         }
 
         /* ★新規追加: ローディング画面のスタイル */
@@ -283,7 +293,7 @@
         }
 
         #loading-overlay img {
-            width: 100px; /* 初期は非常に小さく */
+            width: 90px; /* ★ローディング画像を縮小 */
             height: auto;
             opacity: 0.8; /* わずかに透明に */
             /* transition: width 0.15s ease-out, opacity 0.15s ease-out; */ /* アニメーション削除 */
@@ -294,21 +304,22 @@
             display: flex; /* Flexboxを有効にする */
             flex-wrap: wrap; /* 枠からはみ出たら改行する */
             justify-content: flex-start; /* 左寄せ */
-            gap: 10px; /* アイテム間の隙間 */
+            gap: 8px; /* ★アイテム間の隙間を縮小 */
             text-align: left;
-            max-height: 150px;
+            max-height: 120px; /* ★高さも縮小 */
             overflow-y: auto;
-            padding: 10px;
+            padding: 8px; /* ★パディングを縮小 */
             border: 1px solid var(--border-color);
-            border-radius: 5px;
+            border-radius: 4px; /* ★角丸を調整 */
             background-color: var(--bg-color-main);
         }
 
         #clockedInUsersList .user-name-item {
-            flex: 0 0 calc(25% - 7.5px); /* 4列表示 (gap 10px を考慮して 25% - (3/4)*gap) */
+            flex: 0 0 calc(25% - 6px); /* ★4列表示 (gap 8px を考慮して 25% - (3/4)*gap) */
             box-sizing: border-box; /* paddingとborderを幅に含める */
             text-align: center;
-            padding: 5px 0;
+            padding: 4px 0; /* ★パディングを縮小 */
+            font-size: 0.9em; /* ★文字サイズを調整 */
             color: var(--text-color-main);
             white-space: nowrap; /* 名前が長すぎても改行しない */
             overflow: hidden; /* はみ出た部分を非表示 */
@@ -320,89 +331,79 @@
         /* ========================================================================= */
         @media (max-width: 600px) { /* 画面幅が600px以下の場合に適用 */
             .container {
-                padding: 20px; /* パディングを少し減らす */
+                padding: 15px; /* ★パディングをさらに縮小 */
                 width: 95%; /* 小さい画面ではより幅いっぱいに使う */
             }
 
             h1 {
-                font-size: 1.5em; /* タイトルを少し小さく */
-                margin-bottom: 20px;
+                font-size: 1.4em; /* ★タイトルをさらに小さく */
+                margin-bottom: 15px;
+            }
+            h2 {
+                font-size: 1.2em; /* ★h2の文字サイズを調整 */
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1em; /* ★h3の文字サイズを調整 */
+                margin-top: 15px;
+                margin-bottom: 10px;
             }
 
             #current-time {
-                font-size: 1.3em; /* 時刻表示を少し小さく */
-                margin-bottom: 15px;
+                font-size: 1.2em; /* ★時刻表示をさらに小さく */
+                margin-bottom: 12px;
             }
 
             select, input[type="password"], input[type="datetime-local"] {
-                padding: 10px; /* 入力欄のパディングを少し減らす */
-                margin-bottom: 20px;
-                font-size: 0.95em; /* フォントサイズを少し小さく */
+                padding: 8px; /* ★入力欄のパディングをさらに縮小 */
+                margin-bottom: 15px; /* ★マージンをさらに縮小 */
+                font-size: 0.9em; /* ★フォントサイズをさらに小さく */
             }
 
             button {
-                padding: 12px 25px; /* ボタンのパディングを少し減らす */
-                font-size: 1em; /* ボタンのフォントサイズを標準に */
-                margin: 8px; /* ボタン間の余白を調整 */
-                min-width: 100px; /* ボタンの最小幅を調整 */
+                padding: 10px 20px; /* ★ボタンのパディングをさらに縮小 */
+                font-size: 0.9em; /* ★ボタンのフォントサイズをさらに小さく */
+                margin: 6px; /* ★ボタン間の余白を調整 */
+                min-width: 90px; /* ★ボタンの最小幅を調整 */
             }
 
             .time-correction-group label {
-                font-size: 0.85em; /* 修正時刻のラベルを小さく */
+                font-size: 0.8em; /* ★修正時刻のラベルをさらに小さく */
             }
 
             #message {
-                font-size: 1em; /* メッセージのフォントサイズを調整 */
-                margin-top: 20px;
+                font-size: 0.9em; /* ★メッセージのフォントサイズを調整 */
+                margin-top: 15px;
             }
 
             #loading-overlay img {
-                width: 150px; /* ローディング画像の初期サイズをスマホ向けに少し大きく */
+                width: 120px; /* ★ローディング画像の初期サイズをスマホ向けにさらに小さく */
                 opacity: 0.9;
             }
-            /* 出勤/退勤ボタンを横並びにするため、flex-direction: column を削除または row に変更 */
-            /* 以前の変更: #attendance-section div:first-of-type { display: flex; flex-direction: column; ... } */
-            /* 今回の変更: flex-direction を row に変更 */
+            /* 出勤/退勤ボタンのスタイル */
             #attendance-section div:first-of-type {
-                display: flex;
-                flex-direction: row; /* ★ここを row に変更しました★ */
-                justify-content: center; /* 中央寄せ */
-                align-items: center; /* 垂直方向中央寄せ */
-                gap: 10px; /* ボタン間の隙間 */
+                gap: 8px; /* ★ボタン間の隙間を縮小 */
             }
             #attendance-section div:first-of-type button {
-                /* width: calc(100% - 20px); */ /* 幅の制限を解除するか、小さめに設定 */
-                max-width: 150px; /* 適度な最大幅を設定 */
-                flex: 1; /* スペースを均等に配分 */
-                margin: 0; /* 個別のマージンをリセット */
+                max-width: 140px; /* ★適度な最大幅を調整 */
             }
-            /* 修正時刻グループ内のボタン（取り消し、ログアウト）も横並びにする */
-            /* 以前の変更: #attendance-section > button { width: calc(100% - 20px); ... } */
-            /* 今回の変更: display: flex と flex-direction: row を追加 */
-            #attendance-section > button { /* これはおそらくログアウトボタンを指しています */
-                width: auto; /* 幅を自動調整 */
-                max-width: 250px; /* 広がりすぎないように最大幅を設定 */
-                margin: 10px auto; /* 中央揃えして上下にマージン */
+            /* 修正時刻グループ内のボタン（ログアウト） */
+            #attendance-section > button { 
+                max-width: 200px; /* ★最大幅を調整 */
+                margin: 8px auto; /* ★中央揃えして上下にマージン */
             }
 
-            /* 勤怠取り消し・提出ボタンもスマホで横並びにする */
-            /* 以前の変更: .attendance-submission-buttons { flex-direction: column; ... } */
-            /* 今回の変更: flex-direction を row に変更 */
+            /* 勤怠取り消し・提出ボタンのスタイル */
             .attendance-submission-buttons {
-                flex-direction: row; /* ★ここを row に変更しました★ */
-                justify-content: center; /* 中央寄せ */
-                align-items: center; /* 垂直方向中央寄せ */
-                gap: 10px; /* ボタン間の隙間 */
+                gap: 8px; /* ★ボタン間の隙間を縮小 */
             }
             .attendance-submission-buttons button {
-                /* width: calc(100% - 20px); */ /* 幅の制限を解除するか、小さめに設定 */
-                max-width: 150px; /* 適度な最大幅を設定 */
-                flex: 1; /* スペースを均等に配分 */
-                margin: 0;
+                max-width: 140px; /* ★適度な最大幅を調整 */
             }
             /* スマホでの出勤中ユーザーリスト表示 (2列表示) */
             #clockedInUsersList .user-name-item {
-                flex: 0 0 calc(50% - 5px); /* 2列表示 (gap 10px を考慮して 50% - (1/2)*gap) */
+                flex: 0 0 calc(50% - 4px); /* ★2列表示 (gap 8px を考慮して 50% - (1/2)*gap) */
+                font-size: 0.85em; /* ★文字サイズをさらに調整 */
             }
         }
     </style>
@@ -424,8 +425,7 @@
             <input type="password" id="passwordInput" placeholder="パスワード">
             <button class="login-button" onclick="handleLogin()">ログイン</button>
             <p id="loginMessage"></p>
-            <button onclick="refreshNames()" style="background-color: #7f8c8d; margin-top: 10px;">名前リスト更新</button>
-        </div>
+            <button onclick="refreshNames()" style="background-color: #7f8c8d; margin-top: 8px;">名前リスト更新</button> </div>
 
         <div id="attendance-section">
             <h2 id="loggedInUserName"></h2>
@@ -446,8 +446,7 @@
             <div class="attendance-submission-buttons"> <button class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button>
                 <button id="submitAttendanceButton" class="login-button" onclick="submitAttendance()" disabled>勤怠提出</button>
             </div>
-            <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
-        </div>
+            <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 15px;">ログアウト</button> </div>
 
         <div id="settings-section">
             <h2>設定</h2>
@@ -459,9 +458,7 @@
                 <option value="red-black">レッドブラック</option>
             </select>
             
-            <hr style="margin: 20px 0; border-color: var(--border-color);">
-
-            <h3>現在出勤中のユーザー</h3>
+            <hr style="margin: 15px 0; border-color: var(--border-color);"> <h3>現在出勤中のユーザー</h3>
             <div id="clockedInUsersList">
                 <p style="color: var(--text-color-main-faded);">読み込み中...</p>
             </div>
@@ -653,7 +650,7 @@
             currentView = viewName;
             if(viewName === 'attendance') {
                 updateStatusMessage();
-                updateSubmitButtonState(); // Update submit button state
+                updateSubmitButtonState(); // Update button state
                 // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
             } else if (viewName === 'settings') { // ★追加：設定画面に切り替わったときにリストを読み込む★
                 loadClockedInUsers();
