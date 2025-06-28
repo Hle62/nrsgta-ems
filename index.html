@@ -417,6 +417,14 @@
                 <option value="rose-pink">ローズピンク</option>
                 <option value="red-black">レッドブラック</option>
             </select>
+            
+            <hr style="margin: 20px 0; border-color: var(--border-color);">
+
+            <h3>現在出勤中のユーザー</h3>
+            <div id="clockedInUsersList" style="text-align: left; max-height: 150px; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; background-color: var(--bg-color-main);">
+                <p style="color: var(--text-color-main-faded);">読み込み中...</p>
+            </div>
+            <button onclick="loadClockedInUsers()" style="background-color: var(--setting-button-bg); margin-top: 10px;">リスト更新</button>
         </div>
 
         <button class="setting-toggle-button" id="toggleSettingButton" onclick="toggleSettings()">設定</button>
@@ -580,6 +588,8 @@
                     updateStatusMessage();
                     updateSubmitButtonState(); // Update submit button state 
                     // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
+                } else if (viewName === 'settings') { // ★追加：設定画面に切り替わったときにリストを読み込む★
+                    loadClockedInUsers();
                 }
                 return;
             }
@@ -604,6 +614,8 @@
                 updateStatusMessage();
                 updateSubmitButtonState(); // Update submit button state
                 // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
+            } else if (viewName === 'settings') { // ★追加：設定画面に切り替わったときにリストを読み込む★
+                loadClockedInUsers();
             }
         }
 
@@ -807,8 +819,6 @@
                 updateStatusMessage();
                 // clearCorrectedTimeInputs(); // ❌ NO RESET: 出勤時に修正時間をリセットしない
                 updateSubmitButtonState(); // Update button state
-                // ✅ REMOVED: Discord通知の呼び出しを削除
-                // await window.sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '出勤' }); 
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
                 if (!startTimeISO) {
@@ -924,8 +934,6 @@
             attendanceMessageElement.style.color = 'var(--message-color-processing)';
 
             try {
-                // ✅ REMOVED: Discord通知の呼び出しを削除
-                // await window.sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '退勤' }); 
                 await window.sendRequestToGAS('recordAttendance', { name: loggedInUser, startTime: startTimeISO, endTime: endTimeISO });
 
                 attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠データを提出しました！`;
@@ -973,14 +981,43 @@
             localStorage.removeItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
             localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser);
 
-            // ✅ REMOVED: Discord通知の呼び出しを削除
-            // await window.sendRequestToGAS('notifyDiscord', { name: loggedInUser, type: '勤怠取り消し' }); 
-
             attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
             attendanceMessageElement.style.color = 'var(--message-color-success)';
             updateStatusMessage();
             clearCorrectedTimeInputs(); // ✅ RESET: 勤怠取り消し後に修正時間をリセット
             updateSubmitButtonState(); // Update submit button state
+        }
+
+        /**
+         * 現在出勤中のユーザーリストを取得して表示する関数
+         */
+        async function loadClockedInUsers() {
+            const clockedInUsersListElement = document.getElementById('clockedInUsersList');
+            clockedInUsersListElement.innerHTML = '<p style="color: var(--message-color-processing);">読み込み中...</p>';
+
+            try {
+                const response = await window.sendRequestToGAS('getCurrentlyClockedInUsers', {});
+                
+                if (response.status === 'success' && response.users) {
+                    if (response.users.length > 0) {
+                        clockedInUsersListElement.innerHTML = ''; // クリア
+                        response.users.forEach(user => {
+                            const p = document.createElement('p');
+                            p.textContent = `・${user}`;
+                            p.style.margin = '5px 0';
+                            p.style.color = 'var(--text-color-main)';
+                            clockedInUsersListElement.appendChild(p);
+                        });
+                    } else {
+                        clockedInUsersListElement.innerHTML = '<p style="color: var(--text-color-main);">現在、出勤中のユーザーはいません。</p>';
+                    }
+                } else {
+                    clockedInUsersListElement.innerHTML = `<p style="color: var(--message-color-error);">リスト取得エラー: ${response.message || '不明'}</p>`;
+                }
+            } catch (error) {
+                console.error('出勤中ユーザーリスト取得エラー:', error);
+                clockedInUsersListElement.innerHTML = `<p style="color: var(--message-color-error);">通信エラー: ${error.message || '不明'}</p>`;
+            }
         }
     </script>
 </body>
