@@ -234,9 +234,9 @@
         }
 
         /* ログイン画面では設定ボタンは表示しない */
-        #toggleSettingButton {
-            /* display: none; はJSで制御 */
-        }
+        /* #toggleSettingButton は.bottom-buttons内に移動し、常に表示されるためこのルールは削除 */
+        /* #toggleSettingButton { display: none; } */
+
 
         /* ★ログアウトボタンと設定ボタンのコンテナ */
         .bottom-buttons {
@@ -276,13 +276,14 @@
         .time-correction-group input {
             margin-bottom: 10px; 
         }
-        #settings-section label {
+        /* settings-section のラベルは settings-section内に残す */
+        /* #settings-section label {
             display: block;
             margin-bottom: 10px; 
             text-align: left;
             font-size: 1em; 
             color: var(--text-color-main);
-        }
+        } */
 
         /* 新しいボタンコンテナのスタイル */
         .attendance-submission-buttons {
@@ -322,7 +323,8 @@
         }
 
         /* ★出勤中ユーザーリストの表示スタイル (PC向け) */
-        #clockedInUsersList {
+        /* #attendance-section 内に移動したので、上部からのマージンを調整 */
+        #attendance-section #clockedInUsersList { /* IDで厳密に指定 */
             display: flex; 
             flex-wrap: wrap; 
             justify-content: flex-start; 
@@ -334,7 +336,7 @@
             border: 1px solid var(--border-color);
             border-radius: 5px; 
             background-color: var(--bg-color-main);
-            margin-top: 15px; /* 設定要素からのマージン */
+            margin-top: 20px; /* 上からのマージンを調整 */
         }
 
         #clockedInUsersList .user-name-item {
@@ -348,6 +350,32 @@
             overflow: hidden; 
             text-overflow: ellipsis; 
         }
+
+        /* ★設定画面（テーマ変更）用のスタイル */
+        /* 設定画面内のラベルに個別のスタイルを適用 */
+        #settings-section label {
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 1em;
+            color: var(--text-color-main);
+        }
+        #settings-section select { /* 設定画面内のselectのスタイル */
+            padding: 12px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width: calc(100% - 24px);
+            box-sizing: border-box;
+            font-size: 1em;
+            background-color: var(--bg-color-main);
+            color: var(--text-color-main);
+        }
+        #settings-section hr { /* 設定画面内のhrのスタイル */
+            margin: 20px 0;
+            border-color: var(--border-color);
+        }
+
 
         /* ========================================================================= */
         /* スマホ向け最適化用メディアクエリ (画面幅が600px以下の場合に適用) */
@@ -428,10 +456,11 @@
             .time-correction-group input {
                 margin-bottom: 8px; 
             }
-            #settings-section label {
+            /* settings-section のラベルは settings-section内に残す */
+            /* #settings-section label {
                 font-size: 0.95em; 
                 margin-bottom: 8px; 
-            }
+            } */
 
             /* 出勤/退勤ボタンのスタイル (横並び維持) */
             #attendance-section div:first-of-type {
@@ -467,17 +496,32 @@
             }
 
             /* スマホでの出勤中ユーザーリスト表示 (2列表示) */
-            #clockedInUsersList {
+            /* #attendance-section 内に移動したので、上部からのマージンを調整 */
+            #attendance-section #clockedInUsersList {
                 max-height: 120px; 
                 padding: 8px; 
                 gap: 8px; 
                 border-radius: 4px; 
-                margin-top: 10px; /* 設定要素からのマージン */
+                margin-top: 15px; /* 上からのマージンを調整 */
             }
             #clockedInUsersList .user-name-item {
                 flex: 0 0 calc(50% - 4px); 
                 font-size: 0.85em; 
                 padding: 4px 0; 
+            }
+
+            /* 設定画面（テーマ変更）用のスタイル (スマホ向け) */
+            #settings-section select {
+                padding: 10px;
+                margin-bottom: 20px;
+                font-size: 0.95em;
+            }
+            #settings-section label {
+                margin-bottom: 8px;
+                font-size: 0.95em;
+            }
+            #settings-section hr {
+                margin: 15px 0;
             }
         }
     </style>
@@ -526,6 +570,13 @@
                 <button onclick="handleLogout()">ログアウト</button>
                 <button class="setting-toggle-button" id="toggleSettingButton" onclick="toggleSettings()">設定</button>
             </div>
+
+            <hr style="margin: 20px 0; border-color: var(--border-color);">
+            <h3>現在出勤中のユーザー</h3>
+            <div id="clockedInUsersList">
+                <p style="color: var(--text-color-main-faded);">読み込み中...</p>
+            </div>
+            <button onclick="loadClockedInUsers()" style="background-color: var(--setting-button-bg); margin-top: 10px;">リスト更新</button>
         </div>
 
         <div id="settings-section">
@@ -537,16 +588,9 @@
                 <option value="rose-pink">ローズピンク</option>
                 <option value="red-black">レッドブラック</option>
             </select>
-            
-            <hr style="margin: 20px 0; border-color: var(--border-color);">
-
-            <h3>現在出勤中の人</h3>
-            <div id="clockedInUsersList">
-                <p style="color: var(--text-color-main-faded);">読み込み中...</p>
             </div>
-            <button onclick="loadClockedInUsers()" style="background-color: var(--setting-button-bg); margin-top: 10px;">リスト更新</button>
-        </div>
-        </div>
+
+    </div>
     <script defer>
         // =========================================================================
         // JavaScriptコード
@@ -665,18 +709,12 @@
             if(initialView === 'attendance') {
                 updateStatusMessage();
                 updateSubmitButtonState(); // Call to set initial state of submit button
+                loadClockedInUsers(); // 出勤一覧をロード
             }
             clearCorrectedTimeInputs(); // ✅ RESET: ページロード時は修正時間をリセット
 
-
-            // 設定ボタンの初期表示状態をセット
-            // 設定ボタンは.bottom-buttons内に移動したので、このJSでの制御は不要になりました。
-            // CSSのdisplay: none; が効いているため、初期は非表示のままです。
-            // if (initialView === 'attendance' || initialView === 'settings') {
-            //     document.getElementById('toggleSettingButton').style.display = 'block';
-            // } else {
-            //     document.getElementById('toggleSettingButton').style.display = 'none';
-            // }
+            // 設定ボタンは常に表示されるようになったため、JSで初期表示を制御する必要がなくなりました
+            // document.getElementById('toggleSettingButton').style.display は不要
             currentView = initialView;
         });
 
@@ -688,9 +726,10 @@
             // 現在アクティブなセクションを取得
             const currentActiveSection = document.querySelector('.container > div.active');
             const targetSection = document.getElementById(viewName + '-section');
-            const toggleSettingButton = document.getElementById('toggleSettingButton'); // 設定ボタンは常に存在
-
+            const toggleSettingButton = document.getElementById('toggleSettingButton');
+            
             // 設定ボタンの表示/非表示を事前に設定 (今回は常に表示)
+            // このブロックは削除またはコメントアウトしても問題ありません
             // if (viewName === 'attendance' || viewName === 'settings') {
             //     toggleSettingButton.style.display = 'block';
             // } else {
@@ -708,8 +747,9 @@
                     updateStatusMessage();
                     updateSubmitButtonState(); // Update submit button state 
                     // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
-                } else if (viewName === 'settings') { // ★追加：設定画面に切り替わったときにリストを読み込む★
-                    loadClockedInUsers();
+                    loadClockedInUsers(); // 出勤一覧をロード
+                } else if (viewName === 'settings') { // ★設定画面に切り替わったときにだけテーマリストを読み込む
+                    // 設定画面には出勤一覧がないので、ここで loadClockedInUsers() は呼び出さない
                 }
                 return;
             }
@@ -734,13 +774,15 @@
                 updateStatusMessage();
                 updateSubmitButtonState(); // Update button state
                 // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
-            } else if (viewName === 'settings') { // ★追加：設定画面に切り替わったときにリストを読み込む★
-                loadClockedInUsers();
+                loadClockedInUsers(); // 出勤一覧をロード
+            } else if (viewName === 'settings') { // ★設定画面に切り替わったときにだけテーマリストを読み込む
+                // 設定画面には出勤一覧がないので、ここで loadClockedInUsers() は呼び出さない
             }
         }
 
         /**
          * 設定画面の表示/非表示を切り替える
+         * この関数は、勤怠画面と設定（テーマ変更）画面を切り替えます。
          */
         function toggleSettings() {
             if (currentView === 'attendance') {
@@ -750,6 +792,7 @@
                 transitionToView('attendance');
                 document.getElementById('toggleSettingButton').textContent = '設定';
             }
+            // 出勤一覧は常に勤怠画面に表示されるため、この関数内で loadClockedInUsers() を呼び出す必要はありません
         }
 
         /**
@@ -949,6 +992,7 @@
 
                 updateStatusMessage();
                 updateSubmitButtonState(); // Update button state
+                loadClockedInUsers(); // 出勤・退勤でリストも更新
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
                 if (!startTimeISO) {
@@ -991,6 +1035,7 @@
 
                 updateStatusMessage();
                 updateSubmitButtonState(); // Update button state
+                loadClockedInUsers(); // 出勤・退勤でリストも更新
             }
         }
 
@@ -1085,6 +1130,7 @@
                 updateStatusMessage();
                 updateSubmitButtonState();
                 clearCorrectedTimeInputs(); // ✅ RESET: 勤怠提出後に修正時間をリセット
+                loadClockedInUsers(); // 勤怠提出でリストも更新
 
             } catch (error) {
                 console.error(`勤怠提出エラー:`, error); // 詳細なエラーをコンソールに出力
@@ -1134,6 +1180,7 @@
             updateStatusMessage();
             clearCorrectedTimeInputs(); // ✅ RESET: 勤怠取り消し後に修正時間をリセット
             updateSubmitButtonState(); // Update submit button state
+            loadClockedInUsers(); // 勤怠取り消しでリストも更新
         }
 
         /**
@@ -1161,7 +1208,7 @@
                         });
                     } else {
                         const noUserMessage = document.createElement('p');
-                        noUserMessage.textContent = '現在、出勤中の人はいません。';
+                        noUserMessage.textContent = '現在、出勤中のユーザーはいません。';
                         noUserMessage.style.color = 'var(--text-color-main)';
                         noUserMessage.style.width = '100%'; // メッセージは1行全体を使う
                         noUserMessage.style.textAlign = 'center'; // メッセージは中央寄せ
