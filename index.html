@@ -92,17 +92,16 @@
             margin: 0;
             background-color: var(--bg-color-main); /* 変数を適用 */
             color: var(--text-color-main); /* 変数を適用 */
-            /* font-size: 0.9em;  ★全体的な文字の縮小はスマホ向けメディアクエリに移動 */
             /* transition: background-color 0.3s ease, color 0.3s ease; */ /* アニメーション削除 */
         }
         .container {
             background-color: var(--bg-color-container); /* 変数を適用 */
-            padding: 40px; /* PC向けパディングに戻す */
+            padding: 40px;
             border-radius: 10px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             text-align: center;
             width: 90%;
-            max-width: 400px; /* PC向け最大幅に戻す */
+            max-width: 400px;
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
             
@@ -113,32 +112,32 @@
         }
         h1 {
             color: var(--text-color-main);
-            margin-bottom: 30px; /* PC向けマージンに戻す */
-            font-size: 1.8em; /* PC向け文字サイズに戻す */
+            margin-bottom: 30px; 
+            font-size: 1.8em; 
         }
         h2 {
-            font-size: 1.5em; /* PC向け文字サイズに戻す */
-            margin-bottom: 30px; /* PC向けマージンに戻す */
+            font-size: 1.5em; 
+            margin-bottom: 30px; 
         }
         h3 {
-            font-size: 1.2em; /* PC向け文字サイズに戻す */
-            margin-top: 25px; /* PC向けマージンに戻す */
-            margin-bottom: 20px; /* PC向けマージンに戻す */
+            font-size: 1.2em; 
+            margin-top: 25px; 
+            margin-bottom: 20px; 
         }
         #current-time {
-            font-size: 1.5em; /* PC向け文字サイズに戻す */
+            font-size: 1.5em; 
             font-weight: bold;
-            margin-bottom: 20px; /* PC向けマージンに戻す */
+            margin-bottom: 20px; 
             color: var(--highlight-color); /* 変数を適用 */
         }
         select, input[type="password"], input[type="datetime-local"] {
-            padding: 12px; /* PC向けパディングに戻す */
-            margin-bottom: 25px; /* PC向けマージンに戻す */
+            padding: 12px; 
+            margin-bottom: 25px; 
             border: 1px solid var(--border-color); /* 変数を適用 */
-            border-radius: 6px; /* PC向け角丸に戻す */
-            width: calc(100% - 24px); /* PC向けパディングを考慮 */
+            border-radius: 6px; 
+            width: calc(100% - 24px); 
             box-sizing: border-box;
-            font-size: 1em; /* PC向け文字サイズに戻す */
+            font-size: 1em; 
             background-color: var(--bg-color-main); /* 変数を適用 */
             color: var(--text-color-main); /* 変数を適用 */
             -webkit-appearance: none;
@@ -148,21 +147,21 @@
         select {
             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2C114.7L159.2%2C242.5c-4.2%2C4.2-9.6%2C6.4-15.1%2C6.4s-10.9-2.2-15.1-6.4L5.4%2C114.7c-8.9-8.9-8.9-23.3%2C0-32.2s23.3-8.9%2C32.2%2C0l113.6%2C113.6L254.8%2C82.5c8.9-8.9%2C23.3-8.9%2C32.2%2C0S295.9%2C105.8%2C287%2C114.7z%22%2F%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
-            background-position: right 10px center; /* PC向けアイコン位置に戻す */
-            background-size: 12px; /* PC向けアイコンサイズに戻す */
+            background-position: right 10px center; 
+            background-size: 12px; 
         }
 
         button {
             background-color: var(--button-bg-primary); /* 変数を適用 */
             color: white;
-            padding: 15px 30px; /* PC向けパディングに戻す */
+            padding: 15px 30px; 
             border: none;
-            border-radius: 7px; /* PC向け角丸に戻す */
+            border-radius: 7px; 
             cursor: pointer;
-            font-size: 1.1em; /* PC向け文字サイズに戻す */
-            margin: 10px; /* PC向けマージンに戻す */
+            font-size: 1.1em; 
+            margin: 10px; 
             transition: background-color 0.3s ease;
-            min-width: 120px; /* PC向け最小幅に戻す */
+            min-width: 120px; 
         }
         button.out {
             background-color: var(--button-bg-secondary); /* 変数を適用 */
@@ -173,26 +172,27 @@
         button.cancel-button {
             background-color: var(--button-bg-cancel); /* 変数を適用 */
         }
-        button.setting-toggle-button {
-            background-color: var(--setting-button-bg); /* 変数を適用 */
+        /* 設定ボタンのデフォルトスタイルは削除。bottom-buttons 内で定義 */
+        /* button.setting-toggle-button {
+            background-color: var(--setting-button-bg);
             display: block;
             float: right;
-            margin-top: 15px; /* PC向けマージンに戻す */
+            margin-top: 15px;
             margin-left: auto;
             clear: both;
-            padding: 8px 15px; /* PC向けパディングに戻す */
-            font-size: 0.9em; /* PC向け文字サイズに戻す */
-            border-radius: 5px; /* PC向け角丸に戻す */
+            padding: 8px 15px;
+            font-size: 0.9em;
+            border-radius: 5px;
             width: auto;
             min-width: unset;
-        }
+        } */
         button:hover {
             opacity: 0.9;
         }
         #message {
-            margin-top: 30px; /* PC向けマージンに戻す */
+            margin-top: 30px; 
             font-weight: bold;
-            font-size: 1.1em; /* PC向け文字サイズに戻す */
+            font-size: 1.1em; 
             min-height: 20px;
         }
         .message-processing { color: var(--message-color-processing); }
@@ -212,11 +212,11 @@
             width: 100%;
             /* transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; */ /* アニメーション削除 */
             opacity: 0; 
-            transform: translateY(10px); /* 元: 20px */
+            transform: translateY(10px); 
             position: absolute; /* container 内での位置決めのため */
             top: 0; 
             left: 0;
-            padding: 0 40px; /* PC向けパディングに戻す */
+            padding: 0 40px; 
             box-sizing: border-box; /* paddingを含めた幅にする */
             display: none; /* 初期は完全に非表示 */
         }
@@ -235,30 +235,52 @@
 
         /* ログイン画面では設定ボタンは表示しない */
         #toggleSettingButton {
-            display: none; /* 初期は非表示。JSで表示を制御 */
+            /* display: none; はJSで制御 */
         }
 
+        /* ★ログアウトボタンと設定ボタンのコンテナ */
+        .bottom-buttons {
+            display: flex;
+            justify-content: center; /* 中央寄せ */
+            align-items: center; /* 垂直方向中央寄せ */
+            gap: 15px; /* ボタン間のスペース */
+            margin-top: 25px; /* 上からのマージン */
+            margin-bottom: 10px; /* 下へのマージン */
+        }
+        .bottom-buttons button {
+            margin: 0; /* 親コンテナで管理するので個別のマージンはリセット */
+            flex: 1; /* スペースを均等に配分 */
+            max-width: 150px; /* 最大幅を設定 */
+        }
+        /* 設定ボタンは他のボタンより少し小さめにする場合 */
+        .bottom-buttons #toggleSettingButton {
+            background-color: var(--setting-button-bg);
+            padding: 10px 20px; /* 少し小さめのパディング */
+            font-size: 0.9em; /* 少し小さめのフォントサイズ */
+            border-radius: 5px;
+            max-width: 100px; /* さらに小さく */
+        }
 
         .time-correction-group {
-            margin-top: 20px; /* PC向けマージンに戻す */
-            padding-top: 15px; /* PC向けパディングに戻す */
+            margin-top: 20px; 
+            padding-top: 15px; 
             border-top: 1px solid var(--border-color); /* 変数を適用 */
             text-align: left;
         }
         .time-correction-group label {
             display: block;
-            margin-bottom: 5px; /* PC向けマージンに戻す */
-            font-size: 0.9em; /* PC向け文字サイズに戻す */
+            margin-bottom: 5px; 
+            font-size: 0.9em; 
             color: var(--text-color-main);
         }
         .time-correction-group input {
-            margin-bottom: 10px; /* PC向けマージンに戻す */
+            margin-bottom: 10px; 
         }
         #settings-section label {
             display: block;
-            margin-bottom: 10px; /* PC向けマージンに戻す */
+            margin-bottom: 10px; 
             text-align: left;
-            font-size: 1em; /* PC向け文字サイズに戻す */
+            font-size: 1em; 
             color: var(--text-color-main);
         }
 
@@ -266,147 +288,149 @@
         .attendance-submission-buttons {
             display: flex;
             justify-content: center;
-            gap: 15px; /* PC向けボタン間のスペースに戻す */
-            margin-top: 20px; /* PC向けマージンに戻す */
-            margin-bottom: 10px; /* PC向けマージンに戻す */
-            width: 100%; /* 利用可能な幅いっぱいに広げる */
+            gap: 15px; 
+            margin-top: 20px; 
+            margin-bottom: 10px; 
+            width: 100%; 
         }
         .attendance-submission-buttons button {
-            flex: 1; /* ボタンが利用可能なスペースを均等に分け合う */
-            max-width: 180px; /* PC向け最大幅に戻す */
+            flex: 1; 
+            max-width: 180px; 
         }
 
         /* ★新規追加: ローディング画面のスタイル */
         #loading-overlay {
-            position: fixed; /* 画面全体を覆う */
+            position: fixed; 
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--bg-color-main); /* メイン背景色と同じ */
-            z-index: 1000; /* 最前面に表示 */
+            background-color: var(--bg-color-main); 
+            z-index: 1000; 
             display: flex;
             justify-content: center;
             align-items: center;
-            opacity: 0; /* 最初は透明にしてJavaScriptでフェードイン */
+            opacity: 0; 
             /* transition: opacity 0.15s ease-out; */ /* アニメーション削除 */
         }
 
         #loading-overlay img {
-            width: 100px; /* PC向けサイズに戻す */
+            width: 100px; 
             height: auto;
-            opacity: 0.8; /* わずかに透明に */
+            opacity: 0.8; 
             /* transition: width 0.15s ease-out, opacity 0.15s ease-out; */ /* アニメーション削除 */
         }
 
         /* ★出勤中ユーザーリストの表示スタイル (PC向け) */
         #clockedInUsersList {
-            display: flex; /* Flexboxを有効にする */
-            flex-wrap: wrap; /* 枠からはみ出たら改行する */
-            justify-content: flex-start; /* 左寄せ */
-            gap: 10px; /* アイテム間の隙間 */
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: flex-start; 
+            gap: 10px; 
             text-align: left;
-            max-height: 150px; /* PC向け高さに戻す */
+            max-height: 150px; 
             overflow-y: auto;
-            padding: 10px; /* PC向けパディングに戻す */
+            padding: 10px; 
             border: 1px solid var(--border-color);
-            border-radius: 5px; /* PC向け角丸に戻す */
+            border-radius: 5px; 
             background-color: var(--bg-color-main);
+            margin-top: 15px; /* 設定要素からのマージン */
         }
 
         #clockedInUsersList .user-name-item {
-            flex: 0 0 calc(25% - 7.5px); /* 4列表示 (gap 10px を考慮して 25% - (3/4)*gap) */
-            box-sizing: border-box; /* paddingとborderを幅に含める */
+            flex: 0 0 calc(25% - 7.5px); 
+            box-sizing: border-box; 
             text-align: center;
-            padding: 5px 0; /* PC向けパディングに戻す */
-            font-size: 1em; /* PC向け文字サイズに戻す */
+            padding: 5px 0; 
+            font-size: 1em; 
             color: var(--text-color-main);
-            white-space: nowrap; /* 名前が長すぎても改行しない */
-            overflow: hidden; /* はみ出た部分を非表示 */
-            text-overflow: ellipsis; /* はみ出た部分を...で表示 */
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
         }
 
         /* ========================================================================= */
         /* スマホ向け最適化用メディアクエリ (画面幅が600px以下の場合に適用) */
         /* ========================================================================= */
-        @media (max-width: 600px) { /* ★スマホ表示の縮小はここで行う★ */
+        @media (max-width: 600px) { 
             body {
-                font-size: 0.9em; /* ★スマホで全体的に文字を小さく */
+                font-size: 0.9em; /* スマホで全体的に文字を小さく */
             }
             .container {
                 padding: 20px; /* スマホ向けパディング */
-                width: 95%; /* 小さい画面ではより幅いっぱいに使う */
+                width: 95%; 
                 max-width: 360px; /* スマホ向け最大幅 */
             }
 
             h1 {
-                font-size: 1.5em; /* タイトルを少し小さく */
+                font-size: 1.5em; 
                 margin-bottom: 20px;
             }
             h2 {
-                font-size: 1.3em; /* h2の文字サイズを調整 */
+                font-size: 1.3em; 
                 margin-bottom: 20px;
             }
             h3 {
-                font-size: 1.1em; /* h3の文字サイズを調整 */
+                font-size: 1.1em; 
                 margin-top: 20px;
                 margin-bottom: 15px;
             }
 
             #current-time {
-                font-size: 1.3em; /* 時刻表示を少し小さく */
+                font-size: 1.3em; 
                 margin-bottom: 15px;
             }
 
             select, input[type="password"], input[type="datetime-local"] {
-                padding: 10px; /* 入力欄のパディングを少し減らす */
+                padding: 10px; 
                 margin-bottom: 20px;
-                font-size: 0.95em; /* フォントサイズを少し小さく */
-                border-radius: 5px; /* 角丸を調整 */
+                font-size: 0.95em; 
+                border-radius: 5px; 
             }
             select {
-                background-position: right 8px center; /* アイコン位置を調整 */
-                background-size: 11px; /* アイコンサイズを調整 */
+                background-position: right 8px center; 
+                background-size: 11px; 
             }
 
             button {
-                padding: 12px 25px; /* ボタンのパディングを少し減らす */
-                font-size: 1em; /* ボタンのフォントサイズを標準に */
-                margin: 8px; /* ボタン間の余白を調整 */
-                min-width: 100px; /* ボタンの最小幅を調整 */
-                border-radius: 6px; /* 角丸を調整 */
+                padding: 12px 25px; 
+                font-size: 1em; 
+                margin: 8px; 
+                min-width: 100px; 
+                border-radius: 6px; 
             }
-            button.setting-toggle-button {
-                margin-top: 10px; /* マージンを調整 */
-                padding: 6px 12px; /* パディングを調整 */
-                font-size: 0.8em; /* 文字サイズを調整 */
-                border-radius: 4px; /* 角丸を調整 */
+            /* 設定ボタンは他のボタンより少し小さめにする場合 */
+            .bottom-buttons #toggleSettingButton {
+                padding: 8px 15px;
+                font-size: 0.9em;
+                border-radius: 4px;
+                max-width: 90px; /* スマホ向け設定ボタンの最大幅 */
             }
 
             #message {
-                font-size: 1em; /* メッセージのフォントサイズを調整 */
+                font-size: 1em; 
                 margin-top: 20px;
             }
 
             #loading-overlay img {
-                width: 120px; /* ローディング画像の初期サイズをスマホ向けに調整 */
+                width: 120px; 
                 opacity: 0.9;
             }
             
             .time-correction-group {
-                margin-top: 18px; /* マージンを縮小 */
-                padding-top: 12px; /* パディングを縮小 */
+                margin-top: 18px; 
+                padding-top: 12px; 
             }
             .time-correction-group label {
-                font-size: 0.85em; /* 修正時刻のラベルを小さく */
-                margin-bottom: 4px; /* マージンを縮小 */
+                font-size: 0.85em; 
+                margin-bottom: 4px; 
             }
             .time-correction-group input {
-                margin-bottom: 8px; /* マージンを縮小 */
+                margin-bottom: 8px; 
             }
             #settings-section label {
-                font-size: 0.95em; /* 文字サイズを調整 */
-                margin-bottom: 8px; /* マージンを縮小 */
+                font-size: 0.95em; 
+                margin-bottom: 8px; 
             }
 
             /* 出勤/退勤ボタンのスタイル (横並び維持) */
@@ -422,12 +446,7 @@
                 flex: 1; 
                 margin: 0; 
             }
-            /* 修正時刻グループ内のボタン（ログアウト） */
-            #attendance-section > button { 
-                max-width: 250px; 
-                margin: 10px auto; 
-            }
-
+            
             /* 勤怠取り消し・提出ボタンのスタイル (横並び維持) */
             .attendance-submission-buttons {
                 flex-direction: row; 
@@ -441,17 +460,24 @@
                 margin: 0;
             }
 
+            /* ★ログアウトボタンと設定ボタンのコンテナ (スマホ向け) */
+            .bottom-buttons {
+                margin-top: 15px; /* スマホ向けマージン */
+                gap: 10px; /* スマホ向けボタン間隔 */
+            }
+
             /* スマホでの出勤中ユーザーリスト表示 (2列表示) */
             #clockedInUsersList {
-                max-height: 120px; /* 高さを調整 */
-                padding: 8px; /* パディングを縮小 */
-                gap: 8px; /* アイテム間の隙間を縮小 */
-                border-radius: 4px; /* 角丸を調整 */
+                max-height: 120px; 
+                padding: 8px; 
+                gap: 8px; 
+                border-radius: 4px; 
+                margin-top: 10px; /* 設定要素からのマージン */
             }
             #clockedInUsersList .user-name-item {
-                flex: 0 0 calc(50% - 4px); /* 2列表示 (gap 8px を考慮して 50% - (1/2)*gap) */
-                font-size: 0.85em; /* 文字サイズを調整 */
-                padding: 4px 0; /* パディングを縮小 */
+                flex: 0 0 calc(50% - 4px); 
+                font-size: 0.85em; 
+                padding: 4px 0; 
             }
         }
     </style>
@@ -473,7 +499,7 @@
             <input type="password" id="passwordInput" placeholder="パスワード">
             <button class="login-button" onclick="handleLogin()">ログイン</button>
             <p id="loginMessage"></p>
-            <button onclick="refreshNames()" style="background-color: #7f8c8d; margin-top: 10px;">名前リスト更新</button>
+            <button onclick="refreshNames()" style="background-color: #7f8c8d; margin-top: 10px;">名前リスト更新</button> 
         </div>
 
         <div id="attendance-section">
@@ -495,7 +521,11 @@
             <div class="attendance-submission-buttons"> <button class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button>
                 <button id="submitAttendanceButton" class="login-button" onclick="submitAttendance()" disabled>勤怠提出</button>
             </div>
-            <button onclick="handleLogout()" style="background-color: #7f8c8d; margin-top: 20px;">ログアウト</button>
+            
+            <div class="bottom-buttons">
+                <button onclick="handleLogout()">ログアウト</button>
+                <button class="setting-toggle-button" id="toggleSettingButton" onclick="toggleSettings()">設定</button>
+            </div>
         </div>
 
         <div id="settings-section">
@@ -510,15 +540,13 @@
             
             <hr style="margin: 20px 0; border-color: var(--border-color);">
 
-            <h3>現在出勤中のユーザー</h3>
+            <h3>現在出勤中の人</h3>
             <div id="clockedInUsersList">
                 <p style="color: var(--text-color-main-faded);">読み込み中...</p>
             </div>
             <button onclick="loadClockedInUsers()" style="background-color: var(--setting-button-bg); margin-top: 10px;">リスト更新</button>
         </div>
-
-        <button class="setting-toggle-button" id="toggleSettingButton" onclick="toggleSettings()">設定</button>
-    </div>
+        </div>
     <script defer>
         // =========================================================================
         // JavaScriptコード
@@ -642,11 +670,13 @@
 
 
             // 設定ボタンの初期表示状態をセット
-            if (initialView === 'attendance' || initialView === 'settings') {
-                document.getElementById('toggleSettingButton').style.display = 'block';
-            } else {
-                document.getElementById('toggleSettingButton').style.display = 'none';
-            }
+            // 設定ボタンは.bottom-buttons内に移動したので、このJSでの制御は不要になりました。
+            // CSSのdisplay: none; が効いているため、初期は非表示のままです。
+            // if (initialView === 'attendance' || initialView === 'settings') {
+            //     document.getElementById('toggleSettingButton').style.display = 'block';
+            // } else {
+            //     document.getElementById('toggleSettingButton').style.display = 'none';
+            // }
             currentView = initialView;
         });
 
@@ -658,14 +688,14 @@
             // 現在アクティブなセクションを取得
             const currentActiveSection = document.querySelector('.container > div.active');
             const targetSection = document.getElementById(viewName + '-section');
-            const toggleSettingButton = document.getElementById('toggleSettingButton');
-            
-            // 設定ボタンの表示/非表示を事前に設定
-            if (viewName === 'attendance' || viewName === 'settings') {
-                toggleSettingButton.style.display = 'block';
-            } else {
-                toggleSettingButton.style.display = 'none';
-            }
+            const toggleSettingButton = document.getElementById('toggleSettingButton'); // 設定ボタンは常に存在
+
+            // 設定ボタンの表示/非表示を事前に設定 (今回は常に表示)
+            // if (viewName === 'attendance' || viewName === 'settings') {
+            //     toggleSettingButton.style.display = 'block';
+            // } else {
+            //     toggleSettingButton.style.display = 'none';
+            // }
 
             // currentActiveSection がない場合（初回ロード時やエラーからの復帰時）はアニメーションしない
             if (!currentActiveSection) {
@@ -693,8 +723,8 @@
             currentActiveSection.classList.remove('active');
 
             // 次のセクションを即座に表示する
-            targetSection.style.opacity = '1'; /* opacityを直接1に設定 */
-            targetSection.style.transform = 'translateY(0)'; /* transformを直接0に設定 */
+            targetSection.style.opacity = '1'; 
+            targetSection.style.transform = 'translateY(0)'; 
             targetSection.style.display = 'block';
             targetSection.style.visibility = 'visible';
             targetSection.classList.add('active');
@@ -1131,7 +1161,7 @@
                         });
                     } else {
                         const noUserMessage = document.createElement('p');
-                        noUserMessage.textContent = '現在、出勤中のユーザーはいません。';
+                        noUserMessage.textContent = '現在、出勤中の人はいません。';
                         noUserMessage.style.color = 'var(--text-color-main)';
                         noUserMessage.style.width = '100%'; // メッセージは1行全体を使う
                         noUserMessage.style.textAlign = 'center'; // メッセージは中央寄せ
