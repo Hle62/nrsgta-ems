@@ -274,8 +274,8 @@
         .time-correction-field-item {
             flex: 1; /* 利用可能なスペースを均等に配分 */
             min-width: 120px; /* 小さい画面で破綻しないように最小幅 */
-            /* PCではデフォルトでラベルが上に来るように設定 (flex-directionはデフォルトでrowなので) */
-            display: flex;
+            /* PCではデフォルトでラベルが上に来るように設定 */
+            display: flex; /* ラベルとinputを縦並びにする */
             flex-direction: column; /* ラベルとinputを縦並びにする */
         }
         .time-correction-field-item label {
@@ -389,14 +389,24 @@
             border-color: var(--border-color);
         }
 
-
         /* ========================================================================= */
         /* スマホ向け最適化用メディアクエリ (画面幅が600px以下の場合に適用) */
         /* ========================================================================= */
         @media (max-width: 600px) { 
             body {
                 font-size: 0.9em; /* スマホで全体的に文字を小さく */
+                zoom: 0.8; /* ★全体を80%に縮小 (非標準プロパティ) */
+                -moz-transform: scale(0.8); /* Firefox対応 */
+                -moz-transform-origin: top center; /* Firefox対応 */
+                -webkit-transform: scale(0.8); /* Chrome/Safari対応 */
+                -webkit-transform-origin: top center; /* Chrome/Safari対応 */
+                transform: scale(0.8); /* その他ブラウザ対応 */
+                transform-origin: top center; /* 縮小の起点を上中央に設定 */
+                width: 125%; /* zoom/scaleの逆数を設定して、スクロールバーが出ないように調整 */
+                height: 125vh; /* 高さも調整 */
             }
+            /* bodyにzoom/scaleを適用したため、他の要素の相対的なサイズはこれで調整されるが、
+               レイアウトのずれを防ぐため、個別の要素の調整も維持する */
             .container {
                 padding: 20px; /* スマホ向けパディング */
                 width: 95%; 
@@ -422,11 +432,19 @@
                 margin-bottom: 15px;
             }
 
-            select, input[type="password"], input[type="datetime-local"] {
+            select, input[type="password"] { /* datetime-local は別に定義 */
                 padding: 10px; 
                 margin-bottom: 20px;
                 font-size: 0.95em; 
                 border-radius: 5px; 
+            }
+            /* datetime-localの入力欄のスタイル */
+            input[type="datetime-local"] {
+                padding: 10px;
+                margin-bottom: 20px;
+                font-size: 0.95em;
+                border-radius: 5px;
+                width: 100%; /* ★スマホで幅が狭くならないように */
             }
             select {
                 background-position: right 8px center; 
@@ -469,8 +487,8 @@
                 margin-bottom: 10px;
             }
             .time-correction-field-item {
-                display: flex; /* ★追加: ラベルとinputを縦並びにするため */
-                flex-direction: column; /* ★追加: ラベルとinputを縦並びにするため */
+                display: flex; 
+                flex-direction: column; 
                 min-width: unset; 
             }
             .time-correction-field-item label {
@@ -833,7 +851,7 @@
         }
 
         /**
-         * 修正時刻入力欄に現在の出勤時刻を設定する (この関数はもう使われません。削除しても構いません)
+         * 修正時刻入力欄に現在の出勤時刻を設定する (この関数はもう使われませ.削除しても構いません)
          */
         function populateCorrectedTimeInputs() {
             // この関数は完全に無効化し、呼び出されないようにしています。
