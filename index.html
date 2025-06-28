@@ -451,7 +451,7 @@
             
             <hr style="margin: 20px 0; border-color: var(--border-color);">
 
-            <h3>現在出勤中のユーザー</h3>
+            <h3>現在出勤中の人</h3>
             <div id="clockedInUsersList">
                 <p style="color: var(--text-color-main-faded);">読み込み中...</p>
             </div>
@@ -1072,7 +1072,7 @@
                         });
                     } else {
                         const noUserMessage = document.createElement('p');
-                        noUserMessage.textContent = '現在、出勤中のユーザーはいません。';
+                        noUserMessage.textContent = '現在、出勤中の人はいません。';
                         noUserMessage.style.color = 'var(--text-color-main)';
                         noUserMessage.style.width = '100%'; // メッセージは1行全体を使う
                         noUserMessage.style.textAlign = 'center'; // メッセージは中央寄せ
