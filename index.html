@@ -253,7 +253,8 @@
             max-width: 150px; /* 最大幅を設定 */
         }
         /* 設定ボタンは他のボタンより少し小さめにする場合 */
-        .bottom-buttons #toggleSettingButton {
+        .bottom-buttons .setting-toggle-button,
+        .bottom-buttons .return-to-attendance-button { /* 両方のボタンに適用 */
             background-color: var(--setting-button-bg);
             padding: 10px 20px; /* 少し小さめのパディング */
             font-size: 0.9em; /* 少し小さめのフォントサイズ */
@@ -428,7 +429,8 @@
                 border-radius: 6px; 
             }
             /* 設定ボタンは他のボタンより少し小さめにする場合 */
-            .bottom-buttons #toggleSettingButton {
+            .bottom-buttons .setting-toggle-button,
+            .bottom-buttons .return-to-attendance-button { /* 両方のボタンに適用 */
                 padding: 8px 15px;
                 font-size: 0.9em;
                 border-radius: 4px;
@@ -588,7 +590,10 @@
                 <option value="rose-pink">ローズピンク</option>
                 <option value="red-black">レッドブラック</option>
             </select>
+            <div class="bottom-buttons">
+                <button class="return-to-attendance-button" onclick="toggleSettings()">勤怠に戻る</button>
             </div>
+        </div>
 
     </div>
     <script defer>
@@ -599,10 +604,10 @@
         // ★★★ あなたの環境に合わせて、以下の2つの変数を必ず変更してください ★★★
 
         // 1. GASでデプロイしたウェブアプリのURL
-        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw22uU2hir9XmjP8W4HhcihPYZYncWbuL1_kLYX4frkP08Wur2vS8xzxxP76_-9r8aG/exec'; 
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw22uU2hir9XmjP8W4HhcihPYZYncWbuL1_kLYX4frkP08Wur2vS8xzxxP76_-9r8aG/exec';  
 
         // 2. 共通のパスワード
-        const CORRECT_PASSWORD = 'nrsgta'; 
+        const CORRECT_PASSWORD = 'nrsgta';  
 
         // ★★★ 変更はここまでです ★★★
 
@@ -727,15 +732,26 @@
             const currentActiveSection = document.querySelector('.container > div.active');
             const targetSection = document.getElementById(viewName + '-section');
             const toggleSettingButton = document.getElementById('toggleSettingButton');
-            
-            // 設定ボタンの表示/非表示を事前に設定 (今回は常に表示)
-            // このブロックは削除またはコメントアウトしても問題ありません
-            // if (viewName === 'attendance' || viewName === 'settings') {
-            //     toggleSettingButton.style.display = 'block';
-            // } else {
-            //     toggleSettingButton.style.display = 'none';
-            // }
+            const returnToAttendanceButton = document.querySelector('#settings-section .return-to-attendance-button'); // 新しいボタン
 
+            // 設定ボタンと「勤怠に戻る」ボタンの表示/非表示を切り替える
+            if (viewName === 'attendance') {
+                toggleSettingButton.style.display = 'block';
+                if (returnToAttendanceButton) { // settings-section にボタンがある場合
+                    returnToAttendanceButton.style.display = 'none';
+                }
+            } else if (viewName === 'settings') {
+                toggleSettingButton.style.display = 'none';
+                if (returnToAttendanceButton) { // settings-section にボタンがある場合
+                    returnToAttendanceButton.style.display = 'block';
+                }
+            } else { // loginの場合
+                toggleSettingButton.style.display = 'none';
+                if (returnToAttendanceButton) { // settings-section にボタンがある場合
+                    returnToAttendanceButton.style.display = 'none';
+                }
+            }
+            
             // currentActiveSection がない場合（初回ロード時やエラーからの復帰時）はアニメーションしない
             if (!currentActiveSection) {
                 targetSection.style.display = 'block';
@@ -763,8 +779,8 @@
             currentActiveSection.classList.remove('active');
 
             // 次のセクションを即座に表示する
-            targetSection.style.opacity = '1'; 
-            targetSection.style.transform = 'translateY(0)'; 
+            targetSection.style.opacity = '1';  
+            targetSection.style.transform = 'translateY(0)';  
             targetSection.style.display = 'block';
             targetSection.style.visibility = 'visible';
             targetSection.classList.add('active');
@@ -787,10 +803,11 @@
         function toggleSettings() {
             if (currentView === 'attendance') {
                 transitionToView('settings');
-                document.getElementById('toggleSettingButton').textContent = '勤怠に戻る';
+                // #toggleSettingButton のテキストはもう変更しません。
+                // #settings-section に別のボタンが配置されるため。
             } else if (currentView === 'settings') {
                 transitionToView('attendance');
-                document.getElementById('toggleSettingButton').textContent = '設定';
+                // #toggleSettingButton のテキストはもう変更しません。
             }
             // 出勤一覧は常に勤怠画面に表示されるため、この関数内で loadClockedInUsers() を呼び出す必要はありません
         }
@@ -808,7 +825,7 @@
          * 修正時刻入力欄をクリアする新しい関数
          * これを呼び出すことで、入力欄が常に空になります。
          */
-        function clearCorrectedTimeInputs() { 
+        function clearCorrectedTimeInputs() {  
             document.getElementById('correctedStartTime').value = '';
             document.getElementById('correctedEndTime').value = '';
         }
@@ -823,9 +840,9 @@
             // const correctedEndTimeInput = document.getElementById('correctedEndTime');
             // const storedStartTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
             // if (storedStartTime) {
-            //     correctedStartTimeInput.value = storedStartTime.substring(0, 16);
+            //    correctedStartTimeInput.value = storedStartTime.substring(0, 16);
             // } else {
-            //     correctedEndTimeInput.value = '';
+            //    correctedEndTimeInput.value = '';
             // }
             // correctedEndTimeInput.value = '';
         }
@@ -908,7 +925,7 @@
         function handleLogout() {
             loggedInUser = '';
             localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
-            localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser); 
+            localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);  
             localStorage.removeItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser); // Clear temp end time on logout
             localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser); // Clear submit ready flag
 
