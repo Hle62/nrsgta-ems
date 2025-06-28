@@ -249,9 +249,10 @@
             text-align: left;
         }
 
-        /* ★時刻修正入力の新しいコンテナとFlexboxスタイル */
+        /* ★時刻修正入力の新しいコンテナとFlexboxスタイル (PC用) */
         .time-correction-fields {
-            display: flex;
+            display: flex; /* Flexbox有効 */
+            flex-direction: row; /* 横並び */
             flex-wrap: wrap; /* 必要に応じて折り返し */
             gap: 15px; /* 入力フィールド間の間隔 */
             margin-bottom: 15px; /* 下のマージン */
@@ -459,13 +460,13 @@
             }
             /* ★時刻修正入力の新しいコンテナとFlexboxスタイル (スマホ向け) */
             .time-correction-fields {
-                flex-direction: column; /* ★この設定で出勤修正と退勤修正の項目全体が縦並びになる */
+                flex-direction: column; /* ★出勤修正と退勤修正の項目ブロック全体を縦並びにする */
                 gap: 15px; /* 項目間の間隔を調整 */
                 margin-bottom: 10px;
             }
             .time-correction-field-item {
                 display: flex; 
-                flex-direction: column; 
+                flex-direction: column; /* ラベルと入力フィールドを縦並びにする */
                 min-width: unset; 
             }
             .time-correction-field-item label {
@@ -708,7 +709,7 @@
                 initialView = 'login'; // ログイン画面へ
             }
 
-            // ローディング画面をフェードアウトして、メインコンテンツを表示 (アニメーションを削除するため、不透明度とdisplayを直接設定)
+            // ローディング画面をフェードアウトして、メインコンテナを表示 (アニメーションを削除するため、不透明度とdisplayを直接設定)
             loadingOverlay.style.opacity = '0';
             loadingImage.style.width = '10px';
             
