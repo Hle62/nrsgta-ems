@@ -101,7 +101,7 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             text-align: center;
             width: 90%;
-            max-width: 500px; /* ★PC向け最大幅を広げる */
+            max-width: 500px; /* PC向け最大幅 */
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
             
@@ -380,57 +380,49 @@
         /* ========================================================================= */
         @media (max-width: 600px) { 
             body {
-                font-size: 0.9em; /* スマホで全体的に文字を小さく */
-                zoom: 0.9; /* ★全体を90%に縮小 (非標準プロパティ) */
-                -moz-transform: scale(0.9); /* Firefox対応 */
-                -moz-transform-origin: top center; /* Firefox対応 */
-                -webkit-transform: scale(0.9); /* Chrome/Safari対応 */
-                -webkit-transform-origin: top center; /* Chrome/Safari対応 */
-                transform: scale(0.9); /* その他ブラウザ対応 */
-                transform-origin: top center; /* 縮小の起点を上中央に設定 */
-                width: 111.11%; /* zoom/scaleの逆数を設定して、スクロールバーが出ないように調整 (1/0.9 ≈ 1.1111) */
-                height: 111.11vh; /* 高さも調整 */
+                font-size: 1em; /* ★スマホでの基準フォントサイズ */
+                /* zoom/scaleは削除 */
+                width: 100%; /* zoom/scaleの調整を削除したのでデフォルトに */
+                height: 100vh; /* zoom/scaleの調整を削除したのでデフォルトに */
             }
-            /* bodyにzoom/scaleを適用したため、他の要素の相対的なサイズはこれで調整されるが、
-               レイアウトのずれを防ぐため、個別の要素の調整も維持する */
             .container {
-                padding: 20px; /* スマホ向けパディング */
-                width: 98%; /* ★スマホ向けコンテナの幅を広げる */
-                max-width: 400px; /* ★スマホ向けコンテナの最大幅を広げる */
+                padding: 25px; /* ★スマホ向けパディングを調整 */
+                width: 98%; /* スマホ向けコンテナの幅 */
+                max-width: 450px; /* ★スマホ向けコンテナの最大幅を調整 */
             }
 
             h1 {
-                font-size: 1.5em; 
-                margin-bottom: 20px;
+                font-size: 1.6em; /* ★スマホ向けタイトルサイズ */
+                margin-bottom: 25px;
             }
             h2 {
-                font-size: 1.3em; 
-                margin-bottom: 20px;
+                font-size: 1.4em; /* ★スマホ向けh2サイズ */
+                margin-bottom: 25px;
             }
             h3 {
-                font-size: 1.1em; 
+                font-size: 1.1em; /* ★スマホ向けh3サイズ */
                 margin-top: 20px;
                 margin-bottom: 15px;
             }
 
             #current-time {
-                font-size: 1.3em; 
-                margin-bottom: 15px;
+                font-size: 1.4em; /* ★スマホ向け時刻サイズ */
+                margin-bottom: 18px;
             }
 
-            select, input[type="password"] { /* datetime-local は別に定義 */
+            select, input[type="password"] {
                 padding: 10px; 
                 margin-bottom: 20px;
-                font-size: 0.95em; 
+                font-size: 1em; /* ★スマホ向けフォントサイズ */
                 border-radius: 5px; 
             }
             /* datetime-localの入力欄のスタイル */
             input[type="datetime-local"] {
                 padding: 10px;
                 margin-bottom: 20px;
-                font-size: 0.95em;
+                font-size: 1em; /* ★スマホ向けフォントサイズ */
                 border-radius: 5px;
-                width: 100%; /* ★スマホで幅が狭くならないように */
+                width: 100%; 
             }
             select {
                 background-position: right 8px center; 
@@ -447,9 +439,9 @@
             /* 設定ボタンは他のボタンより少し小さめにする場合 */
             .bottom-buttons .setting-toggle-button {
                 padding: 8px 15px;
-                font-size: 0.9em;
+                font-size: 0.9em; /* ★スマホ向け設定ボタンフォントサイズ */
                 border-radius: 4px;
-                max-width: 90px; /* スマホ向け設定ボタンの最大幅 */
+                max-width: 90px; 
             }
 
             #message {
@@ -466,10 +458,10 @@
                 margin-top: 18px; 
                 padding-top: 12px; 
             }
-            /* ★時刻修正入力の新しいコンテナとFlexboxスタイル (スマホ向け) */
+            /* 時刻修正入力の新しいコンテナとFlexboxスタイル (スマホ向け) */
             .time-correction-fields {
-                flex-direction: column; /* スマホでは縦並びに（狭いので） */
-                gap: 10px; /* 間隔を調整 */
+                flex-direction: column; 
+                gap: 10px; 
                 margin-bottom: 10px;
             }
             .time-correction-field-item {
@@ -478,20 +470,13 @@
                 min-width: unset; 
             }
             .time-correction-field-item label {
-                font-size: 0.85em; 
+                font-size: 0.9em; /* ★スマホ向けラベルフォントサイズ */
                 margin-bottom: 4px; 
             }
             .time-correction-field-item input {
                 margin-bottom: 0; 
             }
-            /* ★ここまで追加修正★ */
 
-
-            /* settings-section のラベルは settings-section内に残す */
-            /* #settings-section label {
-                font-size: 0.95em; 
-                margin-bottom: 8px; 
-            } */
 
             /* 出勤/退勤ボタンのスタイル (横並び維持) */
             #attendance-section div:first-of-type {
@@ -520,24 +505,23 @@
                 margin: 0;
             }
 
-            /* ★ログアウトボタンと設定ボタンのコンテナ (スマホ向け) */
+            /* ログアウトボタンと設定ボタンのコンテナ (スマホ向け) */
             .bottom-buttons {
-                margin-top: 15px; /* スマホ向けマージン */
-                gap: 10px; /* スマホ向けボタン間隔 */
+                margin-top: 15px; 
+                gap: 10px; 
             }
 
             /* スマホでの出勤中ユーザーリスト表示 (2列表示) */
-            /* #attendance-section 内に移動したので、上部からのマージンを調整 */
             #attendance-section #clockedInUsersList {
                 max-height: 120px; 
                 padding: 8px; 
                 gap: 8px; 
                 border-radius: 4px; 
-                margin-top: 15px; /* 上からのマージンを調整 */
+                margin-top: 15px; 
             }
             #clockedInUsersList .user-name-item {
                 flex: 0 0 calc(50% - 4px); 
-                font-size: 0.85em; 
+                font-size: 0.9em; /* ★スマホ向けユーザー名フォントサイズ */
                 padding: 4px 0; 
             }
 
@@ -545,11 +529,11 @@
             #settings-section select {
                 padding: 10px;
                 margin-bottom: 20px;
-                font-size: 0.95em;
+                font-size: 1em; /* ★スマホ向け設定selectフォントサイズ */
             }
             #settings-section label {
                 margin-bottom: 8px;
-                font-size: 0.95em;
+                font-size: 1em; /* ★スマホ向け設定ラベルフォントサイズ */
             }
             #settings-section hr {
                 margin: 15px 0;
