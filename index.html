@@ -814,10 +814,20 @@
                 localStorage.setItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser, currentTime.toISOString());
                 localStorage.removeItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser); // Ensure temp end time is cleared on clock-in
                 localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser); // Reset submit ready flag
-                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
-                attendanceMessageElement.style.color = 'var(--message-color-success)';
+                
+                // ★追加：出勤時にGASを呼び出して「出勤中」シートに名前を追加
+                try {
+                    await window.sendRequestToGAS('addClockedInUser', { name: loggedInUser });
+                    attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！`;
+                    attendanceMessageElement.style.color = 'var(--message-color-success)';
+                } catch (error) {
+                    attendanceMessageElement.textContent = `出勤処理エラー: ${error.message}`;
+                    attendanceMessageElement.style.color = 'var(--message-color-error)';
+                    console.error('Add Clocked In User Error:', error);
+                    // エラーが発生してもローカルストレージは更新しておく（ユーザー体験のため）
+                }
+
                 updateStatusMessage();
-                // clearCorrectedTimeInputs(); // ❌ NO RESET: 出勤時に修正時間をリセットしない
                 updateSubmitButtonState(); // Update button state
             } else if (type === '退勤') {
                 const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
@@ -847,10 +857,19 @@
                 localStorage.setItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser, endTime.toISOString());
                 localStorage.setItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser, 'true'); // Set submit ready flag
 
-                attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤怠提出ボタンを押してください。`;
-                attendanceMessageElement.style.color = 'var(--message-color-processing)'; // Indicate pending submission
+                // ★追加：退勤時にGASを呼び出して「出勤中」シートから名前を削除
+                try {
+                    await window.sendRequestToGAS('removeClockedInUser', { name: loggedInUser });
+                    attendanceMessageElement.textContent = `${loggedInUser}さんが${type}しました！勤怠提出ボタンを押してください。`;
+                    attendanceMessageElement.style.color = 'var(--message-color-processing)';
+                } catch (error) {
+                    attendanceMessageElement.textContent = `退勤処理エラー: ${error.message}`;
+                    attendanceMessageElement.style.color = 'var(--message-color-error)';
+                    console.error('Remove Clocked In User Error:', error);
+                    // エラーが発生してもローカルストレージは更新しておく（ユーザー体験のため）
+                }
+
                 updateStatusMessage();
-                // clearCorrectedTimeInputs(); // ❌ NO RESET: 退勤時に修正時間をリセットしない
                 updateSubmitButtonState(); // Update button state
             }
         }
@@ -980,9 +999,18 @@
             localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
             localStorage.removeItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
             localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser);
+            
+            // ★追加：勤怠取り消し時にGASを呼び出して「出勤中」シートから名前を削除
+            try {
+                await window.sendRequestToGAS('removeClockedInUser', { name: loggedInUser });
+                attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
+                attendanceMessageElement.style.color = 'var(--message-color-success)';
+            } catch (error) {
+                attendanceMessageElement.textContent = `勤怠取り消しエラー: ${error.message}`;
+                attendanceMessageElement.style.color = 'var(--message-color-error)';
+                console.error('Cancel Attendance Remove User Error:', error);
+            }
 
-            attendanceMessageElement.textContent = `${loggedInUser}さんの勤怠記録を取り消しました。`;
-            attendanceMessageElement.style.color = 'var(--message-color-success)';
             updateStatusMessage();
             clearCorrectedTimeInputs(); // ✅ RESET: 勤怠取り消し後に修正時間をリセット
             updateSubmitButtonState(); // Update submit button state
@@ -996,6 +1024,7 @@
             clockedInUsersListElement.innerHTML = '<p style="color: var(--message-color-processing);">読み込み中...</p>';
 
             try {
+                // GASの新しいアクションを呼び出す
                 const response = await window.sendRequestToGAS('getCurrentlyClockedInUsers', {});
                 
                 if (response.status === 'success' && response.users) {
