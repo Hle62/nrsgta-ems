@@ -233,11 +233,6 @@
                 JavaScriptでdisplayの変更を少し遅らせる必要があります。 */
         }
 
-        /* ログイン画面では設定ボタンは表示しない */
-        /* #toggleSettingButton は.bottom-buttons内に移動し、常に表示されるためこのルールは削除 */
-        /* #toggleSettingButton { display: none; } */
-
-
         /* ★ログアウトボタンと設定ボタンのコンテナ (共通スタイル) */
         .bottom-buttons {
             display: flex;
@@ -253,7 +248,7 @@
             max-width: 150px; /* 最大幅を設定 */
         }
         /* 設定ボタンは他のボタンより少し小さめにする場合 */
-        .bottom-buttons #toggleSettingButton {
+        .bottom-buttons .setting-toggle-button { /* クラスで指定して汎用性を高める */
             background-color: var(--setting-button-bg);
             padding: 10px 20px; /* 少し小さめのパディング */
             font-size: 0.9em; /* 少し小さめのフォントサイズ */
@@ -274,10 +269,14 @@
             flex-wrap: wrap; /* 必要に応じて折り返し */
             gap: 15px; /* 入力フィールド間の間隔 */
             margin-bottom: 15px; /* 下のマージン */
+            align-items: flex-start; /* 項目が縦にずれないように上揃え */
         }
         .time-correction-field-item {
             flex: 1; /* 利用可能なスペースを均等に配分 */
             min-width: 120px; /* 小さい画面で破綻しないように最小幅 */
+            /* PCではデフォルトでラベルが上に来るように設定 (flex-directionはデフォルトでrowなので) */
+            display: flex;
+            flex-direction: column; /* ラベルとinputを縦並びにする */
         }
         .time-correction-field-item label {
             display: block;
@@ -442,7 +441,7 @@
                 border-radius: 6px; 
             }
             /* 設定ボタンは他のボタンより少し小さめにする場合 */
-            .bottom-buttons #toggleSettingButton {
+            .bottom-buttons .setting-toggle-button {
                 padding: 8px 15px;
                 font-size: 0.9em;
                 border-radius: 4px;
@@ -470,7 +469,9 @@
                 margin-bottom: 10px;
             }
             .time-correction-field-item {
-                min-width: unset; /* 最小幅をリセット */
+                display: flex; /* ★追加: ラベルとinputを縦並びにするため */
+                flex-direction: column; /* ★追加: ラベルとinputを縦並びにするため */
+                min-width: unset; 
             }
             .time-correction-field-item label {
                 font-size: 0.85em; 
@@ -748,6 +749,8 @@
             }
             clearCorrectedTimeInputs(); // ✅ RESET: ページロード時は修正時間をリセット
 
+            // 設定画面側の「勤怠に戻る」ボタンを初期状態では非表示にする
+            document.getElementById('toggleSettingButtonSettings').style.display = 'none';
             currentView = initialView;
         });
 
@@ -937,10 +940,10 @@
             transitionToView('login'); // ログイン画面へ
             clearCorrectedTimeInputs(); // ✅ RESET: ログアウト時は修正時間をリセット
             updateSubmitButtonState(); // Update submit button state after logout
-            // ログアウト時に設定ボタンのテキストをリセット
+            // ログアウト時に設定ボタンの表示状態をリセット
+            document.getElementById('toggleSettingButton').style.display = 'block'; // 勤怠画面のボタン
             document.getElementById('toggleSettingButton').textContent = '設定';
-            document.getElementById('toggleSettingButtonSettings').textContent = '勤怠に戻る'; // 初期状態に戻す
-            document.getElementById('toggleSettingButtonSettings').style.display = 'none'; // 初期状態は非表示
+            document.getElementById('toggleSettingButtonSettings').style.display = 'none'; // 設定画面のボタン
         }
 
         /**
