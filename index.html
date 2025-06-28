@@ -90,18 +90,18 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: var(--bg-color-main); /* 変数を適用 */
-            color: var(--text-color-main); /* 変数を適用 */
+            background-color: var(--bg-color-main);
+            color: var(--text-color-main);
             /* transition: background-color 0.3s ease, color 0.3s ease; */ /* アニメーション削除 */
         }
         .container {
-            background-color: var(--bg-color-container); /* 変数を適用 */
+            background-color: var(--bg-color-container);
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             text-align: center;
             width: 90%;
-            max-width: 360px; /* ここを400pxから360pxに変更 */
+            max-width: 400px;
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
             
@@ -172,20 +172,6 @@
         button.cancel-button {
             background-color: var(--button-bg-cancel); /* 変数を適用 */
         }
-        /* 設定ボタンのデフォルトスタイルは削除。bottom-buttons 内で定義 */
-        /* button.setting-toggle-button {
-            background-color: var(--setting-button-bg);
-            display: block;
-            float: right;
-            margin-top: 15px;
-            margin-left: auto;
-            clear: both;
-            padding: 8px 15px;
-            font-size: 0.9em;
-            border-radius: 5px;
-            width: auto;
-            min-width: unset;
-        } */
         button:hover {
             opacity: 0.9;
         }
@@ -233,11 +219,6 @@
                 JavaScriptでdisplayの変更を少し遅らせる必要があります。 */
         }
 
-        /* ログイン画面では設定ボタンは表示しない */
-        /* #toggleSettingButton は.bottom-buttons内に移動し、常に表示されるためこのルールは削除 */
-        /* #toggleSettingButton { display: none; } */
-
-
         /* ★ログアウトボタンと設定ボタンのコンテナ */
         .bottom-buttons {
             display: flex;
@@ -277,14 +258,6 @@
         .time-correction-group input {
             margin-bottom: 10px; 
         }
-        /* settings-section のラベルは settings-section内に残す */
-        /* #settings-section label {
-            display: block;
-            margin-bottom: 10px; 
-            text-align: left;
-            font-size: 1em; 
-            color: var(--text-color-main);
-        } */
 
         /* 新しいボタンコンテナのスタイル */
         .attendance-submission-buttons {
@@ -458,11 +431,6 @@
             .time-correction-group input {
                 margin-bottom: 8px; 
             }
-            /* settings-section のラベルは settings-section内に残す */
-            /* #settings-section label {
-                font-size: 0.95em; 
-                margin-bottom: 8px; 
-            } */
 
             /* 出勤/退勤ボタンのスタイル (横並び維持) */
             #attendance-section div:first-of-type {
@@ -596,7 +564,7 @@
         </div>
 
     </div>
-    <script defer>
+    <script>
         // =========================================================================
         // JavaScriptコード
         // =========================================================================
@@ -655,8 +623,7 @@
 
             // ローディング画面を初期表示し、フェードインアニメーションを開始 (アニメーションを削除するため、不透明度を直接設定)
             loadingOverlay.style.opacity = '1';
-            // setTimeout(() => { loadingImage.style.width = '200px'; }, 0); // アニメーション削除
-
+            
             // 名前リストのロードを待つ
             await loadNamesIntoDropdown(); 
 
@@ -701,7 +668,8 @@
             // メインコンテナを表示 (アニメーションを削除するため、不透明度とtransformを直接設定)
             container.style.display = 'block';
             container.style.opacity = '1';
-            container.style.transform = 'scale(1)';
+            // ★ここを修正しました★ UI全体を90%に縮小
+            container.style.transform = 'scale(0.9)'; 
             
             // 初回ビュー表示を即座に設定
             const initialSection = document.getElementById(initialView + '-section');
@@ -718,8 +686,6 @@
             }
             clearCorrectedTimeInputs(); // ✅ RESET: ページロード時は修正時間をリセット
 
-            // 設定ボタンは常に表示されるようになったため、JSで初期表示を制御する必要がなくなりました
-            // document.getElementById('toggleSettingButton').style.display は不要
             currentView = initialView;
         });
 
@@ -762,10 +728,7 @@
                 if(viewName === 'attendance') {
                     updateStatusMessage();
                     updateSubmitButtonState(); // Update submit button state 
-                    // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
                     loadClockedInUsers(); // 出勤一覧をロード
-                } else if (viewName === 'settings') { // ★設定画面に切り替わったときにだけテーマリストを読み込む
-                    // 設定画面には出勤一覧がないので、ここで loadClockedInUsers() は呼び出さない
                 }
                 return;
             }
@@ -789,10 +752,7 @@
             if(viewName === 'attendance') {
                 updateStatusMessage();
                 updateSubmitButtonState(); // Update button state
-                // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
                 loadClockedInUsers(); // 出勤一覧をロード
-            } else if (viewName === 'settings') { // ★設定画面に切り替わったときにだけテーマリストを読み込む
-                // 設定画面には出勤一覧がないので、ここで loadClockedInUsers() は呼び出さない
             }
         }
 
@@ -803,13 +763,9 @@
         function toggleSettings() {
             if (currentView === 'attendance') {
                 transitionToView('settings');
-                // #toggleSettingButton のテキストはもう変更しません。
-                // #settings-section に別のボタンが配置されるため。
             } else if (currentView === 'settings') {
                 transitionToView('attendance');
-                // #toggleSettingButton のテキストはもう変更しません。
             }
-            // 出勤一覧は常に勤怠画面に表示されるため、この関数内で loadClockedInUsers() を呼び出す必要はありません
         }
 
         /**
@@ -828,23 +784,6 @@
         function clearCorrectedTimeInputs() {  
             document.getElementById('correctedStartTime').value = '';
             document.getElementById('correctedEndTime').value = '';
-        }
-
-        /**
-         * 修正時刻入力欄に現在の出勤時刻を設定する (この関数はもう使われません。削除しても構いません)
-         */
-        function populateCorrectedTimeInputs() {
-            // この関数は完全に無効化し、呼び出されないようにしています。
-            // 修正時刻入力欄はclearCorrectedTimeInputs()で明示的にクリアされます。
-            // const correctedStartTimeInput = document.getElementById('correctedStartTime');
-            // const correctedEndTimeInput = document.getElementById('correctedEndTime');
-            // const storedStartTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-            // if (storedStartTime) {
-            //    correctedStartTimeInput.value = storedStartTime.substring(0, 16);
-            // } else {
-            //    correctedEndTimeInput.value = '';
-            // }
-            // correctedEndTimeInput.value = '';
         }
 
         /**
