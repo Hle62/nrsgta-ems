@@ -101,7 +101,7 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             text-align: center;
             width: 90%;
-            max-width: 500px; /* PC向け最大幅 */
+            max-width: 400px;
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
             
@@ -172,6 +172,20 @@
         button.cancel-button {
             background-color: var(--button-bg-cancel); /* 変数を適用 */
         }
+        /* 設定ボタンのデフォルトスタイルは削除。bottom-buttons 内で定義 */
+        /* button.setting-toggle-button {
+            background-color: var(--setting-button-bg);
+            display: block;
+            float: right;
+            margin-top: 15px;
+            margin-left: auto;
+            clear: both;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            border-radius: 5px;
+            width: auto;
+            min-width: unset;
+        } */
         button:hover {
             opacity: 0.9;
         }
@@ -249,10 +263,9 @@
             text-align: left;
         }
 
-        /* ★時刻修正入力の新しいコンテナとFlexboxスタイル (PC用) */
+        /* ★時刻修正入力の新しいコンテナとFlexboxスタイル */
         .time-correction-fields {
-            display: flex; /* Flexbox有効 */
-            flex-direction: row; /* 横並び */
+            display: flex;
             flex-wrap: wrap; /* 必要に応じて折り返し */
             gap: 15px; /* 入力フィールド間の間隔 */
             margin-bottom: 15px; /* 下のマージン */
@@ -381,48 +394,57 @@
         /* ========================================================================= */
         @media (max-width: 600px) { 
             body {
-                font-size: 1em; /* スマホでの基準フォントサイズ */
-                width: 100%; 
-                height: 100vh; 
+                font-size: 0.9em; /* スマホで全体的に文字を小さく */
+                zoom: 0.8; /* ★全体を80%に縮小 (非標準プロパティ) */
+                -moz-transform: scale(0.8); /* Firefox対応 */
+                -moz-transform-origin: top center; /* Firefox対応 */
+                -webkit-transform: scale(0.8); /* Chrome/Safari対応 */
+                -webkit-transform-origin: top center; /* Chrome/Safari対応 */
+                transform: scale(0.8); /* その他ブラウザ対応 */
+                transform-origin: top center; /* 縮小の起点を上中央に設定 */
+                width: 125%; /* zoom/scaleの逆数を設定して、スクロールバーが出ないように調整 */
+                height: 125vh; /* 高さも調整 */
             }
+            /* bodyにzoom/scaleを適用したため、他の要素の相対的なサイズはこれで調整されるが、
+               レイアウトのずれを防ぐため、個別の要素の調整も維持する */
             .container {
-                padding: 25px; /* スマホ向けパディングを調整 */
-                width: 98%; /* スマホ向けコンテナの幅 */
-                max-width: 420px; /* スマホ向けコンテナの最大幅 */
+                padding: 20px; /* スマホ向けパディング */
+                width: 95%; 
+                max-width: 360px; /* スマホ向け最大幅 */
             }
 
             h1 {
-                font-size: 1.6em; /* スマホ向けタイトルサイズ */
-                margin-bottom: 25px;
+                font-size: 1.5em; 
+                margin-bottom: 20px;
             }
             h2 {
-                font-size: 1.4em; /* スマホ向けh2サイズ */
-                margin-bottom: 25px;
+                font-size: 1.3em; 
+                margin-bottom: 20px;
             }
             h3 {
-                font-size: 1.1em; /* スマホ向けh3サイズ */
+                font-size: 1.1em; 
                 margin-top: 20px;
                 margin-bottom: 15px;
             }
 
             #current-time {
-                font-size: 1.4em; /* スマホ向け時刻サイズ */
-                margin-bottom: 18px;
+                font-size: 1.3em; 
+                margin-bottom: 15px;
             }
 
-            select, input[type="password"] {
+            select, input[type="password"] { /* datetime-local は別に定義 */
                 padding: 10px; 
                 margin-bottom: 20px;
-                font-size: 1em; /* スマホ向けフォントサイズ */
+                font-size: 0.95em; 
                 border-radius: 5px; 
             }
             /* datetime-localの入力欄のスタイル */
             input[type="datetime-local"] {
                 padding: 10px;
                 margin-bottom: 20px;
-                font-size: 1em; /* スマホ向けフォントサイズ */
+                font-size: 0.95em;
                 border-radius: 5px;
-                width: 100%; 
+                width: 100%; /* ★スマホで幅が狭くならないように */
             }
             select {
                 background-position: right 8px center; 
@@ -439,9 +461,9 @@
             /* 設定ボタンは他のボタンより少し小さめにする場合 */
             .bottom-buttons .setting-toggle-button {
                 padding: 8px 15px;
-                font-size: 0.9em; /* スマホ向け設定ボタンフォントサイズ */
+                font-size: 0.9em;
                 border-radius: 4px;
-                max-width: 90px; 
+                max-width: 90px; /* スマホ向け設定ボタンの最大幅 */
             }
 
             #message {
@@ -460,23 +482,30 @@
             }
             /* ★時刻修正入力の新しいコンテナとFlexboxスタイル (スマホ向け) */
             .time-correction-fields {
-                flex-direction: column; /* ★出勤修正と退勤修正の項目ブロック全体を縦並びにする */
-                gap: 15px; /* 項目間の間隔を調整 */
+                flex-direction: column; /* スマホでは縦並びに（狭いので） */
+                gap: 10px; /* 間隔を調整 */
                 margin-bottom: 10px;
             }
             .time-correction-field-item {
                 display: flex; 
-                flex-direction: column; /* ラベルと入力フィールドを縦並びにする */
+                flex-direction: column; 
                 min-width: unset; 
             }
             .time-correction-field-item label {
-                font-size: 0.9em; 
+                font-size: 0.85em; 
                 margin-bottom: 4px; 
             }
             .time-correction-field-item input {
                 margin-bottom: 0; 
             }
+            /* ★ここまで追加修正★ */
 
+
+            /* settings-section のラベルは settings-section内に残す */
+            /* #settings-section label {
+                font-size: 0.95em; 
+                margin-bottom: 8px; 
+            } */
 
             /* 出勤/退勤ボタンのスタイル (横並び維持) */
             #attendance-section div:first-of-type {
@@ -505,23 +534,24 @@
                 margin: 0;
             }
 
-            /* ログアウトボタンと設定ボタンのコンテナ (スマホ向け) */
+            /* ★ログアウトボタンと設定ボタンのコンテナ (スマホ向け) */
             .bottom-buttons {
-                margin-top: 15px; 
-                gap: 10px; 
+                margin-top: 15px; /* スマホ向けマージン */
+                gap: 10px; /* スマホ向けボタン間隔 */
             }
 
             /* スマホでの出勤中ユーザーリスト表示 (2列表示) */
+            /* #attendance-section 内に移動したので、上部からのマージンを調整 */
             #attendance-section #clockedInUsersList {
                 max-height: 120px; 
                 padding: 8px; 
                 gap: 8px; 
                 border-radius: 4px; 
-                margin-top: 15px; 
+                margin-top: 15px; /* 上からのマージンを調整 */
             }
             #clockedInUsersList .user-name-item {
                 flex: 0 0 calc(50% - 4px); 
-                font-size: 0.9em; 
+                font-size: 0.85em; 
                 padding: 4px 0; 
             }
 
@@ -529,11 +559,11 @@
             #settings-section select {
                 padding: 10px;
                 margin-bottom: 20px;
-                font-size: 1em; 
+                font-size: 0.95em;
             }
             #settings-section label {
                 margin-bottom: 8px;
-                font-size: 1em; 
+                font-size: 0.95em;
             }
             #settings-section hr {
                 margin: 15px 0;
@@ -573,10 +603,12 @@
             <div class="time-correction-group">
                 <div class="time-correction-fields">
                     <div class="time-correction-field-item">
-                        <label for="correctedStartTime">出勤修正:</label> <input type="datetime-local" id="correctedStartTime">
+                        <label for="correctedStartTime">出勤時刻を修正 (任意):</label>
+                        <input type="datetime-local" id="correctedStartTime">
                     </div>
                     <div class="time-correction-field-item">
-                        <label for="correctedEndTime">退勤修正:</label> <input type="datetime-local" id="correctedEndTime">
+                        <label for="correctedEndTime">退勤時刻を修正 (任意):</label>
+                        <input type="datetime-local" id="correctedEndTime">
                     </div>
                 </div>
             </div>
@@ -709,7 +741,7 @@
                 initialView = 'login'; // ログイン画面へ
             }
 
-            // ローディング画面をフェードアウトして、メインコンテナを表示 (アニメーションを削除するため、不透明度とdisplayを直接設定)
+            // ローディング画面をフェードアウトして、メインコンテンツを表示 (アニメーションを削除するため、不透明度とdisplayを直接設定)
             loadingOverlay.style.opacity = '0';
             loadingImage.style.width = '10px';
             
@@ -826,7 +858,7 @@
             // 修正時刻入力欄はclearCorrectedTimeInputs()で明示的にクリアされます。
             // const correctedStartTimeInput = document.getElementById('correctedStartTime');
             // const correctedEndTimeInput = document.getElementById('correctedEndTime');
-            // const storedStartTime = localStorage.getItem(LOCAL_LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            // const storedStartTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
             // if (storedStartTime) {
             //     correctedStartTimeInput.value = storedStartTime.substring(0, 16);
             // } else {
@@ -895,7 +927,7 @@
 
             if (password === CORRECT_PASSWORD) {
                 loggedInUser = selectedName;
-                localStorage.setItem(LOCAL_LOCAL_STORAGE_USER_KEY, loggedInUser);
+                localStorage.setItem(LOCAL_STORAGE_USER_KEY, loggedInUser);
                 loginMessageElement.textContent = 'ログイン成功！';
                 loginMessageElement.style.color = 'var(--message-color-success)';
                 transitionToView('attendance'); // 勤怠画面へ
@@ -912,10 +944,10 @@
          */
         function handleLogout() {
             loggedInUser = '';
-            localStorage.removeItem(LOCAL_LOCAL_STORAGE_USER_KEY);
-            localStorage.removeItem(LOCAL_LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser); 
-            localStorage.removeItem(LOCAL_LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser); // Clear temp end time on logout
-            localStorage.removeItem(LOCAL_LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser); // Clear submit ready flag
+            localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+            localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser); 
+            localStorage.removeItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser); // Clear temp end time on logout
+            localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser); // Clear submit ready flag
 
             document.getElementById('passwordInput').value = '';
             document.getElementById('loginMessage').textContent = '';
@@ -937,8 +969,8 @@
          */
         function updateStatusMessage() {
             const statusMessageElement = document.getElementById('statusMessage');
-            const startTime = localStorage.getItem(LOCAL_LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-            const endTimeTemp = localStorage.getItem(LOCAL_LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
+            const startTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            const endTimeTemp = localStorage.getItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
 
             if (startTime && !endTimeTemp) {
                 const startDateTime = new Date(startTime);
@@ -983,9 +1015,9 @@
                         return;
                     }
                 }
-                localStorage.setItem(LOCAL_LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser, currentTime.toISOString());
-                localStorage.removeItem(LOCAL_LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser); // Ensure temp end time is cleared on clock-in
-                localStorage.removeItem(LOCAL_LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser); // Reset submit ready flag
+                localStorage.setItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser, currentTime.toISOString());
+                localStorage.removeItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser); // Ensure temp end time is cleared on clock-in
+                localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser); // Reset submit ready flag
                 
                 // ★追加：出勤時にGASを呼び出して「出勤中」シートに名前を追加
                 try {
@@ -1003,7 +1035,7 @@
                 updateSubmitButtonState(); // Update button state
                 loadClockedInUsers(); // 出勤・退勤でリストも更新
             } else if (type === '退勤') {
-                const startTimeISO = localStorage.getItem(LOCAL_LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+                const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
                 if (!startTimeISO) {
                     attendanceMessageElement.textContent = 'エラー: 出勤記録がありません。出勤ボタンを先に押してください。';
                     attendanceMessageElement.style.color = 'var(--message-color-error)';
@@ -1027,8 +1059,8 @@
                 }
                 
                 // Store end time temporarily, do NOT submit yet
-                localStorage.setItem(LOCAL_LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser, endTime.toISOString());
-                localStorage.setItem(LOCAL_LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser, 'true'); // Set submit ready flag
+                localStorage.setItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser, endTime.toISOString());
+                localStorage.setItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser, 'true'); // Set submit ready flag
 
                 // ★追加：退勤時にGASを呼び出して「出勤中」シートから名前を削除
                 try {
@@ -1114,8 +1146,8 @@
                 return;
             }
 
-            const startTimeISO = localStorage.getItem(LOCAL_LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-            const endTimeISO = localStorage.getItem(LOCAL_LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
+            const startTimeISO = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            const endTimeISO = localStorage.getItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
 
             if (!startTimeISO || !endTimeISO) {
                 attendanceMessageElement.textContent = 'エラー: 提出する勤怠データが不完全です。出勤・退勤を再度行ってください。';
@@ -1133,9 +1165,9 @@
                 attendanceMessageElement.style.color = 'var(--message-color-success)';
 
                 // Clear temporary data and disable button after successful submission
-                localStorage.removeItem(LOCAL_LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-                localStorage.removeItem(LOCAL_LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
-                localStorage.removeItem(LOCAL_LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser);
+                localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+                localStorage.removeItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
+                localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser);
                 updateStatusMessage();
                 updateSubmitButtonState();
                 clearCorrectedTimeInputs(); // ✅ RESET: 勤怠提出後に修正時間をリセット
@@ -1158,8 +1190,8 @@
                 return;
             }
 
-            const storedStartTime = localStorage.getItem(LOCAL_LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-            const storedEndTimeTemp = localStorage.getItem(LOCAL_LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
+            const storedStartTime = localStorage.getItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            const storedEndTimeTemp = localStorage.getItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
 
             if (!storedStartTime && !storedEndTimeTemp) { // If neither start nor temp end time exists
                 attendanceMessageElement.textContent = 'エラー: 取り消す勤怠記録がありません。';
@@ -1171,9 +1203,9 @@
             attendanceMessageElement.style.color = 'var(--message-color-processing)';
 
             // Clear all related local storage items
-            localStorage.removeItem(LOCAL_LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
-            localStorage.removeItem(LOCAL_LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
-            localStorage.removeItem(LOCAL_LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser);
+            localStorage.removeItem(LOCAL_STORAGE_START_TIME_KEY_PREFIX + loggedInUser);
+            localStorage.removeItem(LOCAL_STORAGE_END_TIME_TEMP_KEY_PREFIX + loggedInUser);
+            localStorage.removeItem(LOCAL_STORAGE_SUBMIT_READY_KEY_PREFIX + loggedInUser);
             
             // ★追加：勤怠取り消し時にGASを呼び出して「出勤中」シートから名前を削除
             try {
