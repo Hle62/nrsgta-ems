@@ -238,7 +238,7 @@
         /* #toggleSettingButton { display: none; } */
 
 
-        /* ★ログアウトボタンと設定ボタンのコンテナ */
+        /* ★ログアウトボタンと設定ボタンのコンテナ (共通スタイル) */
         .bottom-buttons {
             display: flex;
             justify-content: center; /* 中央寄せ */
@@ -267,23 +267,37 @@
             border-top: 1px solid var(--border-color); /* 変数を適用 */
             text-align: left;
         }
-        .time-correction-group label {
+
+        /* ★時刻修正入力の新しいコンテナとFlexboxスタイル */
+        .time-correction-fields {
+            display: flex;
+            flex-wrap: wrap; /* 必要に応じて折り返し */
+            gap: 15px; /* 入力フィールド間の間隔 */
+            margin-bottom: 15px; /* 下のマージン */
+        }
+        .time-correction-field-item {
+            flex: 1; /* 利用可能なスペースを均等に配分 */
+            min-width: 120px; /* 小さい画面で破綻しないように最小幅 */
+        }
+        .time-correction-field-item label {
             display: block;
             margin-bottom: 5px; 
             font-size: 0.9em; 
             color: var(--text-color-main);
         }
-        .time-correction-group input {
-            margin-bottom: 10px; 
+        .time-correction-field-item input {
+            margin-bottom: 0; /* 親が管理するので個別のマージンはリセット */
         }
-        /* settings-section のラベルは settings-section内に残す */
-        /* #settings-section label {
+        /* ★ここまで追加修正★ */
+
+
+        #settings-section label {
             display: block;
             margin-bottom: 10px; 
             text-align: left;
             font-size: 1em; 
             color: var(--text-color-main);
-        } */
+        }
 
         /* 新しいボタンコンテナのスタイル */
         .attendance-submission-buttons {
@@ -449,13 +463,25 @@
                 margin-top: 18px; 
                 padding-top: 12px; 
             }
-            .time-correction-group label {
+            /* ★時刻修正入力の新しいコンテナとFlexboxスタイル (スマホ向け) */
+            .time-correction-fields {
+                flex-direction: column; /* スマホでは縦並びに（狭いので） */
+                gap: 10px; /* 間隔を調整 */
+                margin-bottom: 10px;
+            }
+            .time-correction-field-item {
+                min-width: unset; /* 最小幅をリセット */
+            }
+            .time-correction-field-item label {
                 font-size: 0.85em; 
                 margin-bottom: 4px; 
             }
-            .time-correction-group input {
-                margin-bottom: 8px; 
+            .time-correction-field-item input {
+                margin-bottom: 0; 
             }
+            /* ★ここまで追加修正★ */
+
+
             /* settings-section のラベルは settings-section内に残す */
             /* #settings-section label {
                 font-size: 0.95em; 
@@ -556,10 +582,16 @@
             <p id="attendanceMessage"></p>
 
             <div class="time-correction-group">
-                <label for="correctedStartTime">出勤時刻を修正 (任意):</label>
-                <input type="datetime-local" id="correctedStartTime">
-                <label for="correctedEndTime">退勤時刻を修正 (任意):</label>
-                <input type="datetime-local" id="correctedEndTime">
+                <div class="time-correction-fields">
+                    <div class="time-correction-field-item">
+                        <label for="correctedStartTime">出勤時刻を修正 (任意):</label>
+                        <input type="datetime-local" id="correctedStartTime">
+                    </div>
+                    <div class="time-correction-field-item">
+                        <label for="correctedEndTime">退勤時刻を修正 (任意):</label>
+                        <input type="datetime-local" id="correctedEndTime">
+                    </div>
+                </div>
             </div>
             
             <div class="attendance-submission-buttons"> <button class="cancel-button" onclick="cancelAttendance()">勤怠取り消し</button>
@@ -588,7 +620,10 @@
                 <option value="rose-pink">ローズピンク</option>
                 <option value="red-black">レッドブラック</option>
             </select>
+            <div class="bottom-buttons">
+                <button class="setting-toggle-button" id="toggleSettingButtonSettings" onclick="toggleSettings()">勤怠に戻る</button>
             </div>
+        </div>
 
     </div>
     <script defer>
@@ -713,8 +748,6 @@
             }
             clearCorrectedTimeInputs(); // ✅ RESET: ページロード時は修正時間をリセット
 
-            // 設定ボタンは常に表示されるようになったため、JSで初期表示を制御する必要がなくなりました
-            // document.getElementById('toggleSettingButton').style.display は不要
             currentView = initialView;
         });
 
@@ -726,43 +759,18 @@
             // 現在アクティブなセクションを取得
             const currentActiveSection = document.querySelector('.container > div.active');
             const targetSection = document.getElementById(viewName + '-section');
-            const toggleSettingButton = document.getElementById('toggleSettingButton');
             
-            // 設定ボタンの表示/非表示を事前に設定 (今回は常に表示)
-            // このブロックは削除またはコメントアウトしても問題ありません
-            // if (viewName === 'attendance' || viewName === 'settings') {
-            //     toggleSettingButton.style.display = 'block';
-            // } else {
-            //     toggleSettingButton.style.display = 'none';
-            // }
-
-            // currentActiveSection がない場合（初回ロード時やエラーからの復帰時）はアニメーションしない
-            if (!currentActiveSection) {
-                targetSection.style.display = 'block';
-                targetSection.style.visibility = 'visible';
-                targetSection.classList.add('active');
-                targetSection.style.pointerEvents = 'auto';
-                currentView = viewName;
-                if(viewName === 'attendance') {
-                    updateStatusMessage();
-                    updateSubmitButtonState(); // Update submit button state 
-                    // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
-                    loadClockedInUsers(); // 出勤一覧をロード
-                } else if (viewName === 'settings') { // ★設定画面に切り替わったときにだけテーマリストを読み込む
-                    // 設定画面には出勤一覧がないので、ここで loadClockedInUsers() は呼び出さない
-                }
-                return;
+            // 現在アクティブなセクションがあれば、それを非表示にする
+            if (currentActiveSection) {
+                currentActiveSection.style.opacity = '0';
+                currentActiveSection.style.transform = 'translateY(-10px)';
+                currentActiveSection.style.pointerEvents = 'none';
+                currentActiveSection.style.display = 'none';
+                currentActiveSection.style.visibility = 'hidden';
+                currentActiveSection.classList.remove('active');
             }
 
-            // 現在のセクションを即座に非表示にする
-            currentActiveSection.style.opacity = '0';
-            currentActiveSection.style.transform = 'translateY(-10px)';
-            currentActiveSection.style.pointerEvents = 'none';
-            currentActiveSection.style.display = 'none';
-            currentActiveSection.style.visibility = 'hidden';
-            currentActiveSection.classList.remove('active');
-
-            // 次のセクションを即座に表示する
+            // 次のセクションを表示する
             targetSection.style.opacity = '1'; 
             targetSection.style.transform = 'translateY(0)'; 
             targetSection.style.display = 'block';
@@ -770,13 +778,14 @@
             targetSection.classList.add('active');
             targetSection.style.pointerEvents = 'auto';
             currentView = viewName;
+
+            // 各ビューに特化した初期化処理
             if(viewName === 'attendance') {
                 updateStatusMessage();
-                updateSubmitButtonState(); // Update button state
-                // clearCorrectedTimeInputs(); // ❌ NO RESET: 画面切り替え時はリセットしない
-                loadClockedInUsers(); // 出勤一覧をロード
-            } else if (viewName === 'settings') { // ★設定画面に切り替わったときにだけテーマリストを読み込む
-                // 設定画面には出勤一覧がないので、ここで loadClockedInUsers() は呼び出さない
+                updateSubmitButtonState();
+                loadClockedInUsers(); // 勤怠画面に戻った際にも出勤一覧を更新
+            } else if (viewName === 'settings') {
+                // 設定画面に切り替わった場合、特にリストの読み込みは不要 (出勤一覧が勤怠画面に移動したため)
             }
         }
 
@@ -785,12 +794,19 @@
          * この関数は、勤怠画面と設定（テーマ変更）画面を切り替えます。
          */
         function toggleSettings() {
+            const toggleButtonAttendance = document.getElementById('toggleSettingButton'); // 勤怠画面側の設定ボタン
+            const toggleButtonSettings = document.getElementById('toggleSettingButtonSettings'); // 設定画面側の勤怠に戻るボタン
+
             if (currentView === 'attendance') {
                 transitionToView('settings');
-                document.getElementById('toggleSettingButton').textContent = '勤怠に戻る';
+                // 勤怠画面側の設定ボタンを非表示にし、設定画面側のボタンを表示
+                toggleButtonAttendance.style.display = 'none';
+                toggleButtonSettings.style.display = 'block';
             } else if (currentView === 'settings') {
                 transitionToView('attendance');
-                document.getElementById('toggleSettingButton').textContent = '設定';
+                // 設定画面側の勤怠に戻るボタンを非表示にし、勤怠画面側のボタンを表示
+                toggleButtonAttendance.style.display = 'block';
+                toggleButtonSettings.style.display = 'none';
             }
             // 出勤一覧は常に勤怠画面に表示されるため、この関数内で loadClockedInUsers() を呼び出す必要はありません
         }
@@ -921,6 +937,10 @@
             transitionToView('login'); // ログイン画面へ
             clearCorrectedTimeInputs(); // ✅ RESET: ログアウト時は修正時間をリセット
             updateSubmitButtonState(); // Update submit button state after logout
+            // ログアウト時に設定ボタンのテキストをリセット
+            document.getElementById('toggleSettingButton').textContent = '設定';
+            document.getElementById('toggleSettingButtonSettings').textContent = '勤怠に戻る'; // 初期状態に戻す
+            document.getElementById('toggleSettingButtonSettings').style.display = 'none'; // 初期状態は非表示
         }
 
         /**
