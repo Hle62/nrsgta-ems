@@ -101,7 +101,7 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             text-align: center;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px; /* ★PC向け最大幅を広げる */
             position: relative; /* 設定ボタン配置のため */
             overflow: hidden; /* コンテンツ切り替え時のちらつき防止 */
             
@@ -172,20 +172,6 @@
         button.cancel-button {
             background-color: var(--button-bg-cancel); /* 変数を適用 */
         }
-        /* 設定ボタンのデフォルトスタイルは削除。bottom-buttons 内で定義 */
-        /* button.setting-toggle-button {
-            background-color: var(--setting-button-bg);
-            display: block;
-            float: right;
-            margin-top: 15px;
-            margin-left: auto;
-            clear: both;
-            padding: 8px 15px;
-            font-size: 0.9em;
-            border-radius: 5px;
-            width: auto;
-            min-width: unset;
-        } */
         button:hover {
             opacity: 0.9;
         }
@@ -395,22 +381,22 @@
         @media (max-width: 600px) { 
             body {
                 font-size: 0.9em; /* スマホで全体的に文字を小さく */
-                zoom: 0.8; /* ★全体を80%に縮小 (非標準プロパティ) */
-                -moz-transform: scale(0.8); /* Firefox対応 */
+                zoom: 0.9; /* ★全体を90%に縮小 (非標準プロパティ) */
+                -moz-transform: scale(0.9); /* Firefox対応 */
                 -moz-transform-origin: top center; /* Firefox対応 */
-                -webkit-transform: scale(0.8); /* Chrome/Safari対応 */
+                -webkit-transform: scale(0.9); /* Chrome/Safari対応 */
                 -webkit-transform-origin: top center; /* Chrome/Safari対応 */
-                transform: scale(0.8); /* その他ブラウザ対応 */
+                transform: scale(0.9); /* その他ブラウザ対応 */
                 transform-origin: top center; /* 縮小の起点を上中央に設定 */
-                width: 125%; /* zoom/scaleの逆数を設定して、スクロールバーが出ないように調整 */
-                height: 125vh; /* 高さも調整 */
+                width: 111.11%; /* zoom/scaleの逆数を設定して、スクロールバーが出ないように調整 (1/0.9 ≈ 1.1111) */
+                height: 111.11vh; /* 高さも調整 */
             }
             /* bodyにzoom/scaleを適用したため、他の要素の相対的なサイズはこれで調整されるが、
                レイアウトのずれを防ぐため、個別の要素の調整も維持する */
             .container {
                 padding: 20px; /* スマホ向けパディング */
-                width: 95%; 
-                max-width: 360px; /* スマホ向け最大幅 */
+                width: 98%; /* ★スマホ向けコンテナの幅を広げる */
+                max-width: 400px; /* ★スマホ向けコンテナの最大幅を広げる */
             }
 
             h1 {
